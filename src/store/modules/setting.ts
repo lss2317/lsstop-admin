@@ -9,7 +9,7 @@
  * - 主题管理（亮色、暗色、自动）
  * - 菜单主题样式配置
  * - 界面显示开关（面包屑、标签页、语言切换等）
- * - 功能开关（手风琴模式、色弱模式、水印等）
+ - 功能开关（手风琴模式、色弱模式等）
  * - 样式配置（边框、圆角、容器宽度、页面过渡）
  * - 节日功能配置
  * - Element Plus 主题色动态设置
@@ -86,9 +86,6 @@ export const useSettingStore = defineStore(
     const showSettingGuide = ref(SETTING_DEFAULT_CONFIG.showSettingGuide);
     /** 是否显示节日文本 */
     const showFestivalText = ref(SETTING_DEFAULT_CONFIG.showFestivalText);
-    /** 是否显示水印 */
-    const watermarkVisible = ref(SETTING_DEFAULT_CONFIG.watermarkVisible);
-
     // 功能设置
     /** 是否自动关闭 */
     const autoClose = ref(SETTING_DEFAULT_CONFIG.autoClose);
@@ -335,14 +332,6 @@ export const useSettingStore = defineStore(
     };
 
     /**
-     * 设置水印显示
-     * @param visible 是否显示
-     */
-    const setWatermarkVisible = (visible: boolean) => {
-      watermarkVisible.value = visible;
-    };
-
-    /**
      * 设置自定义圆角
      * @param radius 圆角值
      */
@@ -394,11 +383,6 @@ export const useSettingStore = defineStore(
       showNprogress,
       colorWeak,
       showSettingGuide,
-      pageTransition,
-      tabStyle,
-      menuOpen,
-      refresh,
-      watermarkVisible,
       customRadius,
       holidayFireworksLoaded,
       showFestivalText,
@@ -428,12 +412,6 @@ export const useSettingStore = defineStore(
       setNprogress,
       setColorWeak,
       hideSettingGuide,
-      openSettingGuide,
-      setPageTransition,
-      setTabStyle,
-      setMenuOpen,
-      reload,
-      setWatermarkVisible,
       setCustomRadius,
       setholidayFireworksLoaded,
       setShowFestivalText,
