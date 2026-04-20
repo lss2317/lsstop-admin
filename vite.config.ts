@@ -12,15 +12,9 @@ import tailwindcss from '@tailwindcss/vite'
 export default ({ mode }: { mode: string }) => {
   const root = process.cwd()
   const env = loadEnv(mode, root)
-  const { VITE_VERSION, VITE_PORT, VITE_BASE_URL, VITE_API_URL, VITE_API_PROXY_URL } = env
-
-  console.log(`🚀 API_URL = ${VITE_API_URL}`)
-  console.log(`🚀 VERSION = ${VITE_VERSION}`)
+  const { VITE_PORT, VITE_BASE_URL, VITE_API_URL, VITE_API_PROXY_URL } = env
 
   return defineConfig({
-    define: {
-      __APP_VERSION__: JSON.stringify(VITE_VERSION)
-    },
     base: VITE_BASE_URL,
     server: {
       port: Number(VITE_PORT),
@@ -106,6 +100,7 @@ export default ({ mode }: { mode: string }) => {
     // 依赖预构建：避免运行时重复请求与转换，提升首次加载速度
     optimizeDeps: {
       include: [
+        '@element-plus/icons-vue',
         'echarts/core',
         'echarts/charts',
         'echarts/components',
