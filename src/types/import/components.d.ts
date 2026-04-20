@@ -67,6 +67,7 @@ declare module 'vue' {
     ColorSettings: typeof import('./../../components/core/layouts/art-settings-panel/widget/ColorSettings.vue')['default']
     ContainerSettings: typeof import('./../../components/core/layouts/art-settings-panel/widget/ContainerSettings.vue')['default']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElDrawer: typeof import('element-plus/es')['ElDrawer']
