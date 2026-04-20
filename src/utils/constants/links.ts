@@ -32,4 +32,4 @@ export const WEB_LINKS = {
 
   // 项目介绍
   INTRODUCE: 'https://www.artd.pro/docs/zh/guide/introduce.html'
-}
+};

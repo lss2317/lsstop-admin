@@ -45,10 +45,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, type PropType } from 'vue'
-  import { AppRouteRecord } from '@/types/router'
-  import { handleMenuJump } from '@/utils/navigation'
-  import { formatMenuTitle } from '@/utils/router'
+  import { computed, type PropType } from 'vue';
+  import { AppRouteRecord } from '@/types/router';
+  import { handleMenuJump } from '@/utils/navigation';
+  import { formatMenuTitle } from '@/utils/router';
 
   const props = defineProps({
     item: {
@@ -64,14 +64,14 @@
       type: Number,
       default: 0
     }
-  })
+  });
 
-  const emit = defineEmits(['close'])
+  const emit = defineEmits(['close']);
 
   // 过滤后的子菜单项（不包含隐藏的）
   const filteredChildren = computed(() => {
-    return props.item.children?.filter((child) => !child.meta.isHide) || []
-  })
+    return props.item.children?.filter((child) => !child.meta.isHide) || [];
+  });
 
   // 父菜单如果本身就是页面，则即使没有可见子菜单也应该保留为菜单项。
   const isNavigableRoute = computed(() => {
@@ -81,22 +81,22 @@
         props.item.meta.link ||
         props.item.meta.isIframe === true) &&
       (props.item.component || props.item.meta.link || props.item.meta.isIframe === true)
-    )
-  })
+    );
+  });
 
   // 计算当前项是否有可见的子菜单
   const hasChildren = computed(() => {
-    return filteredChildren.value.length > 0
-  })
+    return filteredChildren.value.length > 0;
+  });
 
   const goPage = (item: AppRouteRecord) => {
-    closeMenu()
-    handleMenuJump(item)
-  }
+    closeMenu();
+    handleMenuJump(item);
+  };
 
   const closeMenu = () => {
-    emit('close')
-  }
+    emit('close');
+  };
 </script>
 
 <style scoped>

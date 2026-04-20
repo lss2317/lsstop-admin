@@ -28,47 +28,47 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'ArtDataListCard' })
+  defineOptions({ name: 'ArtDataListCard' });
 
   interface Props {
     /** 数据列表 */
-    list: Activity[]
+    list: Activity[];
     /** 标题 */
-    title: string
+    title: string;
     /** 副标题 */
-    subtitle?: string
+    subtitle?: string;
     /** 最大显示数量 */
-    maxCount?: number
+    maxCount?: number;
     /** 是否显示更多按钮 */
-    showMoreButton?: boolean
+    showMoreButton?: boolean;
   }
 
   interface Activity {
     /** 标题 */
-    title: string
+    title: string;
     /** 状态 */
-    status: string
+    status: string;
     /** 时间 */
-    time: string
+    time: string;
     /** 样式类名 */
-    class: string
+    class: string;
     /** 图标 */
-    icon: string
+    icon: string;
   }
 
-  const ITEM_HEIGHT = 66
-  const DEFAULT_MAX_COUNT = 5
+  const ITEM_HEIGHT = 66;
+  const DEFAULT_MAX_COUNT = 5;
 
   const props = withDefaults(defineProps<Props>(), {
     maxCount: DEFAULT_MAX_COUNT
-  })
+  });
 
-  const maxHeight = computed(() => `${ITEM_HEIGHT * props.maxCount}px`)
+  const maxHeight = computed(() => `${ITEM_HEIGHT * props.maxCount}px`);
 
   const emit = defineEmits<{
     /** 点击更多按钮事件 */
-    (e: 'more'): void
-  }>()
+    (e: 'more'): void;
+  }>();
 
-  const handleMore = () => emit('more')
+  const handleMore = () => emit('more');
 </script>

@@ -71,37 +71,37 @@
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n'
-  import { useSettingStore } from '@/store/modules/setting'
-  import { useUserStore } from '@/store/modules/user'
-  import { useHeaderBar } from '@/hooks/core/useHeaderBar'
-  import { themeAnimation } from '@/utils/ui/animation'
-  import { languageOptions } from '@/locales'
-  import { LanguageEnum } from '@/enums/appEnum'
-  import AppConfig from '@/config'
+  import { useI18n } from 'vue-i18n';
+  import { useSettingStore } from '@/store/modules/setting';
+  import { useUserStore } from '@/store/modules/user';
+  import { useHeaderBar } from '@/hooks/core/useHeaderBar';
+  import { themeAnimation } from '@/utils/ui/animation';
+  import { languageOptions } from '@/locales';
+  import { LanguageEnum } from '@/enums/appEnum';
+  import AppConfig from '@/config';
 
-  defineOptions({ name: 'AuthTopBar' })
+  defineOptions({ name: 'AuthTopBar' });
 
-  const settingStore = useSettingStore()
-  const userStore = useUserStore()
-  const { isDark, systemThemeColor } = storeToRefs(settingStore)
-  const { shouldShowThemeToggle, shouldShowLanguage } = useHeaderBar()
-  const { locale } = useI18n()
+  const settingStore = useSettingStore();
+  const userStore = useUserStore();
+  const { isDark, systemThemeColor } = storeToRefs(settingStore);
+  const { shouldShowThemeToggle, shouldShowLanguage } = useHeaderBar();
+  const { locale } = useI18n();
 
-  const mainColors = AppConfig.systemMainColor
-  const color = systemThemeColor // css v-bind 使用
+  const mainColors = AppConfig.systemMainColor;
+  const color = systemThemeColor; // css v-bind 使用
 
   const changeLanguage = (lang: LanguageEnum) => {
-    if (locale.value === lang) return
-    locale.value = lang
-    userStore.setLanguage(lang)
-  }
+    if (locale.value === lang) return;
+    locale.value = lang;
+    userStore.setLanguage(lang);
+  };
 
   const changeThemeColor = (color: string) => {
-    if (systemThemeColor.value === color) return
-    settingStore.setElementTheme(color)
-    settingStore.reload()
-  }
+    if (systemThemeColor.value === color) return;
+    settingStore.setElementTheme(color);
+    settingStore.reload();
+  };
 </script>
 
 <style scoped>

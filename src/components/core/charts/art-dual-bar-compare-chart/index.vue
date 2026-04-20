@@ -4,11 +4,11 @@
 </template>
 
 <script setup lang="ts">
-  import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
-  import type { EChartsOption, BarSeriesOption } from '@/plugins/echarts'
-  import type { BidirectionalBarChartProps } from '@/types/component/chart'
+  import { useChartOps, useChartComponent } from '@/hooks/core/useChart';
+  import type { EChartsOption, BarSeriesOption } from '@/plugins/echarts';
+  import type { BidirectionalBarChartProps } from '@/types/component/chart';
 
-  defineOptions({ name: 'ArtDualBarCompareChart' })
+  defineOptions({ name: 'ArtDualBarCompareChart' });
 
   const props = withDefaults(defineProps<BidirectionalBarChartProps>(), {
     // 基础配置
@@ -41,19 +41,19 @@
     showTooltip: true,
     showLegend: false,
     legendPosition: 'bottom'
-  })
+  });
 
   // 创建系列配置的辅助函数
   const createSeriesConfig = (config: {
-    name: string
-    data: number[]
-    borderRadius: number | number[]
-    labelPosition: 'top' | 'bottom'
-    colorIndex: number
-    formatter?: (params: unknown) => string
+    name: string;
+    data: number[];
+    borderRadius: number | number[];
+    labelPosition: 'top' | 'bottom';
+    colorIndex: number;
+    formatter?: (params: unknown) => string;
   }): BarSeriesOption => {
-    const { fontColor } = useChartOps()
-    const animationConfig = getAnimationConfig()
+    const { fontColor } = useChartOps();
+    const animationConfig = getAnimationConfig();
 
     return {
       name: config.name,
@@ -76,8 +76,8 @@
         fontSize: 12
       },
       ...animationConfig
-    }
-  }
+    };
+  };
 
   // 使用图表组件抽象
   const {
@@ -99,7 +99,7 @@
         !props.negativeData.length ||
         (props.positiveData.every((val) => val === 0) &&
           props.negativeData.every((val) => val === 0))
-      )
+      );
     },
     watchSources: [
       () => props.positiveData,
@@ -109,7 +109,7 @@
     ],
     generateOptions: (): EChartsOption => {
       // 处理负向数据，确保为负值
-      const processedNegativeData = props.negativeData.map((val) => (val > 0 ? -val : val))
+      const processedNegativeData = props.negativeData.map((val) => (val > 0 ? -val : val));
 
       // 优化的Grid配置
       const gridConfig = {
@@ -118,7 +118,7 @@
         left: 0,
         bottom: 0, // 增加底部间距
         containLabel: true
-      }
+      };
 
       const options: EChartsOption = {
         backgroundColor: 'transparent',
@@ -187,9 +187,9 @@
             colorIndex: 0
           })
         ]
-      }
+      };
 
-      return options
+      return options;
     }
-  })
+  });
 </script>

@@ -20,7 +20,7 @@
  * @author Art Design Pro Team
  */
 
-import { RouteRecordRaw } from 'vue-router'
+import { RouteRecordRaw } from 'vue-router';
 
 /**
  * 路由元数据接口
@@ -28,44 +28,44 @@ import { RouteRecordRaw } from 'vue-router'
  */
 export interface RouteMeta extends Record<string | number | symbol, unknown> {
   /** 路由标题 */
-  title: string
+  title: string;
   /** 路由图标 */
-  icon?: string
+  icon?: string;
   /** 是否显示徽章 */
-  showBadge?: boolean
+  showBadge?: boolean;
   /** 文本徽章 */
-  showTextBadge?: string
+  showTextBadge?: string;
   /** 是否在菜单中隐藏 */
-  isHide?: boolean
+  isHide?: boolean;
   /** 是否在标签页中隐藏 */
-  isHideTab?: boolean
+  isHideTab?: boolean;
   /** 外部链接 */
-  link?: string
+  link?: string;
   /** 是否为iframe */
-  isIframe?: boolean
+  isIframe?: boolean;
   /** 是否缓存 */
-  keepAlive?: boolean
+  keepAlive?: boolean;
   /** 操作权限 */
   authList?: Array<{
-    title: string
-    authMark: string
-  }>
+    title: string;
+    authMark: string;
+  }>;
   /** 是否为一级菜单 */
-  isFirstLevel?: boolean
+  isFirstLevel?: boolean;
   /** 角色权限 */
-  roles?: string[]
+  roles?: string[];
   /** 是否固定标签页 */
-  fixedTab?: boolean
+  fixedTab?: boolean;
   /** 激活菜单路径 */
-  activePath?: string
+  activePath?: string;
   /** 是否为全屏页面 */
-  isFullPage?: boolean
+  isFullPage?: boolean;
   /** 是否为权限按钮行 */
-  isAuthButton?: boolean
+  isAuthButton?: boolean;
   /** 权限标识 */
-  authMark?: string
+  authMark?: string;
   /** 父级路径 */
-  parentPath?: string
+  parentPath?: string;
 }
 
 /**
@@ -73,8 +73,8 @@ export interface RouteMeta extends Record<string | number | symbol, unknown> {
  * 扩展 Vue Router 的路由记录类型
  */
 export interface AppRouteRecord extends Omit<RouteRecordRaw, 'meta' | 'children' | 'component'> {
-  id?: number
-  meta: RouteMeta
-  children?: AppRouteRecord[]
-  component?: string | (() => Promise<any>)
+  id?: number;
+  meta: RouteMeta;
+  children?: AppRouteRecord[];
+  component?: string | (() => Promise<any>);
 }

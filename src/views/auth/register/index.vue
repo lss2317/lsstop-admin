@@ -86,41 +86,41 @@
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n'
-  import type { FormInstance, FormRules } from 'element-plus'
+  import { useI18n } from 'vue-i18n';
+  import type { FormInstance, FormRules } from 'element-plus';
 
-  defineOptions({ name: 'Register' })
+  defineOptions({ name: 'Register' });
 
   interface RegisterForm {
-    username: string
-    password: string
-    confirmPassword: string
-    agreement: boolean
+    username: string;
+    password: string;
+    confirmPassword: string;
+    agreement: boolean;
   }
 
-  const USERNAME_MIN_LENGTH = 3
-  const USERNAME_MAX_LENGTH = 20
-  const PASSWORD_MIN_LENGTH = 6
-  const REDIRECT_DELAY = 1000
+  const USERNAME_MIN_LENGTH = 3;
+  const USERNAME_MAX_LENGTH = 20;
+  const PASSWORD_MIN_LENGTH = 6;
+  const REDIRECT_DELAY = 1000;
 
-  const { t, locale } = useI18n()
-  const router = useRouter()
-  const formRef = ref<FormInstance>()
+  const { t, locale } = useI18n();
+  const router = useRouter();
+  const formRef = ref<FormInstance>();
 
-  const loading = ref(false)
-  const formKey = ref(0)
+  const loading = ref(false);
+  const formKey = ref(0);
 
   // 监听语言切换，重置表单
   watch(locale, () => {
-    formKey.value++
-  })
+    formKey.value++;
+  });
 
   const formData = reactive<RegisterForm>({
     username: '',
     password: '',
     confirmPassword: '',
     agreement: false
-  })
+  });
 
   /**
    * 验证密码
@@ -128,16 +128,16 @@
    */
   const validatePassword = (_rule: any, value: string, callback: (error?: Error) => void) => {
     if (!value) {
-      callback(new Error(t('register.placeholder.password')))
-      return
+      callback(new Error(t('register.placeholder.password')));
+      return;
     }
 
     if (formData.confirmPassword) {
-      formRef.value?.validateField('confirmPassword')
+      formRef.value?.validateField('confirmPassword');
     }
 
-    callback()
-  }
+    callback();
+  };
 
   /**
    * 验证确认密码
@@ -149,17 +149,17 @@
     callback: (error?: Error) => void
   ) => {
     if (!value) {
-      callback(new Error(t('register.rule.confirmPasswordRequired')))
-      return
+      callback(new Error(t('register.rule.confirmPasswordRequired')));
+      return;
     }
 
     if (value !== formData.password) {
-      callback(new Error(t('register.rule.passwordMismatch')))
-      return
+      callback(new Error(t('register.rule.passwordMismatch')));
+      return;
     }
 
-    callback()
-  }
+    callback();
+  };
 
   /**
    * 验证用户协议
@@ -167,11 +167,11 @@
    */
   const validateAgreement = (_rule: any, value: boolean, callback: (error?: Error) => void) => {
     if (!value) {
-      callback(new Error(t('register.rule.agreementRequired')))
-      return
+      callback(new Error(t('register.rule.agreementRequired')));
+      return;
     }
-    callback()
-  }
+    callback();
+  };
 
   const rules = computed<FormRules<RegisterForm>>(() => ({
     username: [
@@ -189,18 +189,18 @@
     ],
     confirmPassword: [{ required: true, validator: validateConfirmPassword, trigger: 'blur' }],
     agreement: [{ validator: validateAgreement, trigger: 'change' }]
-  }))
+  }));
 
   /**
    * 注册用户
    * 验证表单后提交注册请求
    */
   const register = async () => {
-    if (!formRef.value) return
+    if (!formRef.value) return;
 
     try {
-      await formRef.value.validate()
-      loading.value = true
+      await formRef.value.validate();
+      loading.value = true;
 
       // TODO: 替换为真实 API 调用
       // const params = {
@@ -215,24 +215,24 @@
 
       // 模拟注册请求
       setTimeout(() => {
-        loading.value = false
-        ElMessage.success('注册成功')
-        toLogin()
-      }, REDIRECT_DELAY)
+        loading.value = false;
+        ElMessage.success('注册成功');
+        toLogin();
+      }, REDIRECT_DELAY);
     } catch (error) {
-      console.error('表单验证失败:', error)
-      loading.value = false
+      console.error('表单验证失败:', error);
+      loading.value = false;
     }
-  }
+  };
 
   /**
    * 跳转到登录页面
    */
   const toLogin = () => {
     setTimeout(() => {
-      router.push({ name: 'Login' })
-    }, REDIRECT_DELAY)
-  }
+      router.push({ name: 'Login' });
+    }, REDIRECT_DELAY);
+  };
 </script>
 
 <style scoped>

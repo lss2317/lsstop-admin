@@ -13,6 +13,6 @@
 
 <script setup lang="ts">
   defineEmits<{
-    close: []
-  }>()
+    close: [];
+  }>();
 </script>

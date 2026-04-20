@@ -25,55 +25,55 @@
  * @module store/modules/table
  * @author Art Design Pro Team
  */
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import { TableSizeEnum } from '@/enums/formEnum'
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
+import { TableSizeEnum } from '@/enums/formEnum';
 
 // 表格
 export const useTableStore = defineStore(
   'tableStore',
   () => {
     // 表格大小
-    const tableSize = ref(TableSizeEnum.DEFAULT)
+    const tableSize = ref(TableSizeEnum.DEFAULT);
     // 斑马纹
-    const isZebra = ref(false)
+    const isZebra = ref(false);
     // 边框
-    const isBorder = ref(false)
+    const isBorder = ref(false);
     // 表头背景
-    const isHeaderBackground = ref(false)
+    const isHeaderBackground = ref(false);
 
     // 是否全屏
-    const isFullScreen = ref(false)
+    const isFullScreen = ref(false);
 
     /**
      * 设置表格大小
      * @param size 表格大小枚举值
      */
-    const setTableSize = (size: TableSizeEnum) => (tableSize.value = size)
+    const setTableSize = (size: TableSizeEnum) => (tableSize.value = size);
 
     /**
      * 设置斑马纹显示状态
      * @param value 是否显示斑马纹
      */
-    const setIsZebra = (value: boolean) => (isZebra.value = value)
+    const setIsZebra = (value: boolean) => (isZebra.value = value);
 
     /**
      * 设置表格边框显示状态
      * @param value 是否显示边框
      */
-    const setIsBorder = (value: boolean) => (isBorder.value = value)
+    const setIsBorder = (value: boolean) => (isBorder.value = value);
 
     /**
      * 设置表头背景显示状态
      * @param value 是否显示表头背景
      */
-    const setIsHeaderBackground = (value: boolean) => (isHeaderBackground.value = value)
+    const setIsHeaderBackground = (value: boolean) => (isHeaderBackground.value = value);
 
     /**
      * 设置是否全屏
      * @param value 是否全屏
      */
-    const setIsFullScreen = (value: boolean) => (isFullScreen.value = value)
+    const setIsFullScreen = (value: boolean) => (isFullScreen.value = value);
 
     return {
       tableSize,
@@ -86,7 +86,7 @@ export const useTableStore = defineStore(
       setIsHeaderBackground,
       isFullScreen,
       setIsFullScreen
-    }
+    };
   },
   {
     persist: {
@@ -94,4 +94,4 @@ export const useTableStore = defineStore(
       storage: localStorage
     }
   }
-)
+);

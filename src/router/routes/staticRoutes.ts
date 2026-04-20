@@ -1,7 +1,13 @@
-import { AppRouteRecordRaw } from '@/utils/router'
+import { AppRouteRecordRaw } from '@/utils/router';
 
 /** 公开路由（无需登录即可访问） */
-export const publicPaths = ['/auth/login', '/auth/register', '/auth/forget-password', '/403', '/500']
+export const publicPaths = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/forget-password',
+  '/403',
+  '/500'
+];
 
 /**
  * 静态路由配置
@@ -63,4 +69,4 @@ export const staticRoutes: AppRouteRecordRaw[] = [
       }
     ]
   }
-]
+];

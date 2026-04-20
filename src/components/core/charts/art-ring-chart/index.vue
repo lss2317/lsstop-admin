@@ -10,11 +10,11 @@
 </template>
 
 <script setup lang="ts">
-  import type { EChartsOption } from '@/plugins/echarts'
-  import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
-  import type { RingChartProps } from '@/types/component/chart'
+  import type { EChartsOption } from '@/plugins/echarts';
+  import { useChartOps, useChartComponent } from '@/hooks/core/useChart';
+  import type { RingChartProps } from '@/types/component/chart';
 
-  defineOptions({ name: 'ArtRingChart' })
+  defineOptions({ name: 'ArtRingChart' });
 
   const props = withDefaults(defineProps<RingChartProps>(), {
     // 基础配置
@@ -34,34 +34,34 @@
     showTooltip: true,
     showLegend: false,
     legendPosition: 'right'
-  })
+  });
 
   // 使用新的图表组件抽象
   const { chartRef, isDark, getAnimationConfig, getTooltipStyle, getLegendStyle } =
     useChartComponent({
       props,
       checkEmpty: () => {
-        return !props.data?.length || props.data.every((item) => item.value === 0)
+        return !props.data?.length || props.data.every((item) => item.value === 0);
       },
       watchSources: [() => props.data, () => props.centerText],
       generateOptions: (): EChartsOption => {
         // 根据图例位置计算环形图中心位置
         const getCenterPosition = (): [string, string] => {
-          if (!props.showLegend) return ['50%', '50%']
+          if (!props.showLegend) return ['50%', '50%'];
 
           switch (props.legendPosition) {
             case 'left':
-              return ['60%', '50%']
+              return ['60%', '50%'];
             case 'right':
-              return ['40%', '50%']
+              return ['40%', '50%'];
             case 'top':
-              return ['50%', '60%']
+              return ['50%', '60%'];
             case 'bottom':
-              return ['50%', '40%']
+              return ['50%', '40%'];
             default:
-              return ['50%', '50%']
+              return ['50%', '50%'];
           }
-        }
+        };
 
         const option: EChartsOption = {
           tooltip: props.showTooltip
@@ -108,11 +108,11 @@
               animationType: 'expansion'
             }
           ]
-        }
+        };
 
         // 添加中心文字
         if (props.centerText) {
-          const centerPos = getCenterPosition()
+          const centerPos = getCenterPosition();
           option.title = {
             text: props.centerText,
             left: centerPos[0],
@@ -124,10 +124,10 @@
               fontWeight: 500,
               color: isDark.value ? '#999' : '#ADB0BC'
             }
-          }
+          };
         }
 
-        return option
+        return option;
       }
-    })
+    });
 </script>

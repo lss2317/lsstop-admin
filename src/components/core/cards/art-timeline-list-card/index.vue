@@ -28,33 +28,33 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'ArtTimelineListCard' })
+  defineOptions({ name: 'ArtTimelineListCard' });
 
   // 常量配置
-  const ITEM_HEIGHT = 65
-  const TIMELINE_PLACEMENT = 'top'
-  const DEFAULT_MAX_COUNT = 5
+  const ITEM_HEIGHT = 65;
+  const TIMELINE_PLACEMENT = 'top';
+  const DEFAULT_MAX_COUNT = 5;
 
   interface TimelineItem {
     /** 时间 */
-    time: string
+    time: string;
     /** 状态颜色 */
-    status: string
+    status: string;
     /** 内容 */
-    content: string
+    content: string;
     /** 代码标识 */
-    code?: string
+    code?: string;
   }
 
   interface Props {
     /** 时间轴列表数据 */
-    list: TimelineItem[]
+    list: TimelineItem[];
     /** 标题 */
-    title: string
+    title: string;
     /** 副标题 */
-    subtitle?: string
+    subtitle?: string;
     /** 最大显示数量 */
-    maxCount?: number
+    maxCount?: number;
   }
 
   // Props 定义和验证
@@ -62,8 +62,8 @@
     title: '',
     subtitle: '',
     maxCount: DEFAULT_MAX_COUNT
-  })
+  });
 
   // 计算最大高度
-  const maxHeight = computed(() => `${ITEM_HEIGHT * props.maxCount}px`)
+  const maxHeight = computed(() => `${ITEM_HEIGHT * props.maxCount}px`);
 </script>

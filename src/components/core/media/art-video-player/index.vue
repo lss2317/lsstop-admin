@@ -4,29 +4,29 @@
 </template>
 
 <script setup lang="ts">
-  import Player from 'xgplayer'
-  import 'xgplayer/dist/index.min.css'
+  import Player from 'xgplayer';
+  import 'xgplayer/dist/index.min.css';
 
-  defineOptions({ name: 'ArtVideoPlayer' })
+  defineOptions({ name: 'ArtVideoPlayer' });
 
   interface Props {
     /** 播放器容器 ID */
-    playerId: string
+    playerId: string;
     /** 视频源URL */
-    videoUrl: string
+    videoUrl: string;
     /** 视频封面图URL */
-    posterUrl: string
+    posterUrl: string;
     /** 是否自动播放 */
-    autoplay?: boolean
+    autoplay?: boolean;
     /** 音量大小(0-1) */
-    volume?: number
+    volume?: number;
     /** 可选的播放速率 */
-    playbackRates?: number[]
+    playbackRates?: number[];
     /** 是否循环播放 */
-    loop?: boolean
+    loop?: boolean;
     /** 是否静音 */
-    muted?: boolean
-    commonStyle?: VideoPlayerStyle
+    muted?: boolean;
+    commonStyle?: VideoPlayerStyle;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -37,20 +37,20 @@
     volume: 1,
     loop: false,
     muted: false
-  })
+  });
 
   // 设置属性默认值
 
   // 播放器实例引用
-  const playerInstance = ref<Player | null>(null)
+  const playerInstance = ref<Player | null>(null);
 
   // 播放器样式接口定义
   interface VideoPlayerStyle {
-    progressColor?: string // 进度条背景色
-    playedColor?: string // 已播放部分颜色
-    cachedColor?: string // 缓存部分颜色
-    sliderBtnStyle?: Record<string, string> // 滑块按钮样式
-    volumeColor?: string // 音量控制器颜色
+    progressColor?: string; // 进度条背景色
+    playedColor?: string; // 已播放部分颜色
+    cachedColor?: string; // 缓存部分颜色
+    sliderBtnStyle?: Record<string, string>; // 滑块按钮样式
+    volumeColor?: string; // 音量控制器颜色
   }
 
   // 默认样式配置
@@ -64,7 +64,7 @@
       backgroundColor: '#00AEED'
     },
     volumeColor: '#00AEED'
-  }
+  };
 
   // 组件挂载时初始化播放器
   onMounted(() => {
@@ -84,28 +84,28 @@
         ...defaultStyle,
         ...props.commonStyle
       }
-    })
+    });
 
     // 播放事件监听器
     playerInstance.value.on('play', () => {
-      console.log('Video is playing')
-    })
+      console.log('Video is playing');
+    });
 
     // 暂停事件监听器
     playerInstance.value.on('pause', () => {
-      console.log('Video is paused')
-    })
+      console.log('Video is paused');
+    });
 
     // 错误事件监听器
     playerInstance.value.on('error', (error) => {
-      console.error('Error occurred:', error)
-    })
-  })
+      console.error('Error occurred:', error);
+    });
+  });
 
   // 组件卸载前清理播放器实例
   onBeforeUnmount(() => {
     if (playerInstance.value) {
-      playerInstance.value.destroy()
+      playerInstance.value.destroy();
     }
-  })
+  });
 </script>

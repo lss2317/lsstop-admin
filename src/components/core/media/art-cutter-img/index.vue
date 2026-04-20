@@ -45,78 +45,78 @@
 </template>
 
 <script setup lang="ts">
-  import ImgCutter from 'vue-img-cutter'
+  import ImgCutter from 'vue-img-cutter';
 
-  defineOptions({ name: 'ArtCutterImg' })
+  defineOptions({ name: 'ArtCutterImg' });
 
   interface CutterProps {
     // 基础配置
     /** 是否模态框 */
-    isModal?: boolean
+    isModal?: boolean;
     /** 是否显示工具栏 */
-    tool?: boolean
+    tool?: boolean;
     /** 工具栏背景色 */
-    toolBgc?: string
+    toolBgc?: string;
     /** 标题 */
-    title?: string
+    title?: string;
     /** 预览标题 */
-    previewTitle?: string
+    previewTitle?: string;
     /** 是否显示预览 */
-    showPreview?: boolean
+    showPreview?: boolean;
 
     // 尺寸相关
     /** 容器宽度 */
-    boxWidth?: number
+    boxWidth?: number;
     /** 容器高度 */
-    boxHeight?: number
+    boxHeight?: number;
     /** 裁剪宽度 */
-    cutWidth?: number
+    cutWidth?: number;
     /** 裁剪高度 */
-    cutHeight?: number
+    cutHeight?: number;
     /** 是否允许大小调整 */
-    sizeChange?: boolean
+    sizeChange?: boolean;
 
     // 移动和缩放
     /** 是否允许移动 */
-    moveAble?: boolean
+    moveAble?: boolean;
     /** 是否允许图片移动 */
-    imgMove?: boolean
+    imgMove?: boolean;
     /** 是否允许缩放 */
-    scaleAble?: boolean
+    scaleAble?: boolean;
 
     // 图片相关
     /** 是否显示原始图片 */
-    originalGraph?: boolean
+    originalGraph?: boolean;
     /** 是否允许跨域 */
-    crossOrigin?: boolean
+    crossOrigin?: boolean;
     /** 文件类型 */
-    fileType?: 'png' | 'jpeg' | 'webp'
+    fileType?: 'png' | 'jpeg' | 'webp';
     /** 质量 */
-    quality?: number
+    quality?: number;
 
     // 水印
     /** 水印文本 */
-    watermarkText?: string
+    watermarkText?: string;
     /** 水印字体大小 */
-    watermarkFontSize?: number
+    watermarkFontSize?: number;
     /** 水印颜色 */
-    watermarkColor?: string
+    watermarkColor?: string;
 
     // 其他功能
     /** 是否保存裁剪位置 */
-    saveCutPosition?: boolean
+    saveCutPosition?: boolean;
     /** 是否预览模式 */
-    previewMode?: boolean
+    previewMode?: boolean;
 
     // 输入图片
-    imgUrl?: string
+    imgUrl?: string;
   }
 
   interface CutterResult {
-    fileName: string
-    file: File
-    blob: Blob
-    dataURL: string
+    fileName: string;
+    file: File;
+    blob: Blob;
+    dataURL: string;
   }
 
   const props = withDefaults(defineProps<CutterProps>(), {
@@ -154,12 +154,12 @@
     // 其他功能默认值
     saveCutPosition: true,
     previewMode: true
-  })
+  });
 
-  const emit = defineEmits(['update:imgUrl', 'error', 'imageLoadComplete', 'imageLoadError'])
+  const emit = defineEmits(['update:imgUrl', 'error', 'imageLoadComplete', 'imageLoadError']);
 
-  const temImgPath = ref('')
-  const imgCutterModal = ref()
+  const temImgPath = ref('');
+  const imgCutterModal = ref();
 
   // 计算属性：整合所有ImgCutter的props
   const cutterProps = computed(() => ({
@@ -167,31 +167,31 @@
     WatermarkText: props.watermarkText,
     WatermarkFontSize: props.watermarkFontSize,
     WatermarkColor: props.watermarkColor
-  }))
+  }));
 
   // 图片预加载
   function preloadImage(url: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const img = new Image()
-      img.crossOrigin = 'anonymous'
-      img.onload = () => resolve()
-      img.onerror = reject
-      img.src = url
-    })
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => resolve();
+      img.onerror = reject;
+      img.src = url;
+    });
   }
 
   // 初始化裁剪器
   async function initImgCutter() {
     if (props.imgUrl) {
       try {
-        await preloadImage(props.imgUrl)
+        await preloadImage(props.imgUrl);
         imgCutterModal.value?.handleOpen({
           name: '封面图片',
           src: props.imgUrl
-        })
+        });
       } catch (error) {
-        emit('error', error)
-        console.error('图片加载失败:', error)
+        emit('error', error);
+        console.error('图片加载失败:', error);
       }
     }
   }
@@ -199,55 +199,55 @@
   // 生命周期钩子
   onMounted(() => {
     if (props.imgUrl) {
-      temImgPath.value = props.imgUrl
-      initImgCutter()
+      temImgPath.value = props.imgUrl;
+      initImgCutter();
     }
-  })
+  });
 
   // 监听图片URL变化
   watch(
     () => props.imgUrl,
     (newVal) => {
       if (newVal) {
-        temImgPath.value = newVal
-        initImgCutter()
+        temImgPath.value = newVal;
+        initImgCutter();
       }
     }
-  )
+  );
 
   // 实时预览
   function cutterPrintImg(result: { dataURL: string }) {
-    temImgPath.value = result.dataURL
+    temImgPath.value = result.dataURL;
   }
 
   // 裁剪完成
   function cutDownImg(result: CutterResult) {
-    emit('update:imgUrl', result.dataURL)
+    emit('update:imgUrl', result.dataURL);
   }
 
   // 图片加载完成
   function handleImageLoadComplete(result: any) {
-    emit('imageLoadComplete', result)
+    emit('imageLoadComplete', result);
   }
 
   // 图片加载失败
   function handleImageLoadError(error: any) {
-    emit('error', error)
-    emit('imageLoadError', error)
+    emit('error', error);
+    emit('imageLoadError', error);
   }
 
   // 清除所有
   function handleClearAll() {
-    temImgPath.value = ''
+    temImgPath.value = '';
   }
 
   // 下载图片
   function downloadImg() {
-    console.log('下载图片')
-    const a = document.createElement('a')
-    a.href = temImgPath.value
-    a.download = 'image.png'
-    a.click()
+    console.log('下载图片');
+    const a = document.createElement('a');
+    a.href = temImgPath.value;
+    a.download = 'image.png';
+    a.click();
   }
 </script>
 

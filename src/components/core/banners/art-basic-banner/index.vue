@@ -67,79 +67,79 @@
 </template>
 
 <script setup lang="ts">
-  import { onMounted, ref, computed } from 'vue'
-  import { useSettingStore } from '@/store/modules/setting'
-  const settingStore = useSettingStore()
-  const { isDark } = storeToRefs(settingStore)
+  import { onMounted, ref, computed } from 'vue';
+  import { useSettingStore } from '@/store/modules/setting';
+  const settingStore = useSettingStore();
+  const { isDark } = storeToRefs(settingStore);
 
-  defineOptions({ name: 'ArtBasicBanner' })
+  defineOptions({ name: 'ArtBasicBanner' });
 
   // 流星对象接口定义
   interface Meteor {
     /** 流星的水平位置(百分比) */
-    x: number
+    x: number;
     /** 流星划过的速度 */
-    speed: number
+    speed: number;
     /** 流星出现的延迟时间 */
-    delay: number
+    delay: number;
   }
 
   // 按钮配置接口定义
   interface ButtonConfig {
     /** 是否启用按钮 */
-    show: boolean
+    show: boolean;
     /** 按钮文本 */
-    text: string
+    text: string;
     /** 按钮背景色 */
-    color?: string
+    color?: string;
     /** 按钮文字颜色 */
-    textColor?: string
+    textColor?: string;
     /** 按钮圆角大小 */
-    radius?: string
+    radius?: string;
   }
 
   // 流星效果配置接口定义
   interface MeteorConfig {
     /** 是否启用流星效果 */
-    enabled: boolean
+    enabled: boolean;
     /** 流星数量 */
-    count?: number
+    count?: number;
   }
 
   // 背景图片配置接口定义
   interface ImageConfig {
     /** 图片源地址 */
-    src: string
+    src: string;
     /** 图片宽度 */
-    width?: string
+    width?: string;
     /** 距底部距离 */
-    bottom?: string
+    bottom?: string;
     /** 距右侧距离 */
-    right?: string // 距右侧距离
+    right?: string; // 距右侧距离
   }
 
   // 组件属性接口定义
   interface Props {
     /** 横幅高度 */
-    height?: string
+    height?: string;
     /** 标题文本 */
-    title?: string
+    title?: string;
     /** 副标题文本 */
-    subtitle?: string
+    subtitle?: string;
     /** 盒子样式 */
-    boxStyle?: string
+    boxStyle?: string;
     /** 是否显示装饰效果 */
-    decoration?: boolean
+    decoration?: boolean;
     /** 按钮配置 */
-    buttonConfig?: ButtonConfig
+    buttonConfig?: ButtonConfig;
     /** 流星配置 */
-    meteorConfig?: MeteorConfig
+    meteorConfig?: MeteorConfig;
     /** 图片配置 */
-    imageConfig?: ImageConfig
+    imageConfig?: ImageConfig;
     /** 标题颜色 */
-    titleColor?: string
+    titleColor?: string;
     /** 副标题颜色 */
-    subtitleColor?: string
+    subtitleColor?: string;
   }
 
   // 组件属性默认值设置
@@ -158,26 +158,26 @@
     }),
     meteorConfig: () => ({ enabled: false, count: 10 }),
     imageConfig: () => ({ src: '', width: '12rem', bottom: '-3rem', right: '0' })
-  })
+  });
 
   // 定义组件事件
   const emit = defineEmits<{
-    (e: 'click'): void // 整体点击事件
-    (e: 'buttonClick'): void // 按钮点击事件
-  }>()
+    (e: 'click'): void; // 整体点击事件
+    (e: 'buttonClick'): void; // 按钮点击事件
+  }>();
 
   // 计算按钮样式属性
-  const buttonColor = computed(() => props.buttonConfig?.color ?? '#fff')
-  const buttonTextColor = computed(() => props.buttonConfig?.textColor ?? '#333')
-  const buttonRadius = computed(() => props.buttonConfig?.radius ?? '6px')
+  const buttonColor = computed(() => props.buttonConfig?.color ?? '#fff');
+  const buttonTextColor = computed(() => props.buttonConfig?.textColor ?? '#333');
+  const buttonRadius = computed(() => props.buttonConfig?.radius ?? '6px');
 
   // 流星数据初始化
-  const meteors = ref<Meteor[]>([])
+  const meteors = ref<Meteor[]>([]);
   onMounted(() => {
     if (props.meteorConfig?.enabled) {
-      meteors.value = generateMeteors(props.meteorConfig?.count ?? 10)
+      meteors.value = generateMeteors(props.meteorConfig?.count ?? 10);
     }
-  })
+  });
 
   /**
    * 生成流星数据数组
@@ -186,20 +186,20 @@
    */
   function generateMeteors(count: number): Meteor[] {
     // 计算每个流星的区域宽度
-    const segmentWidth = 100 / count
+    const segmentWidth = 100 / count;
     return Array.from({ length: count }, (_, index) => {
       // 计算流星起始位置
-      const segmentStart = index * segmentWidth
+      const segmentStart = index * segmentWidth;
       // 在区域内随机生成x坐标
-      const x = segmentStart + Math.random() * segmentWidth
+      const x = segmentStart + Math.random() * segmentWidth;
       // 随机决定流星速度快慢
-      const isSlow = Math.random() > 0.5
+      const isSlow = Math.random() > 0.5;
       return {
         x,
         speed: isSlow ? 5 + Math.random() * 3 : 2 + Math.random() * 2,
         delay: Math.random() * 5
-      }
-    })
+      };
+    });
   }
 </script>
 

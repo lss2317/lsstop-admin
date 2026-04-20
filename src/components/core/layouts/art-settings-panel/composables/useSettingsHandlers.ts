@@ -1,49 +1,49 @@
-import { useSettingStore } from '@/store/modules/setting'
-import { storeToRefs } from 'pinia'
-import type { ContainerWidthEnum } from '@/enums/appEnum'
+import { useSettingStore } from '@/store/modules/setting';
+import { storeToRefs } from 'pinia';
+import type { ContainerWidthEnum } from '@/enums/appEnum';
 
 /**
  * 设置项通用处理逻辑
  */
 export function useSettingsHandlers() {
-  const settingStore = useSettingStore()
+  const settingStore = useSettingStore();
 
   // DOM 操作相关
   const domOperations = {
     // 设置HTML类名
     setHtmlClass: (className: string, add: boolean) => {
-      const el = document.getElementsByTagName('html')[0]
+      const el = document.getElementsByTagName('html')[0];
       if (add) {
-        el.classList.add(className)
+        el.classList.add(className);
       } else {
-        el.classList.remove(className)
+        el.classList.remove(className);
       }
     },
 
     // 设置根元素属性
     setRootAttribute: (attribute: string, value: string) => {
-      const el = document.documentElement
-      el.setAttribute(attribute, value)
+      const el = document.documentElement;
+      el.setAttribute(attribute, value);
     },
 
     // 设置body类名
     setBodyClass: (className: string, add: boolean) => {
-      const el = document.getElementsByTagName('body')[0]
+      const el = document.getElementsByTagName('body')[0];
       if (add) {
-        el.classList.add(className)
+        el.classList.add(className);
       } else {
-        el.classList.remove(className)
+        el.classList.remove(className);
       }
     }
-  }
+  };
 
   // 通用切换处理器
   const createToggleHandler = (storeMethod: () => void, callback?: () => void) => {
     return () => {
-      storeMethod()
-      callback?.()
-    }
-  }
+      storeMethod();
+      callback?.();
+    };
+  };
 
   // 通用值变更处理器
   const createValueHandler = <T>(
@@ -52,11 +52,11 @@ export function useSettingsHandlers() {
   ) => {
     return (value: T) => {
       if (value !== undefined && value !== null) {
-        storeMethod(value)
-        callback?.(value)
+        storeMethod(value);
+        callback?.(value);
       }
-    }
-  }
+    };
+  };
 
   // 基础设置处理器
   const basicHandlers = {
@@ -88,7 +88,7 @@ export function useSettingsHandlers() {
     colorWeak: createToggleHandler(
       () => settingStore.setColorWeak(),
       () => {
-        domOperations.setHtmlClass('color-weak', settingStore.colorWeak)
+        domOperations.setHtmlClass('color-weak', settingStore.colorWeak);
       }
     ),
 
@@ -114,46 +114,46 @@ export function useSettingsHandlers() {
     customRadius: createValueHandler<string>((radius: string) =>
       settingStore.setCustomRadius(radius)
     )
-  }
+  };
 
   // 盒子样式处理器
   const boxStyleHandlers = {
     // 设置盒子模式
     setBoxMode: (type: 'border-mode' | 'shadow-mode') => {
-      const { boxBorderMode } = storeToRefs(settingStore)
+      const { boxBorderMode } = storeToRefs(settingStore);
 
       // 防止重复设置
       if (
         (type === 'shadow-mode' && boxBorderMode.value === false) ||
         (type === 'border-mode' && boxBorderMode.value === true)
       ) {
-        return
+        return;
       }
 
       setTimeout(() => {
-        domOperations.setRootAttribute('data-box-mode', type)
-        settingStore.setBorderMode()
-      }, 50)
+        domOperations.setRootAttribute('data-box-mode', type);
+        settingStore.setBorderMode();
+      }, 50);
     }
-  }
+  };
 
   // 颜色设置处理器
   const colorHandlers = {
     // 选择主题色
     selectColor: (theme: string) => {
-      settingStore.setElementTheme(theme)
-      settingStore.reload()
+      settingStore.setElementTheme(theme);
+      settingStore.reload();
     }
-  }
+  };
 
   // 容器设置处理器
   const containerHandlers = {
     // 设置容器宽度
     setWidth: (type: ContainerWidthEnum) => {
-      settingStore.setContainerWidth(type)
-      settingStore.reload()
+      settingStore.setContainerWidth(type);
+      settingStore.reload();
     }
-  }
+  };
 
   return {
     domOperations,
@@ -163,5 +163,5 @@ export function useSettingsHandlers() {
     containerHandlers,
     createToggleHandler,
     createValueHandler
-  }
+  };
 }

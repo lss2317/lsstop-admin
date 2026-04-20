@@ -29,11 +29,11 @@
  * @author Art Design Pro Team
  */
 
-import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum'
-import { SystemConfig } from '@/types/config'
-import { configImages } from './assets/images'
-import fastEnterConfig from './modules/fastEnter'
-import { headerBarConfig } from './modules/headerBar'
+import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum';
+import { SystemConfig } from '@/types/config';
+import { configImages } from './assets/images';
+import fastEnterConfig from './modules/fastEnter';
+import { headerBarConfig } from './modules/headerBar';
 
 const appConfig: SystemConfig = {
   // 系统信息
@@ -130,6 +130,6 @@ const appConfig: SystemConfig = {
   fastEnter: fastEnterConfig,
   // 顶部栏功能配置
   headerBar: headerBarConfig
-}
+};
 
-export default Object.freeze(appConfig)
+export default Object.freeze(appConfig);

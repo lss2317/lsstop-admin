@@ -13,26 +13,26 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'ArtButtonTable' })
+  defineOptions({ name: 'ArtButtonTable' });
 
   interface Props {
     /** 按钮类型 */
-    type?: 'add' | 'edit' | 'delete' | 'more' | 'view'
+    type?: 'add' | 'edit' | 'delete' | 'more' | 'view';
     /** 按钮图标 */
-    icon?: string
+    icon?: string;
     /** 按钮样式类 */
-    iconClass?: string
+    iconClass?: string;
     /** icon 颜色 */
-    iconColor?: string
+    iconColor?: string;
     /** 按钮背景色 */
-    buttonBgColor?: string
+    buttonBgColor?: string;
   }
 
-  const props = withDefaults(defineProps<Props>(), {})
+  const props = withDefaults(defineProps<Props>(), {});
 
   const emit = defineEmits<{
-    (e: 'click'): void
-  }>()
+    (e: 'click'): void;
+  }>();
 
   // 默认按钮配置
   const defaultButtons = {
@@ -41,19 +41,19 @@
     delete: { icon: 'ri:delete-bin-5-line', class: 'bg-error/12 text-error' },
     view: { icon: 'ri:eye-line', class: 'bg-info/12 text-info' },
     more: { icon: 'ri:more-2-fill', class: '' }
-  } as const
+  } as const;
 
   // 获取图标内容
   const iconContent = computed(() => {
-    return props.icon || (props.type ? defaultButtons[props.type]?.icon : '') || ''
-  })
+    return props.icon || (props.type ? defaultButtons[props.type]?.icon : '') || '';
+  });
 
   // 获取按钮样式类
   const buttonClass = computed(() => {
-    return props.iconClass || (props.type ? defaultButtons[props.type]?.class : '') || ''
-  })
+    return props.iconClass || (props.type ? defaultButtons[props.type]?.class : '') || '';
+  });
 
   const handleClick = () => {
-    emit('click')
-  }
+    emit('click');
+  };
 </script>

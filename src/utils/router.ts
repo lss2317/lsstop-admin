@@ -5,16 +5,16 @@
  *
  * @module utils/router
  */
-import { RouteLocationNormalized, RouteRecordRaw } from 'vue-router'
-import AppConfig from '@/config'
-import NProgress from 'nprogress'
-import 'nprogress/nprogress.css'
-import i18n, { $t } from '@/locales'
+import { RouteLocationNormalized, RouteRecordRaw } from 'vue-router';
+import AppConfig from '@/config';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+import i18n, { $t } from '@/locales';
 
 /** 扩展的路由配置类型 */
 export type AppRouteRecordRaw = RouteRecordRaw & {
-  hidden?: boolean
-}
+  hidden?: boolean;
+};
 
 /** 顶部进度条配置 */
 export const configureNProgress = () => {
@@ -23,21 +23,21 @@ export const configureNProgress = () => {
     speed: 600,
     showSpinner: false,
     parent: 'body'
-  })
-}
+  });
+};
 
 /**
  * 设置页面标题，根据路由元信息和系统信息拼接标题
  * @param to 当前路由对象
  */
 export const setPageTitle = (to: RouteLocationNormalized): void => {
-  const { title } = to.meta
+  const { title } = to.meta;
   if (title) {
     setTimeout(() => {
-      document.title = `${formatMenuTitle(String(title))} - ${AppConfig.systemInfo.name}`
-    }, 150)
+      document.title = `${formatMenuTitle(String(title))} - ${AppConfig.systemInfo.name}`;
+    }, 150);
   }
-}
+};
 
 /**
  * 格式化菜单标题
@@ -49,13 +49,13 @@ export const formatMenuTitle = (title: string): string => {
     if (title.startsWith('menus.')) {
       // 使用 te() 方法检查翻译键值是否存在，避免控制台警告
       if (i18n.global.te(title)) {
-        return $t(title)
+        return $t(title);
       } else {
         // 如果翻译不存在，返回键值的最后部分作为fallback
-        return title.split('.').pop() || title
+        return title.split('.').pop() || title;
       }
     }
-    return title
+    return title;
   }
-  return ''
-}
+  return '';
+};

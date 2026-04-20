@@ -33,29 +33,29 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'ArtStatsCard' })
+  defineOptions({ name: 'ArtStatsCard' });
 
   interface StatsCardProps {
     /** 盒子样式 */
-    boxStyle?: string
+    boxStyle?: string;
     /** 图标 */
-    icon?: string
+    icon?: string;
     /** 图标样式 */
-    iconStyle?: string
+    iconStyle?: string;
     /** 标题 */
-    title?: string
+    title?: string;
     /** 数值 */
-    count?: number
+    count?: number;
     /** 小数位 */
-    decimals?: number
+    decimals?: number;
     /** 分隔符 */
-    separator?: string
+    separator?: string;
     /** 描述 */
-    description: string
+    description: string;
     /** 文本颜色 */
-    textColor?: string
+    textColor?: string;
     /** 是否显示箭头 */
-    showArrow?: boolean
+    showArrow?: boolean;
   }
 
   withDefaults(defineProps<StatsCardProps>(), {
@@ -63,5 +63,5 @@
     iconBgRadius: 50,
     decimals: 0,
     separator: ','
-  })
+  });
 </script>

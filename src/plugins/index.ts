@@ -3,4 +3,4 @@
  * 集中管理第三方库的封装和配置
  */
 
-export * from './echarts'
+export * from './echarts';

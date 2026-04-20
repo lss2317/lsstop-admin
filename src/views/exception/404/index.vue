@@ -11,6 +11,6 @@
 </template>
 
 <script setup lang="ts">
-  import imgUrl from '@imgs/svg/404.svg'
-  defineOptions({ name: 'Exception404' })
+  import imgUrl from '@imgs/svg/404.svg';
+  defineOptions({ name: 'Exception404' });
 </script>

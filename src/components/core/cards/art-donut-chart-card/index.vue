@@ -39,43 +39,43 @@
 </template>
 
 <script setup lang="ts">
-  import { type EChartsOption } from '@/plugins/echarts'
-  import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
+  import { type EChartsOption } from '@/plugins/echarts';
+  import { useChartOps, useChartComponent } from '@/hooks/core/useChart';
 
-  defineOptions({ name: 'ArtDonutChartCard' })
+  defineOptions({ name: 'ArtDonutChartCard' });
 
   interface Props {
     /** 数值 */
-    value: number
+    value: number;
     /** 标题 */
-    title: string
+    title: string;
     /** 百分比 */
-    percentage: number
+    percentage: number;
     /** 百分比标签 */
-    percentageLabel?: string
+    percentageLabel?: string;
     /** 当前年份 */
-    currentValue?: string
+    currentValue?: string;
     /** 去年年份 */
-    previousValue?: string
+    previousValue?: string;
     /** 高度 */
-    height?: number
+    height?: number;
     /** 颜色 */
-    color?: string
+    color?: string;
     /** 半径 */
-    radius?: [string, string]
+    radius?: [string, string];
     /** 数据 */
-    data: [number, number]
+    data: [number, number];
   }
 
   const props = withDefaults(defineProps<Props>(), {
     height: 9,
     radius: () => ['70%', '90%'],
     data: () => [0, 0]
-  })
+  });
 
   const formatNumber = (num: number) => {
-    return num.toLocaleString()
-  }
+    return num.toLocaleString();
+  };
 
   // 使用新的图表组件抽象
   const { chartRef } = useChartComponent({
@@ -93,7 +93,7 @@
       () => props.previousValue
     ],
     generateOptions: (): EChartsOption => {
-      const computedColor = props.color || useChartOps().themeColor
+      const computedColor = props.color || useChartOps().themeColor;
 
       return {
         series: [
@@ -118,7 +118,7 @@
             ]
           }
         ]
-      }
+      };
     }
-  })
+  });
 </script>

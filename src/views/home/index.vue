@@ -5,5 +5,5 @@
 </template>
 
 <script setup lang="ts">
-defineOptions({ name: 'Home' })
+  defineOptions({ name: 'Home' });
 </script>

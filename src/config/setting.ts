@@ -20,8 +20,8 @@
  * 3. 枚举类型的值需要与 src/enums/appEnum.ts 中的定义保持一致
  */
 
-import AppConfig from '@/config'
-import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/enums/appEnum'
+import AppConfig from '@/config';
+import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/enums/appEnum';
 
 /**
  * 系统设置默认值配置
@@ -85,14 +85,14 @@ export const SETTING_DEFAULT_CONFIG = {
   containerWidth: ContainerWidthEnum.FULL,
   /** 节日日期 */
   festivalDate: ''
-}
+};
 
 /**
  * 获取设置默认值
  * @returns 设置默认值对象
  */
 export function getSettingDefaults() {
-  return { ...SETTING_DEFAULT_CONFIG }
+  return { ...SETTING_DEFAULT_CONFIG };
 }
 
 /**
@@ -100,10 +100,10 @@ export function getSettingDefaults() {
  * @param currentSettings 当前设置对象
  */
 export function resetToDefaults(currentSettings: Record<string, any>) {
-  const defaults = getSettingDefaults()
+  const defaults = getSettingDefaults();
   Object.keys(defaults).forEach((key) => {
     if (key in currentSettings) {
-      currentSettings[key] = defaults[key as keyof typeof defaults]
+      currentSettings[key] = defaults[key as keyof typeof defaults];
     }
-  })
+  });
 }

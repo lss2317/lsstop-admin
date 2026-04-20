@@ -8,7 +8,7 @@
  * @author Art Design Pro Team
  */
 
-import { HeaderBarFeatureConfig } from '@/types'
+import { HeaderBarFeatureConfig } from '@/types';
 
 /**
  * 顶部栏功能配置对象
@@ -58,6 +58,6 @@ export const headerBarConfig: HeaderBarFeatureConfig = {
     enabled: true,
     description: '主题切换功能（明暗主题）'
   }
-}
+};
 
-export default headerBarConfig
+export default headerBarConfig;

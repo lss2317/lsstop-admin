@@ -36,42 +36,42 @@
 
 <script setup lang="ts">
   // 导入默认图标
-  import defaultIcon from '@imgs/3d/icon1.webp'
+  import defaultIcon from '@imgs/3d/icon1.webp';
 
-  defineOptions({ name: 'ArtCardBanner' })
+  defineOptions({ name: 'ArtCardBanner' });
 
   // 定义卡片横幅组件的属性接口
   interface CardBannerProps {
     /** 高度 */
-    height?: string
+    height?: string;
     /** 图片路径 */
-    image?: string
+    image?: string;
     /** 标题文本 */
-    title: string
+    title: string;
     /** 描述文本 */
-    description: string
+    description: string;
     /** 主按钮配置 */
     button?: {
       /** 是否显示 */
-      show?: boolean
+      show?: boolean;
       /** 按钮文本 */
-      text?: string
+      text?: string;
       /** 背景颜色 */
-      color?: string
+      color?: string;
       /** 文字颜色 */
-      textColor?: string
-    }
+      textColor?: string;
+    };
     /** 取消按钮配置 */
     cancelButton?: {
       /** 是否显示 */
-      show?: boolean
+      show?: boolean;
       /** 按钮文本 */
-      text?: string
+      text?: string;
       /** 背景颜色 */
-      color?: string
+      color?: string;
       /** 文字颜色 */
-      textColor?: string
-    }
+      textColor?: string;
+    };
   }
 
   // 定义组件属性默认值
@@ -94,21 +94,21 @@
       color: '#f5f5f5',
       textColor: '#666'
     })
-  })
+  });
 
   // 定义组件事件
   const emit = defineEmits<{
-    (e: 'click'): void // 主按钮点击事件
-    (e: 'cancel'): void // 取消按钮点击事件
-  }>()
+    (e: 'click'): void; // 主按钮点击事件
+    (e: 'cancel'): void; // 取消按钮点击事件
+  }>();
 
   // 主按钮点击处理函数
   const handleClick = () => {
-    emit('click')
-  }
+    emit('click');
+  };
 
   // 取消按钮点击处理函数
   const handleCancel = () => {
-    emit('cancel')
-  }
+    emit('cancel');
+  };
 </script>

@@ -1,14 +1,14 @@
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { ContainerWidthEnum } from '@/enums/appEnum'
-import AppConfig from '@/config'
-import { headerBarConfig } from '@/config/modules/headerBar'
+import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { ContainerWidthEnum } from '@/enums/appEnum';
+import AppConfig from '@/config';
+import { headerBarConfig } from '@/config/modules/headerBar';
 
 /**
  * 设置项配置选项管理
  */
 export function useSettingsConfig() {
-  const { t } = useI18n()
+  const { t } = useI18n();
 
   // 标签页风格选项
   const tabStyleOptions = computed(() => [
@@ -24,7 +24,7 @@ export function useSettingsConfig() {
       value: 'tab-google',
       label: t('setting.tabStyle.google')
     }
-  ])
+  ]);
 
   // 页面切换动画选项
   const pageTransitionOptions = computed(() => [
@@ -48,7 +48,7 @@ export function useSettingsConfig() {
       value: 'slide-top',
       label: t('setting.transition.list.slideTop')
     }
-  ])
+  ]);
 
   // 圆角大小选项
   const customRadiusOptions = [
@@ -57,7 +57,7 @@ export function useSettingsConfig() {
     { value: '0.5', label: '0.5' },
     { value: '0.75', label: '0.75' },
     { value: '1', label: '1' }
-  ]
+  ];
 
   // 容器宽度选项
   const containerWidthOptions = computed(() => [
@@ -71,7 +71,7 @@ export function useSettingsConfig() {
       label: t('setting.container.list[1]'),
       icon: 'ix:width'
     }
-  ])
+  ]);
 
   // 盒子样式选项
   const boxStyleOptions = computed(() => [
@@ -85,7 +85,7 @@ export function useSettingsConfig() {
       label: t('setting.box.list[1]'),
       type: 'shadow-mode' as const
     }
-  ])
+  ]);
 
   // 从配置文件获取的选项
   const configOptions = {
@@ -97,7 +97,7 @@ export function useSettingsConfig() {
 
     // 菜单布局选项
     menuLayoutList: AppConfig.menuLayoutList
-  }
+  };
 
   // 基础设置项配置
   const basicSettingsConfig = computed(() => {
@@ -213,7 +213,7 @@ export function useSettingsConfig() {
         style: { width: '120px' },
         headerBarKey: null // 不依赖headerBar配置
       }
-    ]
+    ];
 
     // 根据 headerBarConfig 过滤设置项
     return (
@@ -221,17 +221,17 @@ export function useSettingsConfig() {
         .filter((setting) => {
           // 如果设置项不依赖headerBar配置，则始终显示
           if (setting.headerBarKey === null) {
-            return true
+            return true;
           }
 
           // 如果依赖headerBar配置，检查对应的功能是否启用
-          const headerBarFeature = headerBarConfig[setting.headerBarKey]
-          return headerBarFeature?.enabled !== false
+          const headerBarFeature = headerBarConfig[setting.headerBarKey];
+          return headerBarFeature?.enabled !== false;
         })
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .map(({ headerBarKey: _headerBarKey, ...setting }) => setting)
-    )
-  })
+    );
+  });
 
   return {
     // 选项配置
@@ -244,5 +244,5 @@ export function useSettingsConfig() {
 
     // 设置项配置
     basicSettingsConfig
-  }
+  };
 }

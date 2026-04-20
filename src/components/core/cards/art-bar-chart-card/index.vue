@@ -28,36 +28,36 @@
 </template>
 
 <script setup lang="ts">
-  import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
-  import { type EChartsOption } from '@/plugins/echarts'
+  import { useChartOps, useChartComponent } from '@/hooks/core/useChart';
+  import { type EChartsOption } from '@/plugins/echarts';
 
-  defineOptions({ name: 'ArtBarChartCard' })
+  defineOptions({ name: 'ArtBarChartCard' });
 
   interface Props {
     /** 数值 */
-    value: number
+    value: number;
     /** 标签 */
-    label: string
+    label: string;
     /** 百分比 +（绿色）-（红色） */
-    percentage: number
+    percentage: number;
     /** 日期 */
-    date?: string
+    date?: string;
     /** 高度 */
-    height?: number
+    height?: number;
     /** 颜色 */
-    color?: string
+    color?: string;
     /** 图表数据 */
-    chartData: number[]
+    chartData: number[];
     /** 柱状图宽度 */
-    barWidth?: string
+    barWidth?: string;
     /** 是否为迷你图表 */
-    isMiniChart?: boolean
+    isMiniChart?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
     height: 11,
     barWidth: '26%'
-  })
+  });
 
   // 使用新的图表组件抽象
   const { chartRef } = useChartComponent({
@@ -69,7 +69,7 @@
     checkEmpty: () => !props.chartData?.length || props.chartData.every((val) => val === 0),
     watchSources: [() => props.chartData, () => props.color, () => props.barWidth],
     generateOptions: (): EChartsOption => {
-      const computedColor = props.color || useChartOps().themeColor
+      const computedColor = props.color || useChartOps().themeColor;
 
       return {
         grid: {
@@ -97,7 +97,7 @@
             }
           }
         ]
-      }
+      };
     }
-  })
+  });
 </script>

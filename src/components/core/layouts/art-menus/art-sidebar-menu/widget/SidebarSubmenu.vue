@@ -57,32 +57,32 @@
 </template>
 
 <script setup lang="ts">
-  import { computed } from 'vue'
-  import type { AppRouteRecord } from '@/types/router'
-  import { formatMenuTitle } from '@/utils/router'
-  import { handleMenuJump } from '@/utils/navigation'
-  import { useSettingStore } from '@/store/modules/setting'
+  import { computed } from 'vue';
+  import type { AppRouteRecord } from '@/types/router';
+  import { formatMenuTitle } from '@/utils/router';
+  import { handleMenuJump } from '@/utils/navigation';
+  import { useSettingStore } from '@/store/modules/setting';
 
   interface MenuTheme {
-    iconColor?: string
+    iconColor?: string;
   }
 
   interface Props {
     /** 菜单标题 */
-    title?: string
+    title?: string;
     /** 菜单列表 */
-    list?: AppRouteRecord[]
+    list?: AppRouteRecord[];
     /** 主题配置 */
-    theme?: MenuTheme
+    theme?: MenuTheme;
     /** 是否为移动端模式 */
-    isMobile?: boolean
+    isMobile?: boolean;
     /** 菜单层级 */
-    level?: number
+    level?: number;
   }
 
   interface Emits {
     /** 关闭菜单事件 */
-    (e: 'close'): void
+    (e: 'close'): void;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -91,36 +91,36 @@
     theme: () => ({}),
     isMobile: false,
     level: 0
-  })
+  });
 
-  const emit = defineEmits<Emits>()
+  const emit = defineEmits<Emits>();
 
-  const settingStore = useSettingStore()
+  const settingStore = useSettingStore();
 
-  const { menuOpen } = storeToRefs(settingStore)
+  const { menuOpen } = storeToRefs(settingStore);
 
   /**
    * 过滤后的菜单项列表
    * 只显示未隐藏的菜单项
    */
-  const filteredMenuItems = computed(() => filterRoutes(props.list))
+  const filteredMenuItems = computed(() => filterRoutes(props.list));
 
   /**
    * 跳转到指定页面
    * @param item 菜单项数据
    */
   const goPage = (item: AppRouteRecord): void => {
-    closeMenu()
-    handleMenuJump(item)
-  }
+    closeMenu();
+    handleMenuJump(item);
+  };
 
   /**
    * 关闭菜单
    * 触发父组件的关闭事件
    */
   const closeMenu = (): void => {
-    emit('close')
-  }
+    emit('close');
+  };
 
   /**
    * 判断菜单项本身是否可以作为可点击页面保留在菜单中
@@ -130,8 +130,8 @@
       !item.meta.isHide &&
       ((item.path && item.path.trim()) || item.meta.link || item.meta.isIframe === true) &&
       (item.component || item.meta.link || item.meta.isIframe === true)
-    )
-  }
+    );
+  };
 
   /**
    * 递归过滤菜单路由，移除隐藏的菜单项
@@ -144,24 +144,24 @@
       .filter((item) => {
         // 如果当前项被隐藏，直接过滤掉
         if (item.meta.isHide) {
-          return false
+          return false;
         }
 
         // 如果有子菜单，递归过滤子菜单
         if (item.children && item.children.length > 0) {
-          const filteredChildren = filterRoutes(item.children)
+          const filteredChildren = filterRoutes(item.children);
           // 目录菜单要求有可见子菜单；页面菜单则允许仅保留自身
-          return filteredChildren.length > 0 || isNavigableRoute(item)
+          return filteredChildren.length > 0 || isNavigableRoute(item);
         }
 
         // 叶子节点且未被隐藏，保留
-        return isNavigableRoute(item)
+        return isNavigableRoute(item);
       })
       .map((item) => ({
         ...item,
         children: item.children ? filterRoutes(item.children) : undefined
-      }))
-  }
+      }));
+  };
 
   /**
    * 判断菜单项是否包含可见的子菜单
@@ -170,12 +170,12 @@
    */
   const hasChildren = (item: AppRouteRecord): boolean => {
     if (!item.children || item.children.length === 0) {
-      return false
+      return false;
     }
     // 递归检查是否有可见的子菜单
-    const filteredChildren = filterRoutes(item.children)
-    return filteredChildren.length > 0
-  }
+    const filteredChildren = filterRoutes(item.children);
+    return filteredChildren.length > 0;
+  };
 
   /**
    * 判断是否为外部链接
@@ -183,8 +183,8 @@
    * @returns 是否为外部链接
    */
   const isExternalLink = (item: AppRouteRecord): boolean => {
-    return !!(item.meta.link && !item.meta.isIframe)
-  }
+    return !!(item.meta.link && !item.meta.isIframe);
+  };
 
   /**
    * 生成唯一的 key
@@ -194,6 +194,6 @@
    * @returns 唯一的 key
    */
   const getUniqueKey = (item: AppRouteRecord, index: number): string => {
-    return `${item.path || item.meta.title || 'menu'}-${props.level}-${index}`
-  }
+    return `${item.path || item.meta.title || 'menu'}-${props.level}-${index}`;
+  };
 </script>

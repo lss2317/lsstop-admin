@@ -42,19 +42,19 @@
 </template>
 
 <script setup lang="ts">
-  defineOptions({ name: 'ForgetPassword' })
+  defineOptions({ name: 'ForgetPassword' });
 
-  const router = useRouter()
-  const showInputLabel = ref(false)
+  const router = useRouter();
+  const showInputLabel = ref(false);
 
-  const username = ref('')
-  const loading = ref(false)
+  const username = ref('');
+  const loading = ref(false);
 
-  const register = async () => {}
+  const register = async () => {};
 
   const toLogin = () => {
-    router.push({ name: 'Login' })
-  }
+    router.push({ name: 'Login' });
+  };
 </script>
 
 <style scoped>

@@ -71,14 +71,14 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
-  import loginIcon from '@imgs/svg/login_icon.svg'
-  import { themeAnimation } from '@/utils/ui/animation'
+  import AppConfig from '@/config';
+  import loginIcon from '@imgs/svg/login_icon.svg';
+  import { themeAnimation } from '@/utils/ui/animation';
 
   // 定义 props
   defineProps<{
-    hideContent?: boolean // 是否隐藏内容，只显示 logo
-  }>()
+    hideContent?: boolean; // 是否隐藏内容，只显示 logo
+  }>();
 </script>
 
 <style lang="scss" scoped>

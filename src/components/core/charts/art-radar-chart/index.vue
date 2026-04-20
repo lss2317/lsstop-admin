@@ -9,11 +9,11 @@
 </template>
 
 <script setup lang="ts">
-  import type { EChartsOption } from '@/plugins/echarts'
-  import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
-  import type { RadarChartProps } from '@/types/component/chart'
+  import type { EChartsOption } from '@/plugins/echarts';
+  import { useChartOps, useChartComponent } from '@/hooks/core/useChart';
+  import type { RadarChartProps } from '@/types/component/chart';
 
-  defineOptions({ name: 'ArtRadarChart' })
+  defineOptions({ name: 'ArtRadarChart' });
 
   const props = withDefaults(defineProps<RadarChartProps>(), {
     // 基础配置
@@ -30,13 +30,15 @@
     showTooltip: true,
     showLegend: false,
     legendPosition: 'bottom'
-  })
+  });
 
   // 使用新的图表组件抽象
   const { chartRef, isDark, getAnimationConfig, getTooltipStyle } = useChartComponent({
     props,
     checkEmpty: () => {
-      return !props.data?.length || props.data.every((item) => item.value.every((val) => val === 0))
+      return (
+        !props.data?.length || props.data.every((item) => item.value.every((val) => val === 0))
+      );
     },
     watchSources: [() => props.data, () => props.indicator, () => props.colors],
     generateOptions: (): EChartsOption => {
@@ -99,7 +101,7 @@
             ...getAnimationConfig(200, 1800)
           }
         ]
-      }
+      };
     }
-  })
+  });
 </script>

@@ -103,75 +103,75 @@
 </template>
 
 <script setup lang="ts">
-  import { computed, ref, watch, type Ref, type ComputedRef } from 'vue'
-  import { useI18n } from 'vue-i18n'
+  import { computed, ref, watch, type Ref, type ComputedRef } from 'vue';
+  import { useI18n } from 'vue-i18n';
 
-  defineOptions({ name: 'ArtNotification' })
+  defineOptions({ name: 'ArtNotification' });
 
   interface NoticeItem {
     /** 标题 */
-    title: string
+    title: string;
     /** 时间 */
-    time: string
+    time: string;
     /** 类型 */
-    type: NoticeType
+    type: NoticeType;
   }
 
   interface MessageItem {
     /** 标题 */
-    title: string
+    title: string;
     /** 时间 */
-    time: string
+    time: string;
     /** 头像 */
-    avatar: string
+    avatar: string;
   }
 
   interface PendingItem {
     /** 标题 */
-    title: string
+    title: string;
     /** 时间 */
-    time: string
+    time: string;
   }
 
   interface BarItem {
     /** 名称 */
-    name: ComputedRef<string>
+    name: ComputedRef<string>;
     /** 数量 */
-    num: number
+    num: number;
   }
 
   interface NoticeStyle {
     /** 图标 */
-    icon: string
+    icon: string;
     /** icon 样式 */
-    iconClass: string
+    iconClass: string;
   }
 
-  type NoticeType = 'email' | 'message' | 'collection' | 'user' | 'notice'
+  type NoticeType = 'email' | 'message' | 'collection' | 'user' | 'notice';
 
-  const { t } = useI18n()
+  const { t } = useI18n();
 
   const props = defineProps<{
-    value: boolean
-  }>()
+    value: boolean;
+  }>();
 
   const emit = defineEmits<{
-    'update:value': [value: boolean]
-  }>()
+    'update:value': [value: boolean];
+  }>();
 
-  const show = ref(false)
-  const visible = ref(false)
-  const barActiveIndex = ref(0)
+  const show = ref(false);
+  const visible = ref(false);
+  const barActiveIndex = ref(0);
 
   const useNotificationData = () => {
     // 通知数据（从接口获取，初始为空）
-    const noticeList = ref<NoticeItem[]>([])
+    const noticeList = ref<NoticeItem[]>([]);
 
     // 消息数据（从接口获取，初始为空）
-    const msgList = ref<MessageItem[]>([])
+    const msgList = ref<MessageItem[]>([]);
 
     // 待办数据
-    const pendingList = ref<PendingItem[]>([])
+    const pendingList = ref<PendingItem[]>([]);
 
     // 标签栏数据
     const barList = computed<BarItem[]>(() => [
@@ -187,15 +187,15 @@
         name: computed(() => t('notice.bar[2]')),
         num: pendingList.value.length
       }
-    ])
+    ]);
 
     return {
       noticeList,
       msgList,
       pendingList,
       barList
-    }
-  }
+    };
+  };
 
   // 样式管理
   const useNotificationStyles = () => {
@@ -220,42 +220,42 @@
         icon: 'ri:notification-3-line',
         iconClass: 'bg-theme/12 text-theme'
       }
-    }
+    };
 
     const getNoticeStyle = (type: NoticeType): NoticeStyle => {
       const defaultStyle: NoticeStyle = {
         icon: 'ri:arrow-right-circle-line',
         iconClass: 'bg-theme/12 text-theme'
-      }
+      };
 
-      return noticeStyleMap[type] || defaultStyle
-    }
+      return noticeStyleMap[type] || defaultStyle;
+    };
 
     return {
       getNoticeStyle
-    }
-  }
+    };
+  };
 
   // 动画管理
   const useNotificationAnimation = () => {
     const showNotice = (open: boolean) => {
       if (open) {
-        visible.value = true
+        visible.value = true;
         setTimeout(() => {
-          show.value = true
-        }, 5)
+          show.value = true;
+        }, 5);
       } else {
-        show.value = false
+        show.value = false;
         setTimeout(() => {
-          visible.value = false
-        }, 350)
+          visible.value = false;
+        }, 350);
       }
-    }
+    };
 
     return {
       showNotice
-    }
-  }
+    };
+  };
 
   // 标签页管理
   const useTabManagement = (
@@ -263,22 +263,22 @@
     msgList: Ref<MessageItem[]>,
     pendingList: Ref<PendingItem[]>,
     businessHandlers: {
-      handleNoticeAll: () => void
-      handleMsgAll: () => void
-      handlePendingAll: () => void
+      handleNoticeAll: () => void;
+      handleMsgAll: () => void;
+      handlePendingAll: () => void;
     }
   ) => {
     const changeBar = (index: number) => {
-      barActiveIndex.value = index
-    }
+      barActiveIndex.value = index;
+    };
 
     // 检查当前标签页是否为空
     const currentTabIsEmpty = computed(() => {
-      const tabDataMap = [noticeList.value, msgList.value, pendingList.value]
+      const tabDataMap = [noticeList.value, msgList.value, pendingList.value];
 
-      const currentData = tabDataMap[barActiveIndex.value]
-      return currentData && currentData.length === 0
-    })
+      const currentData = tabDataMap[barActiveIndex.value];
+      return currentData && currentData.length === 0;
+    });
 
     const handleViewAll = () => {
       // 查看全部处理器映射
@@ -286,65 +286,65 @@
         0: businessHandlers.handleNoticeAll,
         1: businessHandlers.handleMsgAll,
         2: businessHandlers.handlePendingAll
-      }
+      };
 
-      const handler = viewAllHandlers[barActiveIndex.value]
-      handler?.()
+      const handler = viewAllHandlers[barActiveIndex.value];
+      handler?.();
 
       // 关闭通知面板
-      emit('update:value', false)
-    }
+      emit('update:value', false);
+    };
 
     return {
       changeBar,
       currentTabIsEmpty,
       handleViewAll
-    }
-  }
+    };
+  };
 
   // 业务逻辑处理
   const useBusinessLogic = () => {
     const handleNoticeAll = () => {
       // 处理查看全部通知
-      console.log('查看全部通知')
-    }
+      console.log('查看全部通知');
+    };
 
     const handleMsgAll = () => {
       // 处理查看全部消息
-      console.log('查看全部消息')
-    }
+      console.log('查看全部消息');
+    };
 
     const handlePendingAll = () => {
       // 处理查看全部待办
-      console.log('查看全部待办')
-    }
+      console.log('查看全部待办');
+    };
 
     return {
       handleNoticeAll,
       handleMsgAll,
       handlePendingAll
-    }
-  }
+    };
+  };
 
   // 组合所有逻辑
-  const { noticeList, msgList, pendingList, barList } = useNotificationData()
-  const { getNoticeStyle } = useNotificationStyles()
-  const { showNotice } = useNotificationAnimation()
-  const { handleNoticeAll, handleMsgAll, handlePendingAll } = useBusinessLogic()
+  const { noticeList, msgList, pendingList, barList } = useNotificationData();
+  const { getNoticeStyle } = useNotificationStyles();
+  const { showNotice } = useNotificationAnimation();
+  const { handleNoticeAll, handleMsgAll, handlePendingAll } = useBusinessLogic();
   const { changeBar, currentTabIsEmpty, handleViewAll } = useTabManagement(
     noticeList,
     msgList,
     pendingList,
     { handleNoticeAll, handleMsgAll, handlePendingAll }
-  )
+  );
 
   // 监听属性变化
   watch(
     () => props.value,
     (newValue) => {
-      showNotice(newValue)
+      showNotice(newValue);
     }
-  )
+  );
 </script>
 
 <style scoped>

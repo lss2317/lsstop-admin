@@ -9,9 +9,9 @@
 
 <script setup lang="ts">
   interface Props {
-    title: string
-    style?: Record<string, any>
+    title: string;
+    style?: Record<string, any>;
   }
 
-  defineProps<Props>()
+  defineProps<Props>();
 </script>

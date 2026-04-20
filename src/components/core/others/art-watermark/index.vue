@@ -18,35 +18,35 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
-  import { useSettingStore } from '@/store/modules/setting'
+  import AppConfig from '@/config';
+  import { useSettingStore } from '@/store/modules/setting';
 
-  defineOptions({ name: 'ArtWatermark' })
+  defineOptions({ name: 'ArtWatermark' });
 
-  const settingStore = useSettingStore()
-  const { watermarkVisible } = storeToRefs(settingStore)
+  const settingStore = useSettingStore();
+  const { watermarkVisible } = storeToRefs(settingStore);
 
   interface WatermarkProps {
     /** 水印内容 */
-    content?: string
+    content?: string;
     /** 水印是否可见 */
-    visible?: boolean
+    visible?: boolean;
     /** 水印字体大小 */
-    fontSize?: number
+    fontSize?: number;
     /** 水印字体颜色 */
-    fontColor?: string
+    fontColor?: string;
     /** 水印旋转角度 */
-    rotate?: number
+    rotate?: number;
     /** 水印间距X */
-    gapX?: number
+    gapX?: number;
     /** 水印间距Y */
-    gapY?: number
+    gapY?: number;
     /** 水印偏移X */
-    offsetX?: number
+    offsetX?: number;
     /** 水印偏移Y */
-    offsetY?: number
+    offsetY?: number;
     /** 水印层级 */
-    zIndex?: number
+    zIndex?: number;
   }
 
   withDefaults(defineProps<WatermarkProps>(), {
@@ -60,5 +60,5 @@
     offsetX: 50,
     offsetY: 50,
     zIndex: 3100
-  })
+  });
 </script>

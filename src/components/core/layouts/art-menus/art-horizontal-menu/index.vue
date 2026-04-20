@@ -25,39 +25,39 @@
 </template>
 
 <script setup lang="ts">
-  import type { AppRouteRecord } from '@/types/router'
-  import HorizontalSubmenu from './widget/HorizontalSubmenu.vue'
-  import { useSettingStore } from '@/store/modules/setting'
+  import type { AppRouteRecord } from '@/types/router';
+  import HorizontalSubmenu from './widget/HorizontalSubmenu.vue';
+  import { useSettingStore } from '@/store/modules/setting';
 
-  defineOptions({ name: 'ArtHorizontalMenu' })
+  defineOptions({ name: 'ArtHorizontalMenu' });
 
-  const settingStore = useSettingStore()
-  const { isDark } = storeToRefs(settingStore)
+  const settingStore = useSettingStore();
+  const { isDark } = storeToRefs(settingStore);
 
   interface Props {
     /** 菜单列表数据 */
-    list: AppRouteRecord[]
+    list: AppRouteRecord[];
   }
 
-  const route = useRoute()
+  const route = useRoute();
 
   const props = withDefaults(defineProps<Props>(), {
     list: () => []
-  })
+  });
 
   /**
    * 过滤后的菜单项列表
    * 只显示未隐藏的菜单项
    */
   const filteredMenuItems = computed(() => {
-    return filterMenuItems(props.list)
-  })
+    return filterMenuItems(props.list);
+  });
 
   /**
    * 当前激活的路由路径
    * 用于菜单高亮显示
    */
-  const routerPath = computed(() => String(route.meta.activePath || route.path))
+  const routerPath = computed(() => String(route.meta.activePath || route.path));
 
   /**
    * 递归过滤菜单项，移除隐藏的菜单
@@ -70,24 +70,24 @@
       .filter((item) => {
         // 如果当前项被隐藏，直接过滤掉
         if (item.meta.isHide) {
-          return false
+          return false;
         }
 
         // 如果有子菜单，递归过滤子菜单
         if (item.children && item.children.length > 0) {
-          const filteredChildren = filterMenuItems(item.children)
+          const filteredChildren = filterMenuItems(item.children);
           // 如果所有子菜单都被过滤掉了，则隐藏父菜单
-          return filteredChildren.length > 0
+          return filteredChildren.length > 0;
         }
 
         // 叶子节点且未被隐藏，保留
-        return true
+        return true;
       })
       .map((item) => ({
         ...item,
         children: item.children ? filterMenuItems(item.children) : undefined
-      }))
-  }
+      }));
+  };
 </script>
 
 <style scoped>

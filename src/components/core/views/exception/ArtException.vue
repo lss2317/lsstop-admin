@@ -13,43 +13,43 @@
 </template>
 
 <script setup lang="ts">
-  import { useCommon } from '@/hooks/core/useCommon'
-  import { useUserStore } from '@/store/modules/user'
+  import { useCommon } from '@/hooks/core/useCommon';
+  import { useUserStore } from '@/store/modules/user';
 
-  const router = useRouter()
-  const userStore = useUserStore()
+  const router = useRouter();
+  const userStore = useUserStore();
 
   interface ExceptionData {
     /** 标题 */
-    title: string
+    title: string;
     /** 描述 */
-    desc: string
+    desc: string;
     /** 按钮文本 */
-    btnText: string
+    btnText: string;
     /** 图片地址 */
-    imgUrl: string
+    imgUrl: string;
   }
 
   withDefaults(
     defineProps<{
-      data: ExceptionData
+      data: ExceptionData;
     }>(),
     {}
-  )
+  );
 
-  const { homePath } = useCommon()
+  const { homePath } = useCommon();
 
   const backHome = () => {
-    const targetHomePath = homePath.value || '/'
+    const targetHomePath = homePath.value || '/';
 
     if (!userStore.isLogin) {
       router.push({
         name: 'Login',
         query: { redirect: targetHomePath }
-      })
-      return
+      });
+      return;
     }
 
-    router.push(targetHomePath)
-  }
+    router.push(targetHomePath);
+  };
 </script>

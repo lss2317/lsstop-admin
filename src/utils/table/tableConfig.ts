@@ -52,4 +52,4 @@ export const tableConfig = {
     // 每页大小
     size: 'size'
   }
-}
+};

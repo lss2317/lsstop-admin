@@ -9,12 +9,12 @@
 </template>
 
 <script setup lang="ts">
-  import { useChartOps, useChartComponent } from '@/hooks/core/useChart'
-  import { getCssVar } from '@/utils/ui'
-  import { graphic, type EChartsOption } from '@/plugins/echarts'
-  import type { BarChartProps, BarDataItem } from '@/types/component/chart'
+  import { useChartOps, useChartComponent } from '@/hooks/core/useChart';
+  import { getCssVar } from '@/utils/ui';
+  import { graphic, type EChartsOption } from '@/plugins/echarts';
+  import type { BarChartProps, BarDataItem } from '@/types/component/chart';
 
-  defineOptions({ name: 'ArtHBarChart' })
+  defineOptions({ name: 'ArtHBarChart' });
 
   const props = withDefaults(defineProps<BarChartProps>(), {
     // 基础配置
@@ -38,7 +38,7 @@
     showTooltip: true,
     showLegend: false,
     legendPosition: 'bottom'
-  })
+  });
 
   // 判断是否为多数据
   const isMultipleData = computed(() => {
@@ -47,15 +47,15 @@
       props.data.length > 0 &&
       typeof props.data[0] === 'object' &&
       'name' in props.data[0]
-    )
-  })
+    );
+  });
 
   // 获取颜色配置
   const getColor = (customColor?: string, index?: number) => {
-    if (customColor) return customColor
+    if (customColor) return customColor;
 
     if (index !== undefined) {
-      return props.colors![index % props.colors!.length]
+      return props.colors![index % props.colors!.length];
     }
 
     // 默认渐变色
@@ -68,8 +68,8 @@
         offset: 1,
         color: getCssVar('--el-color-primary-light-4')
       }
-    ])
-  }
+    ]);
+  };
 
   // 创建渐变色
   const createGradientColor = (color: string) => {
@@ -82,8 +82,8 @@
         offset: 1,
         color: color
       }
-    ])
-  }
+    ]);
+  };
 
   // 获取基础样式配置
   const getBaseItemStyle = (
@@ -91,17 +91,17 @@
   ) => ({
     borderRadius: 4,
     color: typeof color === 'string' ? createGradientColor(color) : color
-  })
+  });
 
   // 创建系列配置
   const createSeriesItem = (config: {
-    name?: string
-    data: number[]
-    color?: string | InstanceType<typeof graphic.LinearGradient>
-    barWidth?: string | number
-    stack?: string
+    name?: string;
+    data: number[];
+    color?: string | InstanceType<typeof graphic.LinearGradient>;
+    barWidth?: string | number;
+    stack?: string;
   }) => {
-    const animationConfig = getAnimationConfig()
+    const animationConfig = getAnimationConfig();
 
     return {
       name: config.name,
@@ -111,8 +111,8 @@
       itemStyle: getBaseItemStyle(config.color),
       barWidth: config.barWidth || props.barWidth,
       ...animationConfig
-    }
-  }
+    };
+  };
 
   // 使用新的图表组件抽象
   const {
@@ -130,20 +130,20 @@
     checkEmpty: () => {
       // 检查单数据情况
       if (Array.isArray(props.data) && typeof props.data[0] === 'number') {
-        const singleData = props.data as number[]
-        return !singleData.length || singleData.every((val) => val === 0)
+        const singleData = props.data as number[];
+        return !singleData.length || singleData.every((val) => val === 0);
       }
 
       // 检查多数据情况
       if (Array.isArray(props.data) && typeof props.data[0] === 'object') {
-        const multiData = props.data as BarDataItem[]
+        const multiData = props.data as BarDataItem[];
         return (
           !multiData.length ||
           multiData.every((item) => !item.data?.length || item.data.every((val) => val === 0))
-        )
+        );
       }
 
-      return true
+      return true;
     },
     watchSources: [() => props.data, () => props.xAxisData, () => props.colors],
     generateOptions: (): EChartsOption => {
@@ -168,18 +168,18 @@
           axisLabel: getAxisLabelStyle(props.showAxisLabel),
           axisLine: getAxisLineStyle(props.showAxisLine)
         }
-      }
+      };
 
       // 添加图例配置
       if (props.showLegend && isMultipleData.value) {
-        options.legend = getLegendStyle(props.legendPosition)
+        options.legend = getLegendStyle(props.legendPosition);
       }
 
       // 生成系列数据
       if (isMultipleData.value) {
-        const multiData = props.data as BarDataItem[]
+        const multiData = props.data as BarDataItem[];
         options.series = multiData.map((item, index) => {
-          const computedColor = getColor(props.colors[index], index)
+          const computedColor = getColor(props.colors[index], index);
 
           return createSeriesItem({
             name: item.name,
@@ -187,22 +187,22 @@
             color: computedColor,
             barWidth: item.barWidth,
             stack: props.stack ? item.stack || 'total' : undefined
-          })
-        })
+          });
+        });
       } else {
         // 单数据情况
-        const singleData = props.data as number[]
-        const computedColor = getColor()
+        const singleData = props.data as number[];
+        const computedColor = getColor();
 
         options.series = [
           createSeriesItem({
             data: singleData,
             color: computedColor
           })
-        ]
+        ];
       }
 
-      return options
+      return options;
     }
-  })
+  });
 </script>

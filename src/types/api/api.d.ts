@@ -38,50 +38,50 @@ declare namespace Api {
     /** 分页参数 */
     interface PaginationParams {
       /** 当前页码 */
-      current: number
+      current: number;
       /** 每页条数 */
-      size: number
+      size: number;
       /** 总条数 */
-      total: number
+      total: number;
     }
 
     /** 通用搜索参数 */
-    type CommonSearchParams = Pick<PaginationParams, 'current' | 'size'>
+    type CommonSearchParams = Pick<PaginationParams, 'current' | 'size'>;
 
     /** 分页响应基础结构 */
     interface PaginatedResponse<T = any> {
-      records: T[]
-      current: number
-      size: number
-      total: number
+      records: T[];
+      current: number;
+      size: number;
+      total: number;
     }
 
     /** 启用状态 */
-    type EnableStatus = '1' | '2'
+    type EnableStatus = '1' | '2';
   }
 
   /** 认证类型 */
   namespace Auth {
     /** 登录参数 */
     interface LoginParams {
-      userName: string
-      password: string
+      userName: string;
+      password: string;
     }
 
     /** 登录响应 */
     interface LoginResponse {
-      token: string
-      refreshToken: string
+      token: string;
+      refreshToken: string;
     }
 
     /** 用户信息 */
     interface UserInfo {
-      buttons: string[]
-      roles: string[]
-      userId: number
-      userName: string
-      email: string
-      avatar?: string
+      buttons: string[];
+      roles: string[];
+      userId: number;
+      userName: string;
+      email: string;
+      avatar?: string;
     }
   }
 }

@@ -5,4 +5,4 @@
  * @author Art Design Pro Team
  */
 
-export { IframeRouteManager } from './IframeRouteManager'
+export { IframeRouteManager } from './IframeRouteManager';

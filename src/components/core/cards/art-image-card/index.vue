@@ -48,25 +48,25 @@
 </template>
 
 <script setup lang="ts">
-  import { Picture, View, ChatLineRound } from '@element-plus/icons-vue'
+  import { Picture, View, ChatLineRound } from '@element-plus/icons-vue';
 
-  defineOptions({ name: 'ArtImageCard' })
+  defineOptions({ name: 'ArtImageCard' });
 
   interface Props {
     /** 图片地址 */
-    imageUrl: string
+    imageUrl: string;
     /** 标题 */
-    title: string
+    title: string;
     /** 分类 */
-    category?: string
+    category?: string;
     /** 阅读时间 */
-    readTime?: string
+    readTime?: string;
     /** 浏览量 */
-    views?: number
+    views?: number;
     /** 评论数 */
-    comments?: number
+    comments?: number;
     /** 日期 */
-    date?: string
+    date?: string;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -77,13 +77,13 @@
     views: 0,
     comments: 0,
     date: ''
-  })
+  });
 
   const emit = defineEmits<{
-    (e: 'click', card: Props): void
-  }>()
+    (e: 'click', card: Props): void;
+  }>();
 
   const handleClick = () => {
-    emit('click', props)
-  }
+    emit('click', props);
+  };
 </script>

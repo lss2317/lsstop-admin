@@ -129,105 +129,105 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config'
-  import { useSettingStore } from '@/store/modules/setting'
-  import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum'
-  import { useMenuStore } from '@/store/modules/menu'
-  import { isIframe } from '@/utils/navigation'
-  import { handleMenuJump } from '@/utils/navigation'
-  import SidebarSubmenu from './widget/SidebarSubmenu.vue'
-  import { useCommon } from '@/hooks/core/useCommon'
-  import { useWindowSize, useTimeoutFn } from '@vueuse/core'
+  import AppConfig from '@/config';
+  import { useSettingStore } from '@/store/modules/setting';
+  import { MenuTypeEnum, MenuWidth } from '@/enums/appEnum';
+  import { useMenuStore } from '@/store/modules/menu';
+  import { isIframe } from '@/utils/navigation';
+  import { handleMenuJump } from '@/utils/navigation';
+  import SidebarSubmenu from './widget/SidebarSubmenu.vue';
+  import { useCommon } from '@/hooks/core/useCommon';
+  import { useWindowSize, useTimeoutFn } from '@vueuse/core';
 
-  defineOptions({ name: 'ArtSidebarMenu' })
+  defineOptions({ name: 'ArtSidebarMenu' });
 
-  const MOBILE_BREAKPOINT = 800
-  const ANIMATION_DELAY = 350
-  const MENU_CLOSE_WIDTH = MenuWidth.CLOSE
+  const MOBILE_BREAKPOINT = 800;
+  const ANIMATION_DELAY = 350;
+  const MENU_CLOSE_WIDTH = MenuWidth.CLOSE;
 
-  const route = useRoute()
-  const router = useRouter()
-  const settingStore = useSettingStore()
+  const route = useRoute();
+  const router = useRouter();
+  const settingStore = useSettingStore();
 
   const { getMenuOpenWidth, menuType, uniqueOpened, dualMenuShowText, menuOpen, getMenuTheme } =
-    storeToRefs(settingStore)
+    storeToRefs(settingStore);
 
   // 组件内部状态
-  const defaultOpenedMenus = ref<string[]>([])
-  const isMobileMode = ref(false)
-  const showMobileModal = ref(false)
+  const defaultOpenedMenus = ref<string[]>([]);
+  const isMobileMode = ref(false);
+  const showMobileModal = ref(false);
 
   // 使用 VueUse 的窗口尺寸监听
-  const { width } = useWindowSize()
+  const { width } = useWindowSize();
 
   // 菜单宽度相关
-  const menuopenwidth = computed(() => getMenuOpenWidth.value)
-  const menuclosewidth = computed(() => MENU_CLOSE_WIDTH)
+  const menuopenwidth = computed(() => getMenuOpenWidth.value);
+  const menuclosewidth = computed(() => MENU_CLOSE_WIDTH);
 
   // 菜单类型判断
-  const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT)
+  const isTopLeftMenu = computed(() => menuType.value === MenuTypeEnum.TOP_LEFT);
   const showLeftMenu = computed(
     () => menuType.value === MenuTypeEnum.LEFT || menuType.value === MenuTypeEnum.TOP_LEFT
-  )
-  const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU)
+  );
+  const isDualMenu = computed(() => menuType.value === MenuTypeEnum.DUAL_MENU);
 
   // 移动端屏幕判断（使用 computed 避免重复计算）
-  const isMobileScreen = computed(() => width.value < MOBILE_BREAKPOINT)
+  const isMobileScreen = computed(() => width.value < MOBILE_BREAKPOINT);
 
   // 路由相关
-  const firstLevelMenuPath = computed(() => route.matched[0]?.path)
-  const routerPath = computed(() => String(route.meta.activePath || route.path))
+  const firstLevelMenuPath = computed(() => route.matched[0]?.path);
+  const routerPath = computed(() => String(route.meta.activePath || route.path));
 
   // 菜单数据
   const firstLevelMenus = computed(() => {
-    return useMenuStore().menuList.filter((menu) => !menu.meta.isHide)
-  })
+    return useMenuStore().menuList.filter((menu) => !menu.meta.isHide);
+  });
 
   const menuList = computed(() => {
-    const menuStore = useMenuStore()
-    const allMenus = menuStore.menuList
+    const menuStore = useMenuStore();
+    const allMenus = menuStore.menuList;
 
     // 如果不是顶部左侧菜单或双列菜单，直接返回完整菜单列表
     if (!isTopLeftMenu.value && !isDualMenu.value) {
-      return allMenus
+      return allMenus;
     }
 
     // 处理 iframe 路径
     if (isIframe(route.path)) {
-      return findIframeMenuList(route.path, allMenus)
+      return findIframeMenuList(route.path, allMenus);
     }
 
     // 处理一级菜单
     if (route.meta.isFirstLevel) {
-      return []
+      return [];
     }
 
     // 返回当前顶级路径对应的子菜单
-    const currentTopPath = `/${route.path.split('/')[1]}`
-    const currentMenu = allMenus.find((menu) => menu.path === currentTopPath)
-    return currentMenu?.children ?? []
-  })
+    const currentTopPath = `/${route.path.split('/')[1]}`;
+    const currentMenu = allMenus.find((menu) => menu.path === currentTopPath);
+    return currentMenu?.children ?? [];
+  });
 
   // 双列菜单收起时的滚动条样式
   const scrollbarStyle = computed(() => {
-    const isCollapsed = isDualMenu.value && !menuOpen.value
+    const isCollapsed = isDualMenu.value && !menuOpen.value;
     return {
       transform: isCollapsed ? 'translateY(-50px)' : 'translateY(0)',
       height: isCollapsed ? 'calc(100% + 50px)' : 'calc(100% - 60px)',
       transition: 'transform 0.3s ease'
-    }
-  })
+    };
+  });
 
   /**
    * 延迟隐藏移动端模态框（使用 VueUse 的 useTimeoutFn）
    */
   const { start: delayHideMobileModal } = useTimeoutFn(
     () => {
-      showMobileModal.value = false
+      showMobileModal.value = false;
     },
     ANIMATION_DELAY,
     { immediate: false }
-  )
+  );
 
   /**
    * 查找 iframe 对应的二级菜单列表
@@ -237,81 +237,81 @@
     const hasPath = (items: any[]): boolean => {
       for (const item of items) {
         if (item.path === currentPath) {
-          return true
+          return true;
         }
         if (item.children && hasPath(item.children)) {
-          return true
+          return true;
         }
       }
-      return false
-    }
+      return false;
+    };
 
     // 遍历一级菜单查找匹配的子菜单
     for (const menu of menuList) {
       if (menu.children && hasPath(menu.children)) {
-        return menu.children
+        return menu.children;
       }
     }
-    return []
-  }
+    return [];
+  };
 
-  const { homePath } = useCommon()
+  const { homePath } = useCommon();
 
   /**
    * 导航到首页
    */
   const navigateToHome = (): void => {
-    router.push(homePath.value)
-  }
+    router.push(homePath.value);
+  };
 
   /**
    * 切换菜单显示/隐藏
    */
   const toggleMenuVisibility = (): void => {
-    settingStore.setMenuOpen(!menuOpen.value)
+    settingStore.setMenuOpen(!menuOpen.value);
 
     // 移动端模态框控制逻辑
     if (isMobileScreen.value) {
       if (!menuOpen.value) {
         // 菜单即将打开，立即显示模态框
-        showMobileModal.value = true
+        showMobileModal.value = true;
       } else {
         // 菜单即将关闭，延迟隐藏模态框确保动画完成
-        delayHideMobileModal()
+        delayHideMobileModal();
       }
     }
-  }
+  };
 
   /**
    * 处理菜单关闭（来自子组件）
    */
   const handleMenuClose = (): void => {
     if (isMobileScreen.value) {
-      settingStore.setMenuOpen(false)
-      delayHideMobileModal()
+      settingStore.setMenuOpen(false);
+      delayHideMobileModal();
     }
-  }
+  };
 
   /**
    * 切换双列菜单模式
    */
   const toggleDualMenuMode = (): void => {
-    settingStore.setDualMenuShowText(!dualMenuShowText.value)
-  }
+    settingStore.setDualMenuShowText(!dualMenuShowText.value);
+  };
 
   /**
    * 监听窗口尺寸变化，自动处理移动端菜单
    */
   watch(width, (newWidth) => {
     if (newWidth < MOBILE_BREAKPOINT) {
-      settingStore.setMenuOpen(false)
+      settingStore.setMenuOpen(false);
       if (!menuOpen.value) {
-        showMobileModal.value = false
+        showMobileModal.value = false;
       }
     } else {
-      showMobileModal.value = false
+      showMobileModal.value = false;
     }
-  })
+  });
 
   /**
    * 监听菜单开关状态变化
@@ -319,18 +319,18 @@
   watch(menuOpen, (isMenuOpen: boolean) => {
     if (!isMobileScreen.value) {
       // 大屏幕设备上，模态框始终隐藏
-      showMobileModal.value = false
+      showMobileModal.value = false;
     } else {
       // 小屏幕设备上，根据菜单状态控制模态框
       if (isMenuOpen) {
         // 菜单打开时立即显示模态框
-        showMobileModal.value = true
+        showMobileModal.value = true;
       } else {
         // 菜单关闭时延迟隐藏模态框，确保动画完成
-        delayHideMobileModal()
+        delayHideMobileModal();
       }
     }
-  })
+  });
 </script>
 
 <style lang="scss" scoped>

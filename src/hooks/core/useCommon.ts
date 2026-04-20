@@ -15,52 +15,52 @@
  * @author Art Design Pro Team
  */
 
-import { computed } from 'vue'
-import { useMenuStore } from '@/store/modules/menu'
-import { useSettingStore } from '@/store/modules/setting'
+import { computed } from 'vue';
+import { useMenuStore } from '@/store/modules/menu';
+import { useSettingStore } from '@/store/modules/setting';
 
 export function useCommon() {
-  const menuStore = useMenuStore()
-  const settingStore = useSettingStore()
+  const menuStore = useMenuStore();
+  const settingStore = useSettingStore();
 
   /**
    * 首页路径
    * 从菜单 store 中获取配置的首页路径
    */
-  const homePath = computed(() => menuStore.getHomePath())
+  const homePath = computed(() => menuStore.getHomePath());
 
   /**
    * 刷新当前页面
    * 通过切换 setting store 中的 refresh 状态触发页面重新渲染
    */
   const refresh = () => {
-    settingStore.reload()
-  }
+    settingStore.reload();
+  };
 
   /**
    * 滚动到页面顶部
    * 查找主内容区域并将其滚动位置重置为顶部
    */
   const scrollToTop = () => {
-    const scrollContainer = document.getElementById('app-main')
+    const scrollContainer = document.getElementById('app-main');
     if (scrollContainer) {
-      scrollContainer.scrollTop = 0
+      scrollContainer.scrollTop = 0;
     }
-  }
+  };
 
   /**
    * 平滑滚动到页面顶部
    * 使用 smooth 行为实现平滑滚动效果
    */
   const smoothScrollToTop = () => {
-    const scrollContainer = document.getElementById('app-main')
+    const scrollContainer = document.getElementById('app-main');
     if (scrollContainer) {
       scrollContainer.scrollTo({
         top: 0,
         behavior: 'smooth'
-      })
+      });
     }
-  }
+  };
 
   /**
    * 滚动到指定位置
@@ -68,14 +68,14 @@ export function useCommon() {
    * @param smooth 是否使用平滑滚动
    */
   const scrollTo = (top: number, smooth: boolean = false) => {
-    const scrollContainer = document.getElementById('app-main')
+    const scrollContainer = document.getElementById('app-main');
     if (scrollContainer) {
       scrollContainer.scrollTo({
         top,
         behavior: smooth ? 'smooth' : 'auto'
-      })
+      });
     }
-  }
+  };
 
   return {
     homePath,
@@ -83,5 +83,5 @@ export function useCommon() {
     scrollTo,
     scrollToTop,
     smoothScrollToTop
-  }
+  };
 }

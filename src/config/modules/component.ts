@@ -15,22 +15,22 @@
  * @author Art Design Pro Team
  */
 
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent } from 'vue';
 
 /**
  * 全局组件配置接口
  */
 export interface GlobalComponentConfig {
   /** 组件名称 */
-  name: string
+  name: string;
   /** 组件标识 */
-  key: string
+  key: string;
   /** 组件 */
-  component: any
+  component: any;
   /** 是否启用 */
-  enabled?: boolean
+  enabled?: boolean;
   /** 组件描述 */
-  description?: string
+  description?: string;
 }
 
 /**
@@ -69,15 +69,15 @@ export const globalComponentsConfig: GlobalComponentConfig[] = [
     ),
     enabled: true
   }
-]
+];
 
 /**
  * 获取启用的全局组件
  * @returns 已启用的组件配置列表
  */
 export const getEnabledGlobalComponents = () => {
-  return globalComponentsConfig.filter((config) => config.enabled !== false)
-}
+  return globalComponentsConfig.filter((config) => config.enabled !== false);
+};
 
 /**
  * 根据 key 获取组件配置
@@ -85,5 +85,5 @@ export const getEnabledGlobalComponents = () => {
  * @returns 组件配置对象
  */
 export const getGlobalComponentByKey = (key: string) => {
-  return globalComponentsConfig.find((config) => config.key === key)
-}
+  return globalComponentsConfig.find((config) => config.key === key);
+};

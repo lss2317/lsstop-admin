@@ -9,7 +9,7 @@
  */
 
 // ECharts 按需导入配置
-import * as echarts from 'echarts/core'
+import * as echarts from 'echarts/core';
 
 // 导入图表类型
 import {
@@ -20,7 +20,7 @@ import {
   RadarChart,
   MapChart,
   CandlestickChart
-} from 'echarts/charts'
+} from 'echarts/charts';
 
 // 导入组件
 import {
@@ -35,10 +35,10 @@ import {
   BrushComponent,
   GeoComponent,
   VisualMapComponent
-} from 'echarts/components'
+} from 'echarts/components';
 
 // 导入渲染器
-import { CanvasRenderer } from 'echarts/renderers'
+import { CanvasRenderer } from 'echarts/renderers';
 
 // 注册必要的组件
 echarts.use([
@@ -66,11 +66,11 @@ echarts.use([
 
   // 渲染器
   CanvasRenderer
-])
+]);
 
 // 导出 echarts 实例和类型
-export { echarts }
-export type { EChartsOption, BarSeriesOption } from 'echarts'
+export { echarts };
+export type { EChartsOption, BarSeriesOption } from 'echarts';
 
 // 导出常用的图形工具
-export const graphic = echarts.graphic
+export const graphic = echarts.graphic;
