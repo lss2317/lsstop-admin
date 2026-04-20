@@ -1,0 +1,29 @@
+export class StorageConfig {
+  /** 存储键前缀 */
+  static readonly STORAGE_PREFIX = 'lsstop-'
+
+  /** 主题键名（index.html中使用了，如果修改，需要同步修改） */
+  static readonly THEME_KEY = 'lsstop-theme'
+
+  /** 上次登录用户ID键名（用于判断是否为同一用户登录） */
+  static readonly LAST_USER_ID_KEY = 'lsstop-last-user-id'
+
+  /** 响应式布局切换时暂存桌面端菜单类型 */
+  static readonly RESPONSIVE_MENU_TYPE_KEY = 'lsstop-responsive-menu-type'
+
+  /**
+   * 生成存储键名
+   * @param storeId 存储ID
+   */
+  static generateStorageKey(storeId: string): string {
+    return `${this.STORAGE_PREFIX}${storeId}`
+  }
+
+  /**
+   * 创建存储键匹配的正则表达式
+   * @param storeId 存储ID
+   */
+  static createKeyPattern(storeId: string): RegExp {
+    return new RegExp(`^${this.STORAGE_PREFIX}${storeId}$`)
+  }
+}
