@@ -19,9 +19,9 @@ export interface LoginResponse {
   /** 个人简介 */
   intro: string | null;
   /** accessToken */
-  accessToken?: string;
+  accessToken: string;
   /** refreshToken */
-  refreshToken?: string;
+  refreshToken: string;
 }
 
 /** 用户信息 */

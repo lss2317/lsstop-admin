@@ -8,6 +8,12 @@ export class StorageConfig {
   /** 上次登录用户ID键名（用于判断是否为同一用户登录） */
   static readonly LAST_USER_ID_KEY = 'lsstop-last-user-id';
 
+  /** 访问令牌键名 */
+  static readonly ACCESS_TOKEN_KEY = 'lsstop-access-token';
+
+  /** 刷新令牌键名 */
+  static readonly REFRESH_TOKEN_KEY = 'lsstop-refresh-token';
+
   /** 响应式布局切换时暂存桌面端菜单类型 */
   static readonly RESPONSIVE_MENU_TYPE_KEY = 'lsstop-responsive-menu-type';
 

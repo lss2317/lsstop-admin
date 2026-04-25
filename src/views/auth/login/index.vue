@@ -111,7 +111,6 @@
   import AppConfig from '@/config';
   import { useUserStore } from '@/store/modules/user';
   import { useI18n } from 'vue-i18n';
-  import { HttpError } from '@/utils/http/error';
   import { fetchLogin } from '@/apis/auth';
   import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
   import { useSettingStore } from '@/store/modules/setting';
@@ -224,11 +223,6 @@
         password
       });
 
-      // 验证token
-      if (!accessToken) {
-        throw new Error('Login failed - no token received');
-      }
-
       // 存储 token
       userStore.setToken(accessToken, refreshToken);
 
@@ -237,16 +231,9 @@
 
       // 获取 redirect 参数，如果存在则跳转到指定页面，否则跳转到首页
       const redirect = route.query.redirect as string;
-      router.push(redirect || '/');
-    } catch (error) {
-      // 处理 HttpError
-      if (error instanceof HttpError) {
-        // console.log(error.code)
-      } else {
-        // 处理非 HttpError
-        // ElMessage.error('登录失败，请稍后重试')
-        console.error('[Login] Unexpected error:', error);
-      }
+      await router.push(redirect || '/');
+    } catch {
+      // 错误已在 HTTP 层统一处理
     } finally {
       loading.value = false;
       resetDragVerify();
