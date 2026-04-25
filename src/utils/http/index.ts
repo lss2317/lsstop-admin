@@ -5,7 +5,8 @@
  * ## 主要功能
  *
  * - 请求/响应拦截器（自动添加 Token、统一错误处理）
- * - 401 未授权自动登出（带防抖机制）
+ * - 401（账号或密码错误）直接抛出错误
+ * - 40102（Token 过期）自动登出（带防抖机制）
  * - 请求失败自动重试（可配置）
  * - 统一的成功/错误消息提示
  * - 支持 GET/POST/PUT/DELETE 等常用方法
@@ -28,7 +29,7 @@ const MAX_RETRIES = 0;
 const RETRY_DELAY = 1000;
 const UNAUTHORIZED_DEBOUNCE_TIME = 3000;
 
-/** 401防抖状态 */
+/** Token 过期/未授权防抖状态 */
 let isUnauthorizedErrorShown = false;
 let unauthorizedTimer: NodeJS.Timeout | null = null;
 
@@ -41,7 +42,7 @@ interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
 const axiosInstance = axios.create({
   timeout: REQUEST_TIMEOUT,
   baseURL: '/api/admin', // 后端接口地址前缀
-  withCredentials: false,   // 跨域请求是否携带 Cookie
+  withCredentials: false, // 跨域请求是否携带 Cookie
   validateStatus: (status) => status >= 200 && status < 300,
   transformResponse: [
     (data, headers) => {
@@ -82,11 +83,14 @@ axiosInstance.interceptors.response.use(
   (response: AxiosResponse<BaseResponse>) => {
     const { code, msg } = response.data;
     if (code === ApiStatus.success) return response;
-    if (code === ApiStatus.unauthorized) handleUnauthorizedError(msg);
+    if (code === ApiStatus.tokenExpired) handleUnauthorizedError(msg, ApiStatus.tokenExpired);
     throw createHttpError(msg || $t('httpMsg.requestFailed'), code);
   },
   (error) => {
-    if (error.response?.status === ApiStatus.unauthorized) handleUnauthorizedError();
+    const responseData = error.response?.data;
+    if (responseData?.code === ApiStatus.tokenExpired) {
+      handleUnauthorizedError(responseData.msg, ApiStatus.tokenExpired);
+    }
     return Promise.reject(handleError(error));
   }
 );
@@ -96,9 +100,9 @@ function createHttpError(message: string, code: number) {
   return new HttpError(message, code);
 }
 
-/** 处理401错误（带防抖） */
-function handleUnauthorizedError(message?: string): never {
-  const error = createHttpError(message || $t('httpMsg.unauthorized'), ApiStatus.unauthorized);
+/** 处理Token过期或未授权错误（带防抖） */
+function handleUnauthorizedError(message?: string, code: number = ApiStatus.unauthorized): never {
+  const error = createHttpError(message || $t('httpMsg.unauthorized'), code);
 
   if (!isUnauthorizedErrorShown) {
     isUnauthorizedErrorShown = true;
@@ -113,7 +117,7 @@ function handleUnauthorizedError(message?: string): never {
   throw error;
 }
 
-/** 重置401防抖状态 */
+/** 重置未认证防抖状态 */
 function resetUnauthorizedError() {
   isUnauthorizedErrorShown = false;
   if (unauthorizedTimer) clearTimeout(unauthorizedTimer);
@@ -181,7 +185,7 @@ async function request<T = any>(config: ExtendedAxiosRequestConfig): Promise<T> 
 
     return res.data.data as T;
   } catch (error) {
-    if (error instanceof HttpError && error.code !== ApiStatus.unauthorized) {
+    if (error instanceof HttpError && error.code !== ApiStatus.tokenExpired) {
       const showMsg = config.showErrorMessage !== false;
       showError(error, showMsg);
     }

@@ -87,28 +87,6 @@
           @click="toggleFullScreen"
         />
 
-        <!-- 国际化按钮 -->
-        <ElDropdown
-          @command="changeLanguage"
-          popper-class="langDropDownStyle"
-          v-if="shouldShowLanguage"
-        >
-          <ArtIconButton icon="ri:translate-2" class="language-btn text-[19px]" />
-          <template #dropdown>
-            <ElDropdownMenu>
-              <div v-for="item in languageOptions" :key="item.value" class="lang-btn-item">
-                <ElDropdownItem
-                  :command="item.value"
-                  :class="{ 'is-selected': locale === item.value }"
-                >
-                  <span class="menu-txt">{{ item.label }}</span>
-                  <ArtSvgIcon icon="ri:check-fill" v-if="locale === item.value" />
-                </ElDropdownItem>
-              </div>
-            </ElDropdownMenu>
-          </template>
-        </ElDropdown>
-
         <!-- 通知按钮 -->
         <ArtIconButton
           v-if="shouldShowNotification"
@@ -117,16 +95,6 @@
           @click="visibleNotice"
         >
           <div class="absolute top-2 right-2 size-1.5 !bg-danger rounded-full"></div>
-        </ArtIconButton>
-
-        <!-- 聊天按钮 -->
-        <ArtIconButton
-          v-if="shouldShowChat"
-          icon="ri:message-3-line"
-          class="chat-button relative"
-          @click="openChat"
-        >
-          <div class="breathing-dot absolute top-2 right-2 size-1.5 !bg-success rounded-full"></div>
         </ArtIconButton>
 
         <!-- 设置按钮 -->
@@ -169,15 +137,13 @@
 </template>
 
 <script setup lang="ts">
-  import { useI18n } from 'vue-i18n';
   import { useRouter } from 'vue-router';
   import { useFullscreen, useWindowSize } from '@vueuse/core';
-  import { LanguageEnum, MenuTypeEnum } from '@/enums/appEnum';
+  import { MenuTypeEnum } from '@/enums/appEnum';
   import { useSettingStore } from '@/store/modules/setting';
   import { useUserStore } from '@/store/modules/user';
   import { useMenuStore } from '@/store/modules/menu';
   import AppConfig from '@/config';
-  import { languageOptions } from '@/locales';
   import { mittBus } from '@/utils/sys';
   import { themeAnimation } from '@/utils/ui/animation';
   import { useCommon } from '@/hooks/core/useCommon';
@@ -190,7 +156,6 @@
   const isWindows = navigator.userAgent.includes('Windows');
 
   const router = useRouter();
-  const { locale } = useI18n();
   const { width } = useWindowSize();
 
   const settingStore = useSettingStore();
@@ -206,8 +171,6 @@
     shouldShowGlobalSearch,
     shouldShowFullscreen,
     shouldShowNotification,
-    shouldShowChat,
-    shouldShowLanguage,
     shouldShowSettings,
     shouldShowThemeToggle,
     fastEnterMinWidth: headerBarFastEnterMinWidth
@@ -216,7 +179,6 @@
   const { menuOpen, systemThemeColor, showSettingGuide, menuType, isDark, tabStyle } =
     storeToRefs(settingStore);
 
-  const { language } = storeToRefs(userStore);
   const { menuList } = storeToRefs(menuStore);
 
   const showNotice = ref(false);
@@ -231,7 +193,6 @@
   const { isFullscreen, toggle: toggleFullscreen } = useFullscreen();
 
   onMounted(() => {
-    initLanguage();
     document.addEventListener('click', bodyCloseNotice);
   });
 
@@ -271,24 +232,6 @@
     setTimeout(() => {
       refresh();
     }, time);
-  };
-
-  /**
-   * 初始化语言设置
-   */
-  const initLanguage = (): void => {
-    locale.value = language.value;
-  };
-
-  /**
-   * 切换系统语言
-   * @param {LanguageEnum} lang - 目标语言类型
-   */
-  const changeLanguage = (lang: LanguageEnum): void => {
-    if (locale.value === lang) return;
-    locale.value = lang;
-    userStore.setLanguage(lang);
-    reload(50);
   };
 
   /**
@@ -335,12 +278,6 @@
     showNotice.value = !showNotice.value;
   };
 
-  /**
-   * 打开聊天窗口
-   */
-  const openChat = (): void => {
-    mittBus.emit('openChat');
-  };
 </script>
 
 <style lang="scss" scoped>
@@ -405,44 +342,9 @@
     }
   }
 
-  @keyframes moveUp {
-    0% {
-      transform: translateY(0);
-    }
-
-    50% {
-      transform: translateY(-3px);
-    }
-
-    100% {
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes breathing {
-    0% {
-      opacity: 0.4;
-      transform: scale(0.9);
-    }
-
-    50% {
-      opacity: 1;
-      transform: scale(1.1);
-    }
-
-    100% {
-      opacity: 0.4;
-      transform: scale(0.9);
-    }
-  }
-
   /* Hover animation classes */
   .refresh-btn:hover :deep(.art-svg-icon) {
     animation: rotate180 0.5s;
-  }
-
-  .language-btn:hover :deep(.art-svg-icon) {
-    animation: moveUp 0.4s;
   }
 
   .setting-btn:hover :deep(.art-svg-icon) {
@@ -459,15 +361,6 @@
 
   .notice-button:hover :deep(.art-svg-icon) {
     animation: shake 0.5s ease-in-out;
-  }
-
-  .chat-button:hover :deep(.art-svg-icon) {
-    animation: shake 0.5s ease-in-out;
-  }
-
-  /* Breathing animation for chat dot */
-  .breathing-dot {
-    animation: breathing 1.5s ease-in-out infinite;
   }
 
   /* iPad breakpoint adjustments */

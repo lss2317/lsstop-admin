@@ -53,5 +53,4 @@ declare namespace Api {
     /** 启用状态 */
     type EnableStatus = '1' | '2';
   }
-
 }

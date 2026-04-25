@@ -8,7 +8,6 @@
  * - 自定义 HttpError 错误类，封装错误信息、状态码、时间戳等
  * - 错误拦截和转换，将 Axios 错误转换为标准的 HttpError
  * - 错误消息国际化处理，根据状态码返回对应的多语言错误提示
- * - 错误日志记录，便于问题追踪和调试
  * - 错误和成功消息的统一展示
  * - 类型守卫函数，用于判断错误类型
  *
@@ -16,7 +15,6 @@
  *
  * - HTTP 请求拦截器中统一处理错误
  * - 业务代码中捕获和处理特定错误
- * - 错误日志收集和上报
  *
  * @module utils/http/error
  * @author Art Design Pro Team
@@ -33,24 +31,6 @@ export interface ErrorResponse {
   msg: string;
   /** 错误附加数据 */
   data?: unknown;
-}
-
-// 错误日志数据接口
-export interface ErrorLogData {
-  /** 错误状态码 */
-  code: number;
-  /** 错误消息 */
-  message: string;
-  /** 错误附加数据 */
-  data?: unknown;
-  /** 错误发生时间戳 */
-  timestamp: string;
-  /** 请求 URL */
-  url?: string;
-  /** 请求方法 */
-  method?: string;
-  /** 错误堆栈信息 */
-  stack?: string;
 }
 
 // 自定义 HttpError 类
@@ -77,18 +57,6 @@ export class HttpError extends Error {
     this.timestamp = new Date().toISOString();
     this.url = options?.url;
     this.method = options?.method;
-  }
-
-  public toLogData(): ErrorLogData {
-    return {
-      code: this.code,
-      message: this.message,
-      data: this.data,
-      timestamp: this.timestamp,
-      url: this.url,
-      method: this.method,
-      stack: this.stack
-    };
   }
 }
 
@@ -138,7 +106,8 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
   }
 
   // 处理 HTTP 状态码错误 - 优先使用后端返回的业务错误消息
-  const message = errorMessage || (statusCode ? getErrorMessage(statusCode) : $t('httpMsg.requestFailed'));
+  const message =
+    errorMessage || (statusCode ? getErrorMessage(statusCode) : $t('httpMsg.requestFailed'));
   throw new HttpError(message, statusCode || ApiStatus.error, {
     data: error.response.data,
     url: requestConfig?.url,
@@ -155,8 +124,6 @@ export function showError(error: HttpError, showMessage: boolean = true): void {
   if (showMessage) {
     ElMessage.error(error.message);
   }
-  // 记录错误日志
-  console.error('[HTTP Error]', error.toLogData());
 }
 
 /**

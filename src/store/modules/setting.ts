@@ -366,6 +366,7 @@ export const useSettingStore = defineStore(
 
     return {
       menuType,
+      menuOpen,
       menuOpenWidth,
       systemThemeType,
       systemThemeMode,
@@ -389,6 +390,9 @@ export const useSettingStore = defineStore(
       festivalDate,
       dualMenuShowText,
       containerWidth,
+      refresh,
+      pageTransition,
+      tabStyle,
       getMenuTheme,
       isDark,
       getMenuOpenWidth,
@@ -396,6 +400,7 @@ export const useSettingStore = defineStore(
       isShowFireworks,
       switchMenuLayouts,
       setMenuOpenWidth,
+      setMenuOpen,
       setGlopTheme,
       switchMenuStyles,
       setElementTheme,
@@ -416,7 +421,11 @@ export const useSettingStore = defineStore(
       setholidayFireworksLoaded,
       setShowFestivalText,
       setFestivalDate,
-      setDualMenuShowText
+      setDualMenuShowText,
+      openSettingGuide,
+      setPageTransition,
+      setTabStyle,
+      reload
     };
   },
   {
