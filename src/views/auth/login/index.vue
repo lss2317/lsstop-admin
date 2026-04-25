@@ -112,7 +112,7 @@
   import { useUserStore } from '@/store/modules/user';
   import { useI18n } from 'vue-i18n';
   import { HttpError } from '@/utils/http/error';
-  import { fetchLogin } from '@/api/auth';
+  import { fetchLogin } from '@/apis/auth';
   import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
   import { useSettingStore } from '@/store/modules/setting';
 
@@ -219,18 +219,18 @@
       // 登录请求
       const { username, password } = formData;
 
-      const { token, refreshToken } = await fetchLogin({
-        userName: username,
+      const { accessToken, refreshToken } = await fetchLogin({
+        email: username,
         password
       });
 
       // 验证token
-      if (!token) {
+      if (!accessToken) {
         throw new Error('Login failed - no token received');
       }
 
       // 存储 token 和登录状态
-      userStore.setToken(token, refreshToken);
+      userStore.setToken(accessToken, refreshToken);
       userStore.setLoginStatus(true);
 
       // 登录成功处理

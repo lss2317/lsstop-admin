@@ -38,13 +38,10 @@ interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
   showSuccessMessage?: boolean;
 }
 
-const { VITE_API_URL, VITE_WITH_CREDENTIALS } = import.meta.env;
-
-/** Axios实例 */
 const axiosInstance = axios.create({
   timeout: REQUEST_TIMEOUT,
-  baseURL: VITE_API_URL,
-  withCredentials: VITE_WITH_CREDENTIALS === 'true',
+  baseURL: '/api/admin', // 后端接口地址前缀
+  withCredentials: false,   // 跨域请求是否携带 Cookie
   validateStatus: (status) => status >= 200 && status < 300,
   transformResponse: [
     (data, headers) => {

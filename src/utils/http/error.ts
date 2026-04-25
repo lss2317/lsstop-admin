@@ -137,10 +137,8 @@ export function handleError(error: AxiosError<ErrorResponse>): never {
     });
   }
 
-  // 处理 HTTP 状态码错误
-  const message = statusCode
-    ? getErrorMessage(statusCode)
-    : errorMessage || $t('httpMsg.requestFailed');
+  // 处理 HTTP 状态码错误 - 优先使用后端返回的业务错误消息
+  const message = errorMessage || (statusCode ? getErrorMessage(statusCode) : $t('httpMsg.requestFailed'));
   throw new HttpError(message, statusCode || ApiStatus.error, {
     data: error.response.data,
     url: requestConfig?.url,

@@ -42,6 +42,7 @@ import { setPageTitle } from '@/utils/router';
 import { resetRouterState } from '@/router/guards/beforeEach';
 import { useMenuStore } from './menu';
 import { StorageConfig } from '@/utils/storage/storage-config';
+import type { UserInfo } from '@/apis/auth/types';
 
 /**
  * 用户状态管理
@@ -59,7 +60,7 @@ export const useUserStore = defineStore(
     // 锁屏密码
     const lockPassword = ref('');
     // 用户信息
-    const info = ref<Partial<Api.Auth.UserInfo>>({});
+    const info = ref<Partial<UserInfo>>({});
     // 搜索历史记录
     const searchHistory = ref<AppRouteRecord[]>([]);
     // 访问令牌
@@ -78,7 +79,7 @@ export const useUserStore = defineStore(
      * 设置用户信息
      * @param newInfo 新的用户信息
      */
-    const setUserInfo = (newInfo: Api.Auth.UserInfo) => {
+    const setUserInfo = (newInfo: UserInfo) => {
       info.value = newInfo;
     };
 
