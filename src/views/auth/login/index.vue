@@ -229,9 +229,8 @@
         throw new Error('Login failed - no token received');
       }
 
-      // 存储 token 和登录状态
+      // 存储 token
       userStore.setToken(accessToken, refreshToken);
-      userStore.setLoginStatus(true);
 
       // 登录成功处理
       showLoginSuccessNotice();

@@ -277,7 +277,6 @@
   const visibleNotice = (): void => {
     showNotice.value = !showNotice.value;
   };
-
 </script>
 
 <style lang="scss" scoped>
