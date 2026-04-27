@@ -132,7 +132,7 @@
       "subTitle": "美观实用的界面，经过视觉优化，确保卓越的用户体验"
     },
     "title": "欢迎回来",
-    "subTitle": "输入您的账号和密码登录",
+    "subTitle": "输入您的邮箱和密码登录",
     "roles": {
       "super": "超级管理员",
       "admin": "管理员",
@@ -140,6 +140,8 @@
     },
     "placeholder": {
       "username": "请输入账号",
+      "email": "请输入邮箱",
+      "emailFormat": "请输入正确的邮箱格式",
       "password": "请输入密码",
       "slider": "请拖动滑块完成验证"
     },
