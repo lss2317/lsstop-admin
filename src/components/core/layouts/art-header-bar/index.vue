@@ -98,22 +98,8 @@
         </ArtIconButton>
 
         <!-- 设置按钮 -->
-        <div v-if="shouldShowSettings">
-          <ElPopover :visible="showSettingGuide" placement="bottom-start" :width="190" :offset="0">
-            <template #reference>
-              <div class="flex-cc">
-                <ArtIconButton icon="ri:settings-line" class="setting-btn" @click="openSetting" />
-              </div>
-            </template>
-            <template #default>
-              <p
-                >{{ $t('topBar.guide.title')
-                }}<span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.theme') }} </span
-                >、 <span :style="{ color: systemThemeColor }"> {{ $t('topBar.guide.menu') }} </span
-                >{{ $t('topBar.guide.description') }}
-              </p>
-            </template>
-          </ElPopover>
+        <div v-if="shouldShowSettings" class="flex-cc">
+          <ArtIconButton icon="ri:settings-line" class="setting-btn" @click="openSetting" />
         </div>
 
         <!-- 主题切换按钮 -->
@@ -176,8 +162,7 @@
     fastEnterMinWidth: headerBarFastEnterMinWidth
   } = useHeaderBar();
 
-  const { menuOpen, systemThemeColor, showSettingGuide, menuType, isDark, tabStyle } =
-    storeToRefs(settingStore);
+  const { menuOpen, systemThemeColor, menuType, isDark, tabStyle } = storeToRefs(settingStore);
 
   const { menuList } = storeToRefs(menuStore);
 
@@ -239,11 +224,6 @@
    */
   const openSetting = (): void => {
     mittBus.emit('openSetting');
-
-    // 隐藏设置引导提示
-    if (showSettingGuide.value) {
-      settingStore.hideSettingGuide();
-    }
   };
 
   /**

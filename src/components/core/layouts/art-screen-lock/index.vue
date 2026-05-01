@@ -118,7 +118,7 @@
   const { t } = useI18n();
 
   // 环境变量
-  const ENCRYPT_KEY = import.meta.env.VITE_LOCK_ENCRYPT_KEY;
+  const ENCRYPT_KEY = 'lsstop-admin-lock-key';
 
   // Store
   const userStore = useUserStore();

@@ -147,13 +147,6 @@ export function useSettingsConfig() {
         headerBarKey: 'breadcrumb' as const
       },
       {
-        key: 'showLanguage',
-        label: t('setting.basics.list.language'),
-        type: 'switch' as const,
-        handler: 'language',
-        headerBarKey: 'language' as const
-      },
-      {
         key: 'showNprogress',
         label: t('setting.basics.list.progressBar'),
         type: 'switch' as const,

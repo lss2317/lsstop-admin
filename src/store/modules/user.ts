@@ -50,6 +50,10 @@ import type { UserInfo } from '@/apis/auth/types';
 export const useUserStore = defineStore('userStore', () => {
   // 语言设置
   const language = ref(LanguageEnum.ZH);
+  // 访问令牌（从 localStorage 初始化，保持响应式）
+  const accessToken = ref(localStorage.getItem(StorageConfig.ACCESS_TOKEN_KEY) || '');
+  // 刷新令牌（从 localStorage 初始化，保持响应式）
+  const refreshToken = ref(localStorage.getItem(StorageConfig.REFRESH_TOKEN_KEY) || '');
   // 登录状态（基于 accessToken 判断）
   const isLogin = computed(() => !!accessToken.value);
   // 锁屏状态
@@ -60,10 +64,6 @@ export const useUserStore = defineStore('userStore', () => {
   const info = ref<Partial<UserInfo>>({});
   // 搜索历史记录
   const searchHistory = ref<AppRouteRecord[]>([]);
-  // 访问令牌（从 localStorage 读取）
-  const accessToken = computed(() => localStorage.getItem(StorageConfig.ACCESS_TOKEN_KEY) || '');
-  // 刷新令牌（从 localStorage 读取）
-  const refreshToken = computed(() => localStorage.getItem(StorageConfig.REFRESH_TOKEN_KEY) || '');
 
   // 计算属性：获取用户信息
   const getUserInfo = computed(() => info.value);
@@ -111,6 +111,10 @@ export const useUserStore = defineStore('userStore', () => {
    * @param newRefreshToken 刷新令牌（可选）
    */
   const setToken = (newAccessToken: string, newRefreshToken: string) => {
+    // 更新响应式状态（触发 isLogin 等 computed 重新计算）
+    accessToken.value = newAccessToken;
+    refreshToken.value = newRefreshToken;
+    // 持久化到 localStorage
     localStorage.setItem(StorageConfig.ACCESS_TOKEN_KEY, newAccessToken);
     localStorage.setItem(StorageConfig.REFRESH_TOKEN_KEY, newRefreshToken);
   };
@@ -134,8 +138,10 @@ export const useUserStore = defineStore('userStore', () => {
     // 清空锁屏密码
     lockPassword.value = '';
     // 清空访问令牌
+    accessToken.value = '';
     localStorage.removeItem(StorageConfig.ACCESS_TOKEN_KEY);
     // 清空刷新令牌
+    refreshToken.value = '';
     localStorage.removeItem(StorageConfig.REFRESH_TOKEN_KEY);
     // 注意：不清空工作台标签页，等下次登录时根据用户判断
     // 移除iframe路由缓存
