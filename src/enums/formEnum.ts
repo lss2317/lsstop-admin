@@ -5,9 +5,6 @@
  *
  * - 页面模式枚举（新增、编辑）
  * - 表格尺寸枚举（默认、紧凑、宽松）
- *
- * @module enums/formEnum
- * @author Art Design Pro Team
  */
 
 // 页面类型

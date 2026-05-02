@@ -8,22 +8,6 @@
  * - 通用类型（分页参数、响应结构等）
  * - 系统管理类型（用户、角色等）
  * - 全局命名空间声明
- *
- * ## 使用场景
- *
- * - API 请求参数类型约束
- * - API 响应数据类型定义
- * - 接口文档类型同步
- *
- * ## 使用方式
- *
- * ```typescript
- * import type { PaginationParams, CommonSearchParams } from '@/types/common';
- * const params: PaginationParams = { current: 1, size: 10, total: 100 }
- * ```
- *
- * @module types/api/api
- * @author Art Design Pro Team
  */
 
 declare namespace Api {

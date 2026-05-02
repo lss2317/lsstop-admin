@@ -5,9 +5,6 @@ export class StorageConfig {
   /** 主题键名（index.html中使用了，如果修改，需要同步修改） */
   static readonly THEME_KEY = 'lsstop-theme';
 
-  /** 上次登录用户ID键名（用于判断是否为同一用户登录） */
-  static readonly LAST_USER_ID_KEY = 'lsstop-last-user-id';
-
   /** 访问令牌键名 */
   static readonly ACCESS_TOKEN_KEY = 'lsstop-access-token';
 

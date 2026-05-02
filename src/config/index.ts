@@ -1,8 +1,7 @@
 /**
  * 系统全局配置
  *
- * 这是系统的核心配置文件，集中管理所有全局配置项。
- * 包含系统信息、主题样式、菜单布局、颜色方案等所有可配置项。
+ * 集中管理所有全局配置项
  *
  * ## 主要功能
  *
@@ -12,21 +11,6 @@
  * - 颜色方案 - 系统主色和预设颜色列表
  * - 快速入口 - 快速入口应用和链接配置
  * - 顶部栏配置 - 顶部栏功能模块配置
- *
- * ## 配置项说明
- *
- * - systemInfo: 系统基础信息（名称等）
- * - systemThemeStyles: 系统主题样式映射
- * - settingThemeList: 可选的系统主题列表
- * - menuLayoutList: 可选的菜单布局列表
- * - themeList: 菜单主题样式列表
- * - darkMenuStyles: 暗黑模式下的菜单样式
- * - systemMainColor: 预设的系统主色列表
- * - fastEnter: 快速入口配置
- * - headerBar: 顶部栏功能配置
- *
- * @module config
- * @author Art Design Pro Team
  */
 
 import { MenuThemeEnum, MenuTypeEnum, SystemThemeEnum } from '@/enums/appEnum';

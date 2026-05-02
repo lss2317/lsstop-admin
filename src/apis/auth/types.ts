@@ -26,10 +26,16 @@ export interface LoginResponse {
 
 /** 用户信息 */
 export interface UserInfo {
-  buttons: string[];
-  roles: string[];
-  userId: number;
-  userName: string;
+  /** 用户ID */
+  userId: string;
+  /** 昵称 */
+  nickname: string;
+  /** 邮箱 */
   email: string;
-  avatar?: string;
+  /** 头像URL */
+  avatar: string;
+  /** 个人简介 */
+  intro: string;
+  /** 个人网站 */
+  website: string;
 }

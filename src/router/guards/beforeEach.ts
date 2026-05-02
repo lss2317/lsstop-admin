@@ -65,11 +65,26 @@ export function setupBeforeEachGuard(router: Router): void {
         return;
       }
 
-      // 登录后初始化菜单（只执行一次）
+      // 登录后初始化（只执行一次）：获取用户信息 + 构建菜单
       if (userStore.isLogin && !menuInited) {
         menuInited = true;
-        const menuStore = useMenuStore();
-        menuStore.setMenuList(buildMenuFromRoutes());
+        try {
+          // 1. 获取用户信息
+          await userStore.fetchUserInfoAction();
+
+          // 2. 构建菜单（目前从静态路由，后续可改为后端动态菜单）
+          const menuStore = useMenuStore();
+          menuStore.setMenuList(buildMenuFromRoutes());
+
+          // 动态路由可能刚注册，需要重定向以确保匹配
+          next({ ...to, replace: true });
+          return;
+        } catch {
+          // 请求失败由 HTTP 层统一处理（错误提示、token 过期自动登出）
+          // 这里只需重置初始化标志，避免卡死在守卫中
+          menuInited = false;
+          return;
+        }
       }
 
       setWorktab(to);

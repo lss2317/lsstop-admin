@@ -9,9 +9,6 @@
  * - 语言类型枚举（中文、英文）
  * - 容器宽度枚举（全屏、固定）
  * - 菜单宽度枚举（收起宽度）
- *
- * @module enums/appEnum
- * @author Art Design Pro Team
  */
 
 /**

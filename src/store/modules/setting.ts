@@ -9,26 +9,9 @@
  * - 主题管理（亮色、暗色、自动）
  * - 菜单主题样式配置
  * - 界面显示开关（面包屑、标签页、语言切换等）
- - 功能开关（手风琴模式、色弱模式等）
+ * - 功能开关（手风琴模式、色弱模式等）
  * - 样式配置（边框、圆角、容器宽度、页面过渡）
- * - 节日功能配置
  * - Element Plus 主题色动态设置
- *
- * ## 使用场景
- *
- * - 设置面板配置管理
- * - 主题切换和样式定制
- * - 界面功能开关控制
- * - 用户偏好设置持久化
- *
- * ## 持久化
- *
- * - 使用 localStorage 存储
- * - 存储键：sys-v{version}-setting
- * - 支持跨版本数据迁移
- *
- * @module store/modules/setting
- * @author Art Design Pro Team
  */
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
