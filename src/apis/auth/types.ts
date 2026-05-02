@@ -24,6 +24,20 @@ export interface LoginResponse {
   refreshToken: string;
 }
 
+/** 刷新Token参数 */
+export interface RefreshTokenParams {
+  /** 刷新令牌 */
+  refreshToken: string;
+}
+
+/** 刷新Token响应 */
+export interface RefreshTokenResponse {
+  /** 访问令牌，用于接口鉴权 */
+  accessToken: string;
+  /** 刷新令牌，用于获取新的访问令牌 */
+  refreshToken: string;
+}
+
 /** 用户信息 */
 export interface UserInfo {
   /** 用户ID */
