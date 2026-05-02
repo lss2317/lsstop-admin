@@ -19,7 +19,6 @@ import { MenuThemeType } from '@/types/store';
 import AppConfig from '@/config';
 import { SystemThemeEnum, MenuThemeEnum, MenuTypeEnum, ContainerWidthEnum } from '@/enums/appEnum';
 import { setElementThemeColor } from '@/utils/ui';
-import { useCeremony } from '@/hooks/core/useCeremony';
 import { StorageConfig } from '@/utils';
 import { SETTING_DEFAULT_CONFIG } from '@/config/setting';
 
@@ -65,8 +64,6 @@ export const useSettingStore = defineStore('settingStore', () => {
   const showNprogress = ref(SETTING_DEFAULT_CONFIG.showNprogress);
   /** 是否显示设置引导 */
   const showSettingGuide = ref(SETTING_DEFAULT_CONFIG.showSettingGuide);
-  /** 是否显示节日文本 */
-  const showFestivalText = ref(SETTING_DEFAULT_CONFIG.showFestivalText);
   // 功能设置
   /** 是否自动关闭 */
   const autoClose = ref(SETTING_DEFAULT_CONFIG.autoClose);
@@ -76,8 +73,6 @@ export const useSettingStore = defineStore('settingStore', () => {
   const colorWeak = ref(SETTING_DEFAULT_CONFIG.colorWeak);
   /** 是否刷新 */
   const refresh = ref(SETTING_DEFAULT_CONFIG.refresh);
-  /** 是否加载节日烟花 */
-  const holidayFireworksLoaded = ref(SETTING_DEFAULT_CONFIG.holidayFireworksLoaded);
 
   // 样式设置
   /** 边框模式 */
@@ -90,10 +85,6 @@ export const useSettingStore = defineStore('settingStore', () => {
   const customRadius = ref(SETTING_DEFAULT_CONFIG.customRadius);
   /** 容器宽度 */
   const containerWidth = ref(SETTING_DEFAULT_CONFIG.containerWidth);
-
-  // 节日相关
-  /** 节日日期 */
-  const festivalDate = ref('');
 
   /**
    * 获取菜单主题
@@ -127,14 +118,6 @@ export const useSettingStore = defineStore('settingStore', () => {
    */
   const getCustomRadius = computed((): string => {
     return customRadius.value + 'rem' || SETTING_DEFAULT_CONFIG.customRadius + 'rem';
-  });
-
-  /**
-   * 是否显示烟花
-   * 根据当前日期和节日日期判断是否显示烟花效果
-   */
-  const isShowFireworks = computed((): boolean => {
-    return festivalDate.value === useCeremony().currentFestivalData.value?.date ? false : true;
   });
 
   /**
@@ -321,26 +304,6 @@ export const useSettingStore = defineStore('settingStore', () => {
     document.documentElement.style.setProperty('--custom-radius', `${radius}rem`);
   };
 
-  /**
-   * 设置节日烟花加载状态
-   * @param isLoad 是否已加载
-   */
-  const setholidayFireworksLoaded = (isLoad: boolean) => {
-    holidayFireworksLoaded.value = isLoad;
-  };
-
-  /**
-   * 设置节日文本显示
-   * @param show 是否显示
-   */
-  const setShowFestivalText = (show: boolean) => {
-    showFestivalText.value = show;
-  };
-
-  const setFestivalDate = (date: string) => {
-    festivalDate.value = date;
-  };
-
   const setDualMenuShowText = (show: boolean) => {
     dualMenuShowText.value = show;
   };
@@ -366,9 +329,6 @@ export const useSettingStore = defineStore('settingStore', () => {
     colorWeak,
     showSettingGuide,
     customRadius,
-    holidayFireworksLoaded,
-    showFestivalText,
-    festivalDate,
     dualMenuShowText,
     containerWidth,
     refresh,
@@ -378,7 +338,6 @@ export const useSettingStore = defineStore('settingStore', () => {
     isDark,
     getMenuOpenWidth,
     getCustomRadius,
-    isShowFireworks,
     switchMenuLayouts,
     setMenuOpenWidth,
     setMenuOpen,
@@ -399,9 +358,6 @@ export const useSettingStore = defineStore('settingStore', () => {
     setColorWeak,
     hideSettingGuide,
     setCustomRadius,
-    setholidayFireworksLoaded,
-    setShowFestivalText,
-    setFestivalDate,
     setDualMenuShowText,
     openSettingGuide,
     setPageTransition,

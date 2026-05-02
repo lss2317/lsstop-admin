@@ -29,15 +29,6 @@ const fastEnterConfig: FastEnterConfig = {
       routeName: 'Analysis'
     },
     {
-      name: '礼花效果',
-      description: '动画特效展示',
-      icon: 'ri:loader-line',
-      iconColor: '#7A7FFF',
-      enabled: true,
-      order: 3,
-      routeName: 'Fireworks'
-    },
-    {
       name: '聊天',
       description: '即时通讯功能',
       icon: 'ri:user-line',

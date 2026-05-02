@@ -62,12 +62,12 @@
             </div>
 
             <div class="flex-cb mt-2 text-sm">
-              <ElCheckbox v-model="formData.rememberPassword">{{
-                $t('login.rememberPwd')
-              }}</ElCheckbox>
-              <RouterLink class="text-theme" :to="{ name: 'ForgetPassword' }">{{
-                $t('login.forgetPwd')
-              }}</RouterLink>
+              <ElCheckbox v-model="formData.rememberPassword"
+                >{{ $t('login.rememberPwd') }}
+              </ElCheckbox>
+              <RouterLink class="text-theme" :to="{ name: 'ForgetPassword' }"
+                >{{ $t('login.forgetPwd') }}
+              </RouterLink>
             </div>
 
             <div style="margin-top: 30px">
@@ -84,9 +84,9 @@
 
             <div class="mt-5 text-sm text-gray-600">
               <span>{{ $t('login.noAccount') }}</span>
-              <RouterLink class="text-theme" :to="{ name: 'Register' }">{{
-                $t('login.register')
-              }}</RouterLink>
+              <RouterLink class="text-theme" :to="{ name: 'Register' }"
+                >{{ $t('login.register') }}
+              </RouterLink>
             </div>
           </ElForm>
         </div>
@@ -96,7 +96,6 @@
 </template>
 
 <script setup lang="ts">
-  import AppConfig from '@/config';
   import { useUserStore } from '@/store/modules/user';
   import { useI18n } from 'vue-i18n';
   import { fetchLogin } from '@/apis/auth';
@@ -123,7 +122,6 @@
   const isPassing = ref(false);
   const isClickPass = ref(false);
 
-  const systemName = AppConfig.systemInfo.name;
   const formRef = ref<FormInstance>();
 
   const formData = reactive({
@@ -186,7 +184,7 @@
 
   // 重置拖拽验证
   const resetDragVerify = () => {
-    dragVerify.value.reset();
+    dragVerify.value?.reset();
   };
 
   // 登录成功提示
@@ -197,7 +195,7 @@
         type: 'success',
         duration: 2500,
         zIndex: 10000,
-        message: `${t('login.success.message')}, ${systemName}!`
+        message: `${t('login.success.message')}!`
       });
     }, 1000);
   };

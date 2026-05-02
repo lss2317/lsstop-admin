@@ -64,8 +64,8 @@ axiosInstance.interceptors.request.use(
       delete request.headers['Content-Type'];
     }
 
-    // Token 正在刷新中，将新请求挂起，不发到服务端
-    if (isRefreshing) {
+    // Token 正在刷新中，将新请求挂起（刷新接口本身除外，避免死锁）
+    if (isRefreshing && !request.url?.includes(REFRESH_URL)) {
       return new Promise<InternalAxiosRequestConfig>((resolve, reject) => {
         pendingRequests.push({
           resolve: (token: string) => {
@@ -89,7 +89,8 @@ axiosInstance.interceptors.request.use(
 );
 
 /** 响应拦截器 */
-axiosInstance.interceptors.response.use((response: AxiosResponse<BaseResponse>) => {
+axiosInstance.interceptors.response.use(
+  (response: AxiosResponse<BaseResponse>) => {
     const { code, msg } = response.data;
     if (code === ApiStatus.success) return response;
 
@@ -108,7 +109,7 @@ axiosInstance.interceptors.response.use((response: AxiosResponse<BaseResponse>) 
 
     throw createHttpError(msg || $t('httpMsg.requestFailed'), code);
   },
-  (error) => {
+  async (error) => {
     const responseData = error.response?.data;
 
     // Token 过期且非重试请求且非刷新接口 → 尝试刷新
@@ -157,7 +158,7 @@ function handleTokenExpired(): Promise<string> {
   if (!currentRefreshToken) {
     // 无 refreshToken，直接登出
     flushPendingRequests(null);
-    return Promise.reject(createHttpError($t('httpMsg.unauthorized'), ApiStatus.tokenExpired));
+    return Promise.reject(createHttpError($t('httpMsg.tokenExpired'), ApiStatus.tokenExpired));
   }
 
   // 用独立 axios 调刷新接口，绕过拦截器避免死循环
@@ -178,14 +179,14 @@ function handleTokenExpired(): Promise<string> {
       }
       // 业务码非成功，视为刷新失败
       flushPendingRequests(null);
-      throw createHttpError($t('httpMsg.unauthorized'), ApiStatus.tokenExpired);
+      throw createHttpError($t('httpMsg.tokenExpired'), ApiStatus.tokenExpired);
     })
     .catch((err) => {
       // 刷新接口请求失败（仅在未被 flushPendingRequests 处理时执行）
       if (isRefreshing) flushPendingRequests(null);
       throw err instanceof HttpError
         ? err
-        : createHttpError($t('httpMsg.unauthorized'), ApiStatus.tokenExpired);
+        : createHttpError($t('httpMsg.tokenExpired'), ApiStatus.tokenExpired);
     });
 }
 
@@ -202,14 +203,21 @@ function flushPendingRequests(token: string | null) {
   if (token) {
     requests.forEach((req) => req.resolve(token));
   } else {
-    const error = createHttpError($t('httpMsg.unauthorized'), ApiStatus.tokenExpired);
+    // 立即清除 Token，防止延迟登出期间新请求携带过期 Token 再次触发刷新
+    clearToken();
+    const error = createHttpError($t('httpMsg.tokenExpired'), ApiStatus.tokenExpired);
     requests.forEach((req) => req.reject(error));
     showError(error, true);
     logOut();
   }
 }
 
-/** 退出登录函数 */
+/** 立即清除 Token（防止竞态：延迟登出期间新请求仍携带过期 Token） */
+function clearToken() {
+  useUserStore().setToken('', '');
+}
+
+/** 延迟退出登录（清理状态 + 跳转登录页） */
 function logOut() {
   setTimeout(() => {
     useUserStore().logOut();
