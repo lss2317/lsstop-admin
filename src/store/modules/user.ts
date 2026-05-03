@@ -24,7 +24,7 @@ import { resetRouterState } from '@/router/guards/beforeEach';
 import { useMenuStore } from './menu';
 import { StorageConfig } from '@/utils/storage/storage-config';
 import type { UserInfo } from '@/apis/auth/types';
-import { fetchGetUserInfo } from '@/apis/auth';
+import { fetchGetUserInfo, fetchLogout } from '@/apis/auth';
 
 /**
  * 用户状态管理
@@ -117,6 +117,10 @@ export const useUserStore = defineStore('userStore', () => {
    * 清空所有用户相关状态并跳转到登录页
    */
   const logOut = () => {
+    // 通知后台清除 Token（fire-and-forget，不阻塞前端登出流程）
+    if (refreshToken.value) {
+      fetchLogout(refreshToken.value).catch(() => {});
+    }
     // 清空用户信息
     info.value = {};
     // 重置锁屏状态
