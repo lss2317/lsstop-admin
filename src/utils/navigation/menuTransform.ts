@@ -30,10 +30,7 @@ function resolveComponent(component: string | null): (() => Promise<any>) | unde
   // 去掉开头的 /，统一格式
   const cleanPath = component.startsWith('/') ? component.slice(1) : component;
 
-  const candidates = [
-    `/src/views/${cleanPath}/index.vue`,
-    `/src/views/${cleanPath}.vue`
-  ];
+  const candidates = [`/src/views/${cleanPath}/index.vue`, `/src/views/${cleanPath}.vue`];
 
   for (const path of candidates) {
     if (viewModules[path]) {
@@ -52,7 +49,11 @@ function createErrorComponent(componentPath: string): () => Promise<any> {
   return () =>
     Promise.resolve({
       render() {
-        return h('div', { class: 'route-error', style: 'padding:20px;color:red' }, `组件未找到: ${componentPath}`);
+        return h(
+          'div',
+          { class: 'route-error', style: 'padding:20px;color:red' },
+          `组件未找到: ${componentPath}`
+        );
       }
     });
 }
@@ -189,7 +190,9 @@ export function transformToRouteRecords(menuList: AppRouteRecord[]): RouteRecord
   for (const item of menuList) {
     const hasChildren = item.children && item.children.length > 0;
     const isDirectory = hasChildren && !item.component;
-    const component = isDirectory ? undefined : resolveComponent(item.component as string ?? null);
+    const component = isDirectory
+      ? undefined
+      : resolveComponent((item.component as string) ?? null);
 
     // 菜单页面必须有组件
     if (!isDirectory && !component) {
