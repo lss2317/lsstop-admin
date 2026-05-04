@@ -12,6 +12,6 @@ import type { BackendMenuItem } from './types';
  */
 export function fetchMenuList() {
   return request.get<BackendMenuItem[]>({
-    url: '/menu/list'
+    url: '/menu/user'
   });
 }

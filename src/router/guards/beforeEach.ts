@@ -89,13 +89,9 @@ export function setupBeforeEachGuard(router: Router): void {
           // 5. 设置菜单列表（同时自动推导 homePath）
           menuStore.setMenuList(menuList);
 
-          // 动态路由刚注册，需要重定向以确保匹配
-          // 如果用户访问的是根路径 '/'，则跳转到首页
-          if (to.path === '/') {
-            next({ path: menuStore.getHomePath(), replace: true });
-          } else {
-            next({ ...to, replace: true });
-          }
+          // 动态路由刚注册，用 path 重新解析（不能用 ...to，否则会携带旧的 name 如 Exception404）
+          const targetPath = to.path === '/' ? menuStore.getHomePath() : to.fullPath;
+          next({ path: targetPath, replace: true });
           return;
         } catch {
           // 请求失败由 HTTP 层统一处理（错误提示、token 过期自动登出）

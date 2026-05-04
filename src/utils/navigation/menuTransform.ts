@@ -10,6 +10,7 @@
  * 5. 按钮权限提取到 meta.authList
  */
 import { h } from 'vue';
+import { RouterView } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import type { BackendMenuItem } from '@/apis/menu/types';
 import type { AppRouteRecord } from '@/types/router';
@@ -146,7 +147,8 @@ export function transformMenuData(items: BackendMenuItem[], parentPath = ''): Ap
       id: item.id,
       name: item.name,
       path: fullPath,
-      component: item.component ?? undefined,
+      // 目录类型（menuType=1）仅做逻辑分组，不对应实际组件，强制清空防止嵌套布局
+      component: item.menuType === 1 ? undefined : (item.component ?? undefined),
       meta: buildMeta(item)
     };
 
@@ -207,7 +209,7 @@ export function transformToRouteRecords(menuList: AppRouteRecord[]): RouteRecord
       component: component ?? {
         // 目录容器：只渲染子路由，不渲染自身页面
         name: `${String(item.name)}Container`,
-        render: () => h('router-view')
+        render: () => h(RouterView)
       },
       redirect: item.redirect ?? undefined,
       children: undefined as RouteRecordRaw[] | undefined
