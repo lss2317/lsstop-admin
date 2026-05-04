@@ -14,15 +14,14 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { AppRouteRecord } from '@/types/router';
 import { getFirstMenuPath } from '@/utils';
-import { HOME_PAGE_PATH } from '@/router';
 
 /**
  * 菜单状态管理
  * 管理应用的菜单列表、首页路径、菜单宽度和动态路由移除函数
  */
 export const useMenuStore = defineStore('menuStore', () => {
-  /** 首页路径 */
-  const homePath = ref(HOME_PAGE_PATH);
+  /** 首页路径（由菜单列表动态推导） */
+  const homePath = ref('');
   /** 菜单列表 */
   const menuList = ref<AppRouteRecord[]>([]);
   /** 菜单宽度 */
@@ -32,11 +31,12 @@ export const useMenuStore = defineStore('menuStore', () => {
 
   /**
    * 设置菜单列表
+   * 同时自动推导首页路径（菜单树中第一个叶子节点）
    * @param list 菜单路由记录数组
    */
   const setMenuList = (list: AppRouteRecord[]) => {
     menuList.value = list;
-    setHomePath(HOME_PAGE_PATH || getFirstMenuPath(list));
+    setHomePath(getFirstMenuPath(list));
   };
 
   /**

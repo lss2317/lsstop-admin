@@ -54,19 +54,11 @@ export const staticRoutes: AppRouteRecordRaw[] = [
     meta: { title: '500', isHideTab: true }
   },
   // 需要登录的布局路由（由 beforeEach 守卫保护）
+  // children 由登录后接口动态注册，redirect 由 menuStore.homePath 控制
   {
     path: '/',
     name: 'Layout',
     component: () => import('@views/index/index.vue'),
-    redirect: '/home',
-    meta: { title: '' },
-    children: [
-      {
-        path: '/home',
-        name: 'Home',
-        component: () => import('@views/home/index.vue'),
-        meta: { title: '首页' }
-      }
-    ]
+    meta: { title: '' }
   }
 ];
