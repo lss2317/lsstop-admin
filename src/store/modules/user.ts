@@ -22,6 +22,7 @@ import { useWorktabStore } from './worktab';
 import { AppRouteRecord } from '@/types/router';
 import { resetRouterState } from '@/router/guards/beforeEach';
 import { useMenuStore } from './menu';
+import { IframeRouteManager } from '@/router/core';
 import { StorageConfig } from '@/utils/storage/storage-config';
 import type { UserInfo } from '@/apis/auth/types';
 import { fetchGetUserInfo, fetchLogout } from '@/apis/auth';
@@ -135,8 +136,8 @@ export const useUserStore = defineStore('userStore', () => {
     localStorage.removeItem(StorageConfig.REFRESH_TOKEN_KEY);
     // 清空工作台标签页
     useWorktabStore().clearAll();
-    // 移除iframe路由缓存
-    sessionStorage.removeItem('iframeRoutes');
+    // 清空 iframe 路由内存缓存
+    IframeRouteManager.getInstance().clear();
     // 清空主页路径
     useMenuStore().setHomePath('');
     // 重置路由状态

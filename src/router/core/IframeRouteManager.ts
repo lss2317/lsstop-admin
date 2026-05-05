@@ -51,28 +51,4 @@ export class IframeRouteManager {
   clear(): void {
     this.iframeRoutes = [];
   }
-
-  /**
-   * 保存到 sessionStorage
-   */
-  save(): void {
-    if (this.iframeRoutes.length > 0) {
-      sessionStorage.setItem('iframeRoutes', JSON.stringify(this.iframeRoutes));
-    }
-  }
-
-  /**
-   * 从 sessionStorage 加载
-   */
-  load(): void {
-    try {
-      const data = sessionStorage.getItem('iframeRoutes');
-      if (data) {
-        this.iframeRoutes = JSON.parse(data);
-      }
-    } catch (error) {
-      console.error('[IframeRouteManager] 加载 iframe 路由失败:', error);
-      this.iframeRoutes = [];
-    }
-  }
 }

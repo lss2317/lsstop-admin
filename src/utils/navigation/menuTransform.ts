@@ -14,6 +14,7 @@ import { RouterView } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
 import type { BackendMenuItem } from '@/apis/menu/types';
 import type { AppRouteRecord } from '@/types/router';
+import { IframeRouteManager } from '@/router/core';
 
 /**
  * Vite 预扫描所有 views 下的 .vue 文件
@@ -139,8 +140,10 @@ function buildMeta(item: BackendMenuItem): AppRouteRecord['meta'] {
  */
 export function transformMenuData(items: BackendMenuItem[], parentPath = ''): AppRouteRecord[] {
   return items.map((item) => {
-    // 1. 路径规范化
-    const fullPath = buildFullPath(item.path, parentPath);
+    // 1. 路径规范化（iframe 菜单使用 /outside/iframe/{normalizedPath} 格式）
+    const isIframeMenu = item.isIframe && !!item.link;
+    const basePath = buildFullPath(item.path, parentPath);
+    const fullPath = isIframeMenu ? `/outside/iframe/${basePath.replace(/^\//, '')}` : basePath;
 
     // 2. 基础转换
     const route: AppRouteRecord = {
@@ -148,7 +151,9 @@ export function transformMenuData(items: BackendMenuItem[], parentPath = ''): Ap
       name: item.name,
       path: fullPath,
       // 目录类型（menuType=1）仅做逻辑分组，不对应实际组件，强制清空防止嵌套布局
-      component: item.menuType === 1 ? undefined : (item.component ?? undefined),
+      // iframe 菜单使用专用 iframe 视图组件
+      component:
+        item.menuType === 1 ? undefined : isIframeMenu ? '/outside' : (item.component ?? undefined),
       meta: buildMeta(item)
     };
 
@@ -185,19 +190,22 @@ export function transformMenuData(items: BackendMenuItem[], parentPath = ''): Ap
  *
  * 核心工作：将 component 字符串通过 resolveComponent 映射为懒加载函数
  * 目录类型使用 RouterView 做透传容器
+ * iframe 菜单注册到 IframeRouteManager 并使用 iframe 视图组件
  */
 export function transformToRouteRecords(menuList: AppRouteRecord[]): RouteRecordRaw[] {
   const routes: RouteRecordRaw[] = [];
+  const iframeManager = IframeRouteManager.getInstance();
 
   for (const item of menuList) {
     const hasChildren = item.children && item.children.length > 0;
     const isDirectory = hasChildren && !item.component;
+    const isIframeRoute = item.meta?.isIframe && !!item.meta?.link;
     const component = isDirectory
       ? undefined
       : resolveComponent((item.component as string) ?? null);
 
-    // 菜单页面必须有组件
-    if (!isDirectory && !component) {
+    // 菜单页面必须有组件（iframe 路由除外，因为 resolveComponent 能解析到 iframe 视图）
+    if (!isDirectory && !component && !isIframeRoute) {
       console.warn(`[menuTransform] 菜单 "${String(item.name)}" 缺少有效组件，已跳过`);
       continue;
     }
@@ -214,6 +222,11 @@ export function transformToRouteRecords(menuList: AppRouteRecord[]): RouteRecord
       redirect: item.redirect ?? undefined,
       children: undefined as RouteRecordRaw[] | undefined
     };
+
+    // iframe 路由注册到 IframeRouteManager
+    if (isIframeRoute) {
+      iframeManager.add(item);
+    }
 
     // 递归处理子路由
     if (hasChildren) {
