@@ -11,14 +11,13 @@
         <SalesOverview />
       </ElCol>
     </ElRow>
-
   </div>
 </template>
 
 <script setup lang="ts">
-  import CardList from './modules/card-list.vue'
-  import ActiveUser from './modules/active-user.vue'
-  import SalesOverview from './modules/sales-overview.vue'
+  import CardList from './modules/card-list.vue';
+  import ActiveUser from './modules/active-user.vue';
+  import SalesOverview from './modules/sales-overview.vue';
 
-  defineOptions({ name: 'Console' })
+  defineOptions({ name: 'Console' });
 </script>

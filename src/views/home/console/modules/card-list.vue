@@ -25,12 +25,12 @@
 
 <script setup lang="ts">
   interface CardDataItem {
-    des: string
-    icon: string
-    startVal: number
-    duration: number
-    num: number
-    change: string
+    des: string;
+    icon: string;
+    startVal: number;
+    duration: number;
+    num: number;
+    change: string;
   }
 
   /**
@@ -70,5 +70,5 @@
       num: 156,
       change: '+30%'
     }
-  ])
+  ]);
 </script>

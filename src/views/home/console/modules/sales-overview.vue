@@ -17,26 +17,21 @@
 
 <script setup lang="ts">
   /**
-   * 全年访问量数据
-   * 记录每月的访问量统计
+   * 近十天访问量数据（模拟）
    */
-  const data = [50, 25, 40, 20, 70, 35, 65, 30, 35, 20, 40, 44]
+  const data = [50, 25, 40, 20, 70, 35, 65, 30, 35, 20];
 
   /**
-   * X 轴月份标签
+   * 动态生成近十天日期标签（MM/DD 格式）
    */
-  const xAxisData = [
-    '1月',
-    '2月',
-    '3月',
-    '4月',
-    '5月',
-    '6月',
-    '7月',
-    '8月',
-    '9月',
-    '10月',
-    '11月',
-    '12月'
-  ]
+  const xAxisData = (() => {
+    const days: string[] = [];
+    const now = new Date();
+    for (let i = 10; i >= 1; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      days.push(`${d.getMonth() + 1}/${d.getDate()}`);
+    }
+    return days;
+  })();
 </script>
