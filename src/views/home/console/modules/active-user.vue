@@ -3,16 +3,12 @@
     <ArtBarChart
       class="box-border p-2"
       barWidth="50%"
-      height="13.7rem"
+      height="19rem"
       :showAxisLine="false"
       :data="chartData"
       :xAxisData="xAxisLabels"
     />
-    <div class="ml-1">
-      <h3 class="mt-5 text-lg font-medium">用户概述</h3>
-      <p class="mt-1 text-sm">比上周 <span class="text-success font-medium">+23%</span></p>
-      <p class="mt-1 text-sm">我们为您创建了多个选项，可将它们组合在一起并定制为像素完美的页面</p>
-    </div>
+
     <div class="flex-b mt-2">
       <div class="flex-1" v-for="(item, index) in list" :key="index">
         <p class="text-2xl text-g-900">{{ item.num }}</p>
