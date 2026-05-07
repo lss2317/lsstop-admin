@@ -50,7 +50,7 @@
    * 评论统计数据
    */
   const list: ArticleStatItem[] = [
-    { name: '总评论数', num: '9.5k' },
+    { name: '待审核', num: '12' },
     { name: '今日新增', num: '35' },
     { name: '日均评论', num: '24' },
     { name: '周同比', num: '+15%' }

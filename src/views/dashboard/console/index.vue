@@ -11,6 +11,8 @@
         <SalesOverview />
       </ElCol>
     </ElRow>
+
+    <TodoList />
   </div>
 </template>
 
@@ -18,6 +20,7 @@
   import CardList from './modules/card-list.vue';
   import ActiveUser from './modules/active-user.vue';
   import SalesOverview from './modules/sales-overview.vue';
+  import TodoList from './modules/todo-list.vue';
 
   defineOptions({ name: 'Console' });
 </script>
