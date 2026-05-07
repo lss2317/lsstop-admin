@@ -10,7 +10,7 @@
       :data="chartData"
       :showLegend="true"
       legendPosition="bottom"
-      :showLabel="true"
+      :showLabel="false"
     />
   </div>
 </template>

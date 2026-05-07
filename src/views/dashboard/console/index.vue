@@ -12,7 +12,14 @@
       </ElCol>
     </ElRow>
 
-    <TodoList />
+    <ElRow :gutter="20">
+      <ElCol :sm="24" :md="14" :lg="14">
+        <RecentComments />
+      </ElCol>
+      <ElCol :sm="24" :md="10" :lg="10">
+        <PendingReview />
+      </ElCol>
+    </ElRow>
   </div>
 </template>
 
@@ -20,7 +27,8 @@
   import CardList from './modules/card-list.vue';
   import ActiveUser from './modules/active-user.vue';
   import SalesOverview from './modules/sales-overview.vue';
-  import TodoList from './modules/todo-list.vue';
+  import RecentComments from './modules/recent-comments.vue';
+  import PendingReview from './modules/pending-review.vue';
 
   defineOptions({ name: 'Console' });
 </script>

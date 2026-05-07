@@ -2,14 +2,13 @@
   <div class="art-card p-5 mb-5 max-sm:mb-4">
     <div class="art-card-header mb-4">
       <div class="title">
-        <h4>待办事项</h4>
-        <p>需要处理的内容</p>
+        <h4>待处理</h4>
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
+    <div class="space-y-4">
       <div
-        v-for="(item, index) in todoList"
+        v-for="(item, index) in pendingItems"
         :key="index"
         class="flex items-center justify-between p-4 rounded-xl border border-g-300/85 hover:border-theme/50 transition-colors cursor-pointer"
       >
@@ -22,14 +21,14 @@
             <p class="text-xs text-g-500 mt-0.5">{{ item.desc }}</p>
           </div>
         </div>
-        <span class="text-lg font-semibold" :class="item.numColor">{{ item.num }}</span>
+        <span class="text-2xl font-semibold" :class="item.numColor">{{ item.num }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-  interface TodoItem {
+  interface PendingItem {
     title: string;
     desc: string;
     icon: string;
@@ -40,9 +39,9 @@
   }
 
   /**
-   * 待办事项列表（对应 blog_comment.review 和 blog_message.review）
+   * 待处理事项（对应 blog_comment.review=1 和 blog_message.review=1）
    */
-  const todoList: TodoItem[] = [
+  const pendingItems: PendingItem[] = [
     {
       title: '待审核评论',
       desc: '需要审核的用户评论',
@@ -60,24 +59,6 @@
       iconColor: 'text-warning',
       num: 5,
       numColor: 'text-warning'
-    },
-    {
-      title: '草稿文章',
-      desc: '未发布的文章草稿',
-      icon: 'ri:draft-line',
-      iconBg: 'bg-success/10',
-      iconColor: 'text-success',
-      num: 3,
-      numColor: 'text-success'
-    },
-    {
-      title: '今日新用户',
-      desc: '今日注册的新用户',
-      icon: 'ri:user-add-line',
-      iconBg: 'bg-danger/10',
-      iconColor: 'text-danger',
-      num: 8,
-      numColor: 'text-danger'
     }
   ];
 </script>
