@@ -24,26 +24,26 @@
 </template>
 
 <script setup lang="ts">
+  import { formatDateShort } from '@/utils/format';
+
   interface ArticleStatItem {
     name: string;
     num: string;
   }
 
-  /**
-   * 动态生成近 7 天日期标签（M/D 格式，不含今天）
-   */
-  const xAxisLabels = (() => {
-    const days: string[] = [];
-    const now = new Date();
-    for (let i = 7; i >= 1; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      days.push(`${d.getMonth() + 1}/${d.getDate()}`);
-    }
-    return days;
-  })();
+  // 近七天日期（由后端返回 yyyy-MM-dd 格式）
+  const dates = [
+    '2026-05-01',
+    '2026-05-02',
+    '2026-05-03',
+    '2026-05-04',
+    '2026-05-05',
+    '2026-05-06',
+    '2026-05-07'
+  ];
+  const xAxisLabels = dates.map(formatDateShort);
 
-  // 近七天每日评论数（模拟）
+  // 近七天每日评论数（由后端返回）
   const chartData = [18, 25, 12, 30, 22, 35, 28];
 
   /**

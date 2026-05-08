@@ -32,3 +32,6 @@ export * from './form';
 
 // socket 相关
 export * from './socket';
+
+// 格式化相关
+export * from './format';

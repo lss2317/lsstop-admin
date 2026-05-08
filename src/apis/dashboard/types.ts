@@ -2,10 +2,8 @@
  * 仪表盘接口类型定义
  */
 
-/** 统计卡片项 */
+/** 统计卡片项（后端返回） */
 export interface StatCardItem {
-  /** 描述（如"总访问量"） */
-  des: string;
   /** 数值 */
   num: number;
   /** 周环比变化（如"+20%"、"-12%"） */
@@ -14,6 +12,8 @@ export interface StatCardItem {
 
 /** 近七天评论统计 */
 export interface CommentStat {
+  /** 日期列表（yyyy-MM-dd 格式） */
+  dates: string[];
   /** 近7天每日评论数 */
   dailyCounts: number[];
   /** 待审核数 */
@@ -28,6 +28,8 @@ export interface CommentStat {
 
 /** 近十天访问量 */
 export interface VisitOverview {
+  /** 日期列表（yyyy-MM-dd 格式） */
+  dates: string[];
   /** 每日访问量 */
   dailyCounts: number[];
 }
@@ -42,8 +44,8 @@ export interface RecentCommentItem {
   content: string;
   /** 文章标题 */
   article: string;
-  /** 时间描述（如"5分钟前"） */
-  time: string;
+  /** 评论时间（ISO 8601 格式） */
+  createdAt: string;
 }
 
 /** 待审核统计 */
@@ -70,6 +72,8 @@ export interface ConsoleData {
 
 /** 独立访客趋势（近30天） */
 export interface UniqueVisitorTrend {
+  /** 日期列表（yyyy-MM-dd 格式） */
+  dates: string[];
   /** 每日独立访客数 */
   dailyCounts: number[];
 }
@@ -96,6 +100,14 @@ export interface CommentSourceItem {
   name: string;
   /** 评论数量 */
   value: number;
+}
+
+/** 互动趋势 */
+export interface InteractionTrend {
+  /** 日期列表（yyyy-MM-dd 格式） */
+  dates: string[];
+  /** 各类型趋势数据 */
+  items: InteractionTrendItem[];
 }
 
 /** 互动趋势数据项 */
@@ -125,7 +137,7 @@ export interface AnalysisData {
   /** 评论来源分布 */
   commentSource: CommentSourceItem[];
   /** 近7天互动趋势 */
-  interactionTrend: InteractionTrendItem[];
+  interactionTrend: InteractionTrend;
   /** 标签热度 */
   tagRadar: TagRadarItem[];
 }

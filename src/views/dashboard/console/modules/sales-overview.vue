@@ -16,22 +16,23 @@
 </template>
 
 <script setup lang="ts">
-  /**
-   * 近十天访问量数据（模拟）
-   */
+  import { formatDateShort } from '@/utils/format';
+
+  // 近十天访问量数据（由后端返回）
   const data = [50, 25, 40, 20, 70, 35, 65, 30, 35, 20];
 
-  /**
-   * 动态生成近十天日期标签（M/D 格式，不含今天）
-   */
-  const xAxisData = (() => {
-    const days: string[] = [];
-    const now = new Date();
-    for (let i = 10; i >= 1; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      days.push(`${d.getMonth() + 1}/${d.getDate()}`);
-    }
-    return days;
-  })();
+  // 近十天日期（由后端返回 yyyy-MM-dd 格式）
+  const dates = [
+    '2026-04-28',
+    '2026-04-29',
+    '2026-04-30',
+    '2026-05-01',
+    '2026-05-02',
+    '2026-05-03',
+    '2026-05-04',
+    '2026-05-05',
+    '2026-05-06',
+    '2026-05-07'
+  ];
+  const xAxisData = dates.map(formatDateShort);
 </script>

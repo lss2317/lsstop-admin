@@ -19,24 +19,21 @@
 
 <script setup lang="ts">
   import type { LineDataItem } from '@/types/component/chart';
+  import { formatDateShort } from '@/utils/format';
 
-  /**
-   * 动态生成近 7 天日期标签（M/D 格式，不含今天）
-   */
-  const xAxisData = (() => {
-    const days: string[] = [];
-    const now = new Date();
-    for (let i = 7; i >= 1; i--) {
-      const d = new Date(now);
-      d.setDate(d.getDate() - i);
-      days.push(`${d.getMonth() + 1}/${d.getDate()}`);
-    }
-    return days;
-  })();
+  // 近7天日期（由后端返回 yyyy-MM-dd 格式）
+  const dates = [
+    '2026-05-01',
+    '2026-05-02',
+    '2026-05-03',
+    '2026-05-04',
+    '2026-05-05',
+    '2026-05-06',
+    '2026-05-07'
+  ];
+  const xAxisData = dates.map(formatDateShort);
 
-  /**
-   * 互动数据对比（对应 blog_comment、blog_message、blog_like_record）
-   */
+  // 互动数据对比（由后端返回）
   const chartData = computed<LineDataItem[]>(() => [
     {
       name: '评论',

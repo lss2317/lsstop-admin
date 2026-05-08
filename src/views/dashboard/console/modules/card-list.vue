@@ -24,51 +24,25 @@
 </template>
 
 <script setup lang="ts">
-  interface CardDataItem {
-    des: string;
-    icon: string;
-    startVal: number;
-    duration: number;
-    num: number;
-    change: string;
-  }
+  /** 前端固定配置（图标、描述、动画参数） */
+  const cardConfig = [
+    { des: '总访问量', icon: 'ri:line-chart-line' },
+    { des: '总用户数', icon: 'ri:user-line' },
+    { des: '总评论数', icon: 'ri:chat-3-line' },
+    { des: '总留言数', icon: 'ri:message-2-line' }
+  ];
 
-  /**
-   * 卡片统计数据列表
-   * 展示总访问量、总用户数、总评论数和总留言数等核心数据指标
-   */
-  const dataList = reactive<CardDataItem[]>([
-    {
-      des: '总访问量',
-      icon: 'ri:line-chart-line',
-      startVal: 0,
-      duration: 1000,
-      num: 9120,
-      change: '+20%'
-    },
-    {
-      des: '总用户数',
-      icon: 'ri:user-line',
-      startVal: 0,
-      duration: 1000,
-      num: 182,
-      change: '+10%'
-    },
-    {
-      des: '总评论数',
-      icon: 'ri:chat-3-line',
-      startVal: 0,
-      duration: 1000,
-      num: 9520,
-      change: '-12%'
-    },
-    {
-      des: '总留言数',
-      icon: 'ri:message-2-line',
-      startVal: 0,
-      duration: 1000,
-      num: 156,
-      change: '+30%'
-    }
-  ]);
+  /** 后端返回的数据（模拟） */
+  const statCards = [
+    { num: 9120, change: '+20%' },
+    { num: 182, change: '+10%' },
+    { num: 9520, change: '-12%' },
+    { num: 156, change: '+30%' }
+  ];
+
+  /** 合并前端配置 + 后端数据 */
+  const dataList = cardConfig.map((config, index) => ({
+    ...config,
+    ...statCards[index]
+  }));
 </script>
