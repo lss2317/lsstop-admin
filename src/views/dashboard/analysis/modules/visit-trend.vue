@@ -2,8 +2,8 @@
   <div class="art-card h-72 p-5 mb-5 max-sm:mb-4">
     <div class="art-card-header">
       <div class="title">
-        <h4>近30天访问趋势</h4>
-        <p>每日独立访客数据</p>
+        <h4>近30天访客趋势</h4>
+        <p>每日独立访客数</p>
       </div>
     </div>
     <ArtLineChart

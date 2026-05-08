@@ -34,7 +34,7 @@ export const setPageTitle = (to: RouteLocationNormalized): void => {
   const { title } = to.meta;
   if (title) {
     setTimeout(() => {
-      document.title = `${formatMenuTitle(String(title))} - 博客管理`;
+      document.title = `${formatMenuTitle(String(title))} - 博客后台`;
     }, 150);
   }
 };
