@@ -3,17 +3,20 @@
     <div class="art-card-header mb-4">
       <div class="title">
         <h4>最近评论</h4>
-        <p>最近5条评论</p>
+        <p v-if="comments.length > 0">最近{{ comments.length }}条评论</p>
       </div>
     </div>
 
-    <div class="space-y-4 max-h-80 overflow-y-auto">
+    <div v-if="comments.length === 0" class="flex-cc h-42 text-g-400 text-sm">
+      暂无评论
+    </div>
+    <div v-else class="space-y-4 max-h-80 overflow-y-auto">
       <div
         v-for="(item, index) in comments"
         :key="index"
         class="flex items-start p-3 rounded-lg hover:bg-g-100/50 transition-colors"
       >
-        <img :src="item.avatar" class="size-9 rounded-full shrink-0" />
+        <img :src="item.avatar" :alt="item.nickname" class="size-9 rounded-full shrink-0" />
         <div class="ml-3 flex-1 min-w-0">
           <div class="flex items-center justify-between">
             <span class="text-sm font-medium text-g-800">{{ item.nickname }}</span>
