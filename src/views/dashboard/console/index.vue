@@ -1,14 +1,14 @@
-<!-- 工作台页面 -->
+<!-- 控制台页面 -->
 <template>
   <div>
-    <CardList></CardList>
+    <StatCards />
 
     <ElRow :gutter="20">
       <ElCol :sm="24" :md="12" :lg="10">
-        <ActiveUser />
+        <CommentStat />
       </ElCol>
       <ElCol :sm="24" :md="12" :lg="14">
-        <SalesOverview />
+        <VisitOverview />
       </ElCol>
     </ElRow>
 
@@ -25,9 +25,9 @@
 </template>
 
 <script setup lang="ts">
-  import CardList from './modules/card-list.vue';
-  import ActiveUser from './modules/active-user.vue';
-  import SalesOverview from './modules/sales-overview.vue';
+  import StatCards from './modules/stat-cards.vue';
+  import CommentStat from './modules/comment-stat.vue';
+  import VisitOverview from './modules/visit-overview.vue';
   import RecentComments from './modules/recent-comments.vue';
   import PendingReview from './modules/pending-review.vue';
   import ContentOverview from './modules/content-overview.vue';

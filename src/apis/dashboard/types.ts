@@ -24,8 +24,8 @@ export interface DailyStatItem {
 export interface CommentStat {
   /** 近7天每日评论数 */
   dailyStats: DailyStatItem[];
-  /** 待审核数 */
-  pendingCount: number;
+  /** 7天评论总数 */
+  totalCount: number;
   /** 今日新增 */
   todayCount: number;
   /** 日均评论 */
