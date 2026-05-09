@@ -20,7 +20,11 @@
             <span class="text-xs text-g-400">{{ formatTimeAgo(item.createdAt) }}</span>
           </div>
           <p class="text-xs text-g-500 mt-1 truncate">{{ item.content }}</p>
-          <p class="text-xs text-g-400 mt-0.5"> 评论了《{{ item.article }}》 </p>
+          <p class="text-xs text-g-400 mt-0.5">
+            <template v-if="item.targetType === 1">评论了《{{ item.targetName }}》</template>
+            <template v-else-if="item.targetType === 2">评论了友链</template>
+            <template v-else>评论了说说「{{ item.targetName }}」</template>
+          </p>
         </div>
       </div>
     </div>
@@ -28,53 +32,49 @@
 </template>
 
 <script setup lang="ts">
+  import type { RecentCommentItem } from '@/apis/dashboard/types';
   import { formatTimeAgo } from '@/utils/format';
 
-  interface CommentItem {
-    avatar: string;
-    nickname: string;
-    content: string;
-    article: string;
-    createdAt: string;
-  }
-
-  /**
-   * 最近评论列表（模拟数据，对应 blog_comment 表）
-   */
-  const comments: CommentItem[] = [
+  /** 最近评论列表（模拟） */
+  const comments: RecentCommentItem[] = [
     {
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=1',
       nickname: '前端小白',
       content: '写得很详细，终于搞懂了组合式API的用法！',
-      article: 'Vue3组合式API实战',
+      targetType: 1,
+      targetName: 'Vue3组合式API实战',
       createdAt: '2026-05-07T10:25:00'
     },
     {
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=2',
       nickname: 'DevOps工程师',
       content: '请问Docker Compose的配置能详细讲讲吗？',
-      article: 'Docker部署实战',
+      targetType: 1,
+      targetName: 'Docker部署实战',
       createdAt: '2026-05-07T10:07:00'
     },
     {
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=3',
       nickname: '全栈学习者',
-      content: '这个Redis缓存方案在高并发下表现如何？',
-      article: 'Redis缓存策略',
+      content: '这友链不错啊，我也要交换一下',
+      targetType: 2,
+      targetName: '',
       createdAt: '2026-05-07T09:30:00'
     },
     {
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=4',
       nickname: '后端萌新',
       content: '感谢分享，正好项目用得上！',
-      article: 'Nest.js入门指南',
+      targetType: 1,
+      targetName: 'Nest.js入门指南',
       createdAt: '2026-05-07T08:30:00'
     },
     {
       avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=5',
       nickname: 'DBA学徒',
-      content: '索引优化那部分讲得太好了，收藏了',
-      article: 'MySQL优化指南',
+      content: '这条说说很有意思，点赞',
+      targetType: 3,
+      targetName: '今天天气真好',
       createdAt: '2026-05-07T07:30:00'
     }
   ];

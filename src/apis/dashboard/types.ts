@@ -48,8 +48,10 @@ export interface RecentCommentItem {
   nickname: string;
   /** 评论内容 */
   content: string;
-  /** 文章标题 */
-  article: string;
+  /** 评论目标类型：1=文章, 2=友链, 3=说说 */
+  targetType: 1 | 2 | 3;
+  /** 目标名称（文章标题/说说内容摘要；友链时为空字符串） */
+  targetName: string;
   /** 评论时间（ISO 8601 格式） */
   createdAt: string;
 }
