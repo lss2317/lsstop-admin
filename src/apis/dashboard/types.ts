@@ -64,6 +64,18 @@ export interface PendingReview {
   messageCount: number;
 }
 
+/** 内容概览 */
+export interface ContentOverview {
+  /** 文章总数 */
+  articleCount: number;
+  /** 分类总数 */
+  categoryCount: number;
+  /** 标签总数 */
+  tagCount: number;
+  /** 友链总数 */
+  friendLinkCount: number;
+}
+
 /** Console 主页聚合响应 */
 export interface ConsoleData {
   /** 统计卡片列表 */
@@ -76,6 +88,8 @@ export interface ConsoleData {
   recentComments: RecentCommentItem[];
   /** 待审核统计 */
   pendingReview: PendingReview;
+  /** 内容概览 */
+  contentOverview: ContentOverview;
 }
 
 /** 独立访客趋势（近30天） */

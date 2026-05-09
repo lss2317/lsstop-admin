@@ -21,7 +21,8 @@
             <p class="text-xs text-g-500 mt-0.5">{{ item.desc }}</p>
           </div>
         </div>
-        <span class="text-2xl font-semibold" :class="item.numColor">{{ item.num }}</span>
+        <span v-if="item.num > 0" class="text-2xl font-semibold" :class="item.numColor">{{ item.num }}</span>
+        <span v-else class="text-xs text-g-400">无待处理</span>
       </div>
     </div>
   </div>

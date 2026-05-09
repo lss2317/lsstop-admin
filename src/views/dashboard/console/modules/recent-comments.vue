@@ -1,5 +1,5 @@
 <template>
-  <div class="art-card p-5 mb-5 max-sm:mb-4">
+  <div class="art-card p-5 mb-5 max-sm:mb-4 flex flex-col">
     <div class="art-card-header mb-4">
       <div class="title">
         <h4>最近评论</h4>
@@ -7,7 +7,7 @@
       </div>
     </div>
 
-    <div v-if="comments.length === 0" class="flex-cc flex-col h-42 text-g-400">
+    <div v-if="comments.length === 0" class="flex-cc flex-col flex-1 text-g-400">
       <ArtSvgIcon icon="ri:chat-3-line" class="text-3xl mb-2" />
       <span class="text-sm">暂无评论</span>
     </div>
