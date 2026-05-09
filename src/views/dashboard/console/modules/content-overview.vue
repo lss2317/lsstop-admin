@@ -28,48 +28,71 @@
 </template>
 
 <script setup lang="ts">
-  interface OverviewItem {
+  import type { ContentOverview } from '@/apis/dashboard/types';
+
+  interface OverviewMeta {
+    key: keyof ContentOverview;
     label: string;
-    count: number;
     icon: string;
     iconBg: string;
     iconColor: string;
     numColor: string;
   }
 
-  /** 内容概览（模拟） */
-  const overviewItems: OverviewItem[] = [
+  /** 前端固定配置（图标、颜色等纯展示信息） */
+  const overviewMeta: OverviewMeta[] = [
     {
+      key: 'articleCount',
       label: '文章',
-      count: 12,
       icon: 'ri:article-line',
       iconBg: 'bg-blue-500/10',
       iconColor: 'text-blue-500',
       numColor: 'text-blue-500'
     },
     {
+      key: 'categoryCount',
       label: '分类',
-      count: 8,
       icon: 'ri:folder-line',
       iconBg: 'bg-green-500/10',
       iconColor: 'text-green-500',
       numColor: 'text-green-500'
     },
     {
+      key: 'tagCount',
       label: '标签',
-      count: 16,
       icon: 'ri:price-tag-3-line',
       iconBg: 'bg-orange-500/10',
       iconColor: 'text-orange-500',
       numColor: 'text-orange-500'
     },
     {
+      key: 'friendLinkCount',
       label: '友链',
-      count: 0,
       icon: 'ri:links-line',
       iconBg: 'bg-purple-500/10',
       iconColor: 'text-purple-500',
       numColor: 'text-purple-500'
     }
   ];
+
+  /**
+   * 后端返回数据（模拟）
+   * 来源：GET /dashboard/console → ConsoleData.contentOverview
+   * - articleCount: blog_article WHERE deleted_at=0
+   * - categoryCount: blog_category WHERE deleted_at=0
+   * - tagCount: blog_tag WHERE deleted_at=0
+   * - friendLinkCount: blog_friend_link WHERE deleted_at=0
+   */
+  const contentOverview: ContentOverview = {
+    articleCount: 12,
+    categoryCount: 8,
+    tagCount: 16,
+    friendLinkCount: 0
+  };
+
+  /** 合并前端配置 + 后端数据 */
+  const overviewItems = overviewMeta.map((meta) => ({
+    ...meta,
+    count: contentOverview[meta.key]
+  }));
 </script>

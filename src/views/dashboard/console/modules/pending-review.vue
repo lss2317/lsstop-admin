@@ -21,7 +21,9 @@
             <p class="text-xs text-g-500 mt-0.5">{{ item.desc }}</p>
           </div>
         </div>
-        <span v-if="item.num > 0" class="text-2xl font-semibold" :class="item.numColor">{{ item.num }}</span>
+        <span v-if="item.num > 0" class="text-2xl font-semibold" :class="item.numColor">{{
+          item.num
+        }}</span>
         <span v-else class="text-xs text-g-400">无待处理</span>
       </div>
     </div>
@@ -29,37 +31,54 @@
 </template>
 
 <script setup lang="ts">
-  interface PendingItem {
+  import type { PendingReview } from '@/apis/dashboard/types';
+
+  interface PendingMeta {
+    key: keyof PendingReview;
     title: string;
     desc: string;
     icon: string;
     iconBg: string;
     iconColor: string;
-    num: number;
     numColor: string;
   }
 
-  /**
-   * 待处理事项（对应 blog_comment.review=1 和 blog_message.review=1）
-   */
-  const pendingItems: PendingItem[] = [
+  /** 前端固定配置（图标、描述、颜色等纯展示信息） */
+  const pendingMeta: PendingMeta[] = [
     {
+      key: 'commentCount',
       title: '待审核评论',
       desc: '需要审核的用户评论',
       icon: 'ri:chat-check-line',
       iconBg: 'bg-theme/10',
       iconColor: 'text-theme',
-      num: 12,
       numColor: 'text-theme'
     },
     {
+      key: 'messageCount',
       title: '待审核留言',
       desc: '需要审核的用户留言',
       icon: 'ri:message-3-line',
       iconBg: 'bg-warning/10',
       iconColor: 'text-warning',
-      num: 5,
       numColor: 'text-warning'
     }
   ];
+
+  /**
+   * 后端返回数据（模拟）
+   * 来源：GET /dashboard/console → ConsoleData.pendingReview
+   * - commentCount: blog_comment WHERE review=1 AND deleted_at=0
+   * - messageCount: blog_message WHERE review=1 AND deleted_at=0
+   */
+  const pendingReview: PendingReview = {
+    commentCount: 12,
+    messageCount: 5
+  };
+
+  /** 合并前端配置 + 后端数据 */
+  const pendingItems = pendingMeta.map((meta) => ({
+    ...meta,
+    num: pendingReview[meta.key]
+  }));
 </script>
