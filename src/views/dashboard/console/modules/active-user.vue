@@ -24,6 +24,7 @@
 </template>
 
 <script setup lang="ts">
+  import type { DailyStatItem } from '@/apis/dashboard/types';
   import { formatDateShort } from '@/utils/format';
 
   interface ArticleStatItem {
@@ -31,20 +32,19 @@
     num: string;
   }
 
-  // 近七天日期（由后端返回 yyyy-MM-dd 格式）
-  const dates = [
-    '2026-05-01',
-    '2026-05-02',
-    '2026-05-03',
-    '2026-05-04',
-    '2026-05-05',
-    '2026-05-06',
-    '2026-05-07'
+  /** 近七天每日评论（后端返回，date+count 一体不会错位） */
+  const dailyStats: DailyStatItem[] = [
+    { date: '2026-05-01', count: 18 },
+    { date: '2026-05-02', count: 25 },
+    { date: '2026-05-03', count: 12 },
+    { date: '2026-05-04', count: 30 },
+    { date: '2026-05-05', count: 22 },
+    { date: '2026-05-06', count: 35 },
+    { date: '2026-05-07', count: 28 }
   ];
-  const xAxisLabels = dates.map(formatDateShort);
 
-  // 近七天每日评论数（由后端返回）
-  const chartData = [18, 25, 12, 30, 22, 35, 28];
+  const xAxisLabels = dailyStats.map((d) => formatDateShort(d.date));
+  const chartData = dailyStats.map((d) => d.count);
 
   /**
    * 评论统计数据

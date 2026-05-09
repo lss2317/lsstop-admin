@@ -2,20 +2,28 @@
  * 仪表盘接口类型定义
  */
 
-/** 统计卡片项（后端返回） */
+/** 统计卡片项 */
 export interface StatCardItem {
+  /** 卡片标识（"totalVisits" | "totalUsers" | "totalComments" | "totalMessages"） */
+  key: 'totalVisits' | 'totalUsers' | 'totalComments' | 'totalMessages';
   /** 数值 */
   num: number;
   /** 周环比变化（如"+20%"、"-12%"） */
   change: string;
 }
 
+/** 每日统计项 */
+export interface DailyStatItem {
+  /** 日期（yyyy-MM-dd 格式） */
+  date: string;
+  /** 当日数值 */
+  count: number;
+}
+
 /** 近七天评论统计 */
 export interface CommentStat {
-  /** 日期列表（yyyy-MM-dd 格式） */
-  dates: string[];
   /** 近7天每日评论数 */
-  dailyCounts: number[];
+  dailyStats: DailyStatItem[];
   /** 待审核数 */
   pendingCount: number;
   /** 今日新增 */
@@ -28,10 +36,8 @@ export interface CommentStat {
 
 /** 近十天访问量 */
 export interface VisitOverview {
-  /** 日期列表（yyyy-MM-dd 格式） */
-  dates: string[];
-  /** 每日访问量 */
-  dailyCounts: number[];
+  /** 近10天每日访问量 */
+  dailyStats: DailyStatItem[];
 }
 
 /** 最近评论项 */
@@ -72,10 +78,8 @@ export interface ConsoleData {
 
 /** 独立访客趋势（近30天） */
 export interface UniqueVisitorTrend {
-  /** 日期列表（yyyy-MM-dd 格式） */
-  dates: string[];
-  /** 每日独立访客数 */
-  dailyCounts: number[];
+  /** 近30天每日独立访客数 */
+  dailyStats: DailyStatItem[];
 }
 
 /** 热门文章项 */

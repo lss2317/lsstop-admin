@@ -16,23 +16,23 @@
 </template>
 
 <script setup lang="ts">
+  import type { DailyStatItem } from '@/apis/dashboard/types';
   import { formatDateShort } from '@/utils/format';
 
-  // 近十天访问量数据（由后端返回）
-  const data = [50, 25, 40, 20, 70, 35, 65, 30, 35, 20];
-
-  // 近十天日期（由后端返回 yyyy-MM-dd 格式）
-  const dates = [
-    '2026-04-28',
-    '2026-04-29',
-    '2026-04-30',
-    '2026-05-01',
-    '2026-05-02',
-    '2026-05-03',
-    '2026-05-04',
-    '2026-05-05',
-    '2026-05-06',
-    '2026-05-07'
+  /** 近十天每日访问量（后端返回，date+count 一体不会错位） */
+  const dailyStats: DailyStatItem[] = [
+    { date: '2026-04-28', count: 50 },
+    { date: '2026-04-29', count: 25 },
+    { date: '2026-04-30', count: 40 },
+    { date: '2026-05-01', count: 20 },
+    { date: '2026-05-02', count: 70 },
+    { date: '2026-05-03', count: 35 },
+    { date: '2026-05-04', count: 65 },
+    { date: '2026-05-05', count: 30 },
+    { date: '2026-05-06', count: 35 },
+    { date: '2026-05-07', count: 20 }
   ];
-  const xAxisData = dates.map(formatDateShort);
+
+  const xAxisData = dailyStats.map((d) => formatDateShort(d.date));
+  const data = dailyStats.map((d) => d.count);
 </script>

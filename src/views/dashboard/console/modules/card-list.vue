@@ -24,25 +24,27 @@
 </template>
 
 <script setup lang="ts">
-  /** 前端固定配置（图标、描述、动画参数） */
-  const cardConfig = [
-    { des: '总访问量', icon: 'ri:line-chart-line' },
-    { des: '总用户数', icon: 'ri:user-line' },
-    { des: '总评论数', icon: 'ri:chat-3-line' },
-    { des: '总留言数', icon: 'ri:message-2-line' }
-  ];
+  import type { StatCardItem } from '@/apis/dashboard/types';
+
+  /** 前端固定配置（图标、描述，按 key 索引） */
+  const cardMetaMap: Record<string, { des: string; icon: string }> = {
+    totalVisits: { des: '总访问量', icon: 'ri:line-chart-line' },
+    totalUsers: { des: '总用户数', icon: 'ri:user-line' },
+    totalComments: { des: '总评论数', icon: 'ri:chat-3-line' },
+    totalMessages: { des: '总留言数', icon: 'ri:message-2-line' }
+  };
 
   /** 后端返回的数据（模拟） */
-  const statCards = [
-    { num: 9120, change: '+20%' },
-    { num: 182, change: '+10%' },
-    { num: 9520, change: '-12%' },
-    { num: 156, change: '+30%' }
+  const statCards: StatCardItem[] = [
+    { key: 'totalVisits', num: 9120, change: '+20%' },
+    { key: 'totalUsers', num: 182, change: '+10%' },
+    { key: 'totalComments', num: 9520, change: '-12%' },
+    { key: 'totalMessages', num: 156, change: '+30%' }
   ];
 
-  /** 合并前端配置 + 后端数据 */
-  const dataList = cardConfig.map((config, index) => ({
-    ...config,
-    ...statCards[index]
+  /** 按 key 匹配合并前端配置 + 后端数据 */
+  const dataList = statCards.map((item) => ({
+    ...item,
+    ...cardMetaMap[item.key]
   }));
 </script>
