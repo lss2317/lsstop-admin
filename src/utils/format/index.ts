@@ -2,6 +2,8 @@
  * 格式化工具函数
  */
 
+import EmojiList from '@/utils/constants/emoji';
+
 /**
  * 将日期时间格式化为相对时间描述
  * @param dateStr ISO 8601 格式的时间字符串
@@ -35,4 +37,33 @@ export function formatTimeAgo(dateStr: string): string {
 export function formatDateShort(dateStr: string): string {
   const [, month, day] = dateStr.split('-');
   return `${Number(month)}/${Number(day)}`;
+}
+
+/**
+ * HTML特殊字符转义，防止XSS攻击
+ * @param str 原始字符串
+ * @returns 转义后的安全字符串
+ */
+export function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * 将表情文本转换为图片标签
+ * 先转义HTML特殊字符防止XSS，再将 [微笑] 等标记替换为 <img> 标签
+ * @param content 原始评论内容
+ * @returns 包含表情图片标签的HTML字符串
+ */
+export function parseEmoji(content: string): string {
+  if (!content) return '';
+  const escaped = escapeHtml(content);
+  return escaped.replace(/\[([^\]]+)]/g, (match) => {
+    const url = EmojiList[match];
+    return url ? `<img src="${url}" alt="${match}" class="comment-emoji" />` : match;
+  });
 }

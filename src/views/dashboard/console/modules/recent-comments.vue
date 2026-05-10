@@ -27,7 +27,10 @@
             <span class="text-sm font-medium text-g-800">{{ item.nickname }}</span>
             <span class="text-xs text-g-400">{{ formatTimeAgo(item.createdAt) }}</span>
           </div>
-          <p class="text-xs text-g-500 mt-1 truncate">{{ item.content }}</p>
+          <p
+            class="text-xs text-g-500 mt-1 truncate comment-content"
+            v-html="parseEmoji(item.content)"
+          ></p>
           <p class="text-xs text-g-400 mt-0.5 flex items-center min-w-0">
             <ArtSvgIcon
               :icon="
@@ -60,9 +63,19 @@
 
 <script setup lang="ts">
   import type { RecentCommentItem } from '@/apis/dashboard/types';
-  import { formatTimeAgo } from '@/utils/format';
+  import { formatTimeAgo, parseEmoji } from '@/utils/format';
 
   defineProps<{
     data: RecentCommentItem[];
   }>();
 </script>
+
+<style scoped>
+  .comment-content :deep(.comment-emoji) {
+    display: inline-block;
+    width: 1.2em;
+    height: 1.2em;
+    vertical-align: text-bottom;
+    margin: 0 1px;
+  }
+</style>
