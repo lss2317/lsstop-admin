@@ -8,8 +8,6 @@ export interface StatCardItem {
   key: 'totalVisits' | 'totalUsers' | 'totalComments' | 'totalMessages';
   /** 数值 */
   num: number;
-  /** 周环比变化（如"+20%"、"-12%"） */
-  change: string;
 }
 
 /** 每日统计项 */
