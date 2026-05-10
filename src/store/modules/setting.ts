@@ -50,8 +50,6 @@ export const useSettingStore = defineStore('settingStore', () => {
   // 界面显示设置
   /** 是否显示菜单按钮 */
   const showMenuButton = ref(SETTING_DEFAULT_CONFIG.showMenuButton);
-  /** 是否显示快速入口 */
-  const showFastEnter = ref(SETTING_DEFAULT_CONFIG.showFastEnter);
   /** 是否显示刷新按钮 */
   const showRefreshButton = ref(SETTING_DEFAULT_CONFIG.showRefreshButton);
   /** 是否显示面包屑 */
@@ -194,13 +192,6 @@ export const useSettingStore = defineStore('settingStore', () => {
   };
 
   /**
-   * 切换快速入口显示
-   */
-  const setFastEnter = () => {
-    showFastEnter.value = !showFastEnter.value;
-  };
-
-  /**
    * 切换自动关闭
    */
   const setAutoClose = () => {
@@ -319,7 +310,6 @@ export const useSettingStore = defineStore('settingStore', () => {
     boxBorderMode,
     uniqueOpened,
     showMenuButton,
-    showFastEnter,
     showRefreshButton,
     showCrumbs,
     autoClose,
@@ -348,7 +338,6 @@ export const useSettingStore = defineStore('settingStore', () => {
     setContainerWidth,
     setUniqueOpened,
     setButton,
-    setFastEnter,
     setAutoClose,
     setShowRefreshButton,
     setCrumbs,
