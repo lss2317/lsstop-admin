@@ -31,7 +31,12 @@
 </template>
 
 <script setup lang="ts">
+  import { computed } from 'vue';
   import type { PendingReview } from '@/apis/dashboard/types';
+
+  const props = defineProps<{
+    data: PendingReview;
+  }>();
 
   interface PendingMeta {
     key: keyof PendingReview;
@@ -65,20 +70,11 @@
     }
   ];
 
-  /**
-   * 后端返回数据（模拟）
-   * 来源：GET /dashboard/console → ConsoleData.pendingReview
-   * - commentCount: blog_comment WHERE review=1 AND deleted_at=0
-   * - messageCount: blog_message WHERE review=1 AND deleted_at=0
-   */
-  const pendingReview: PendingReview = {
-    commentCount: 12,
-    messageCount: 5
-  };
-
   /** 合并前端配置 + 后端数据 */
-  const pendingItems = pendingMeta.map((meta) => ({
-    ...meta,
-    num: pendingReview[meta.key]
-  }));
+  const pendingItems = computed(() =>
+    pendingMeta.map((meta) => ({
+      ...meta,
+      num: props.data[meta.key]
+    }))
+  );
 </script>

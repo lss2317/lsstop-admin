@@ -28,7 +28,12 @@
 </template>
 
 <script setup lang="ts">
+  import { computed } from 'vue';
   import type { ContentOverview } from '@/apis/dashboard/types';
+
+  const props = defineProps<{
+    data: ContentOverview;
+  }>();
 
   interface OverviewMeta {
     key: keyof ContentOverview;
@@ -75,24 +80,11 @@
     }
   ];
 
-  /**
-   * 后端返回数据（模拟）
-   * 来源：GET /dashboard/console → ConsoleData.contentOverview
-   * - articleCount: blog_article WHERE deleted_at=0
-   * - categoryCount: blog_category WHERE deleted_at=0
-   * - tagCount: blog_tag WHERE deleted_at=0
-   * - friendLinkCount: blog_friend_link WHERE deleted_at=0
-   */
-  const contentOverview: ContentOverview = {
-    articleCount: 12,
-    categoryCount: 8,
-    tagCount: 16,
-    friendLinkCount: 0
-  };
-
   /** 合并前端配置 + 后端数据 */
-  const overviewItems = overviewMeta.map((meta) => ({
-    ...meta,
-    count: contentOverview[meta.key]
-  }));
+  const overviewItems = computed(() =>
+    overviewMeta.map((meta) => ({
+      ...meta,
+      count: props.data[meta.key]
+    }))
+  );
 </script>

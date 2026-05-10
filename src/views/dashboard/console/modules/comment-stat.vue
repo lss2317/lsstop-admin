@@ -24,37 +24,22 @@
 </template>
 
 <script setup lang="ts">
+  import { computed } from 'vue';
   import type { CommentStat } from '@/apis/dashboard/types';
   import { formatDateShort } from '@/utils/format';
 
-  /**
-   * 后端返回数据（模拟）
-   * 来源：GET /dashboard/console → ConsoleData.commentStat
-   */
-  const commentStat: CommentStat = {
-    dailyStats: [
-      { date: '2026-05-01', count: 18 },
-      { date: '2026-05-02', count: 25 },
-      { date: '2026-05-03', count: 12 },
-      { date: '2026-05-04', count: 30 },
-      { date: '2026-05-05', count: 22 },
-      { date: '2026-05-06', count: 35 },
-      { date: '2026-05-07', count: 28 }
-    ],
-    totalCount: 170,
-    todayCount: 35,
-    dailyAvg: 24,
-    weekOverWeek: '+15%'
-  };
+  const props = defineProps<{
+    data: CommentStat;
+  }>();
 
-  const xAxisLabels = commentStat.dailyStats.map((d) => formatDateShort(d.date));
-  const chartData = commentStat.dailyStats.map((d) => d.count);
+  const xAxisLabels = computed(() => props.data.dailyStats.map((d) => formatDateShort(d.date)));
+  const chartData = computed(() => props.data.dailyStats.map((d) => d.count));
 
   /** 底部统计指标（前端配置 label，后端提供 value） */
-  const list = [
-    { name: '总数', num: String(commentStat.totalCount) },
-    { name: '今日新增', num: String(commentStat.todayCount) },
-    { name: '日均评论', num: String(commentStat.dailyAvg) },
-    { name: '周同比', num: commentStat.weekOverWeek }
-  ];
+  const list = computed(() => [
+    { name: '总数', num: String(props.data.totalCount) },
+    { name: '今日新增', num: String(props.data.todayCount) },
+    { name: '日均评论', num: String(props.data.dailyAvg) },
+    { name: '周同比', num: props.data.weekOverWeek }
+  ]);
 </script>
