@@ -73,7 +73,6 @@
     { comment: '是否显示刷新按钮', key: 'showRefreshButton' },
     { comment: '是否显示面包屑', key: 'showCrumbs' },
     { comment: '是否显示工作台标签', key: 'showWorkTab' },
-    { comment: '是否显示语言切换', key: 'showLanguage' },
     { comment: '是否显示进度条', key: 'showNprogress' },
     { comment: '是否显示设置引导', key: 'showSettingGuide' },
     { comment: '是否自动关闭', key: 'autoClose' },
@@ -186,9 +185,6 @@
         settingStore.setShowRefreshButton()
       );
       toggleIfDifferent(settingStore.showCrumbs, config.showCrumbs, () => settingStore.setCrumbs());
-      toggleIfDifferent(settingStore.showLanguage, config.showLanguage, () =>
-        settingStore.setLanguage()
-      );
       toggleIfDifferent(settingStore.showNprogress, config.showNprogress, () =>
         settingStore.setNprogress()
       );

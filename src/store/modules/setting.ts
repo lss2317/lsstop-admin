@@ -56,8 +56,6 @@ export const useSettingStore = defineStore('settingStore', () => {
   const showCrumbs = ref(SETTING_DEFAULT_CONFIG.showCrumbs);
   /** 是否显示工作台标签 */
   const showWorkTab = ref(SETTING_DEFAULT_CONFIG.showWorkTab);
-  /** 是否显示语言切换 */
-  const showLanguage = ref(SETTING_DEFAULT_CONFIG.showLanguage);
   /** 是否显示进度条 */
   const showNprogress = ref(SETTING_DEFAULT_CONFIG.showNprogress);
   /** 是否显示设置引导 */
@@ -221,13 +219,6 @@ export const useSettingStore = defineStore('settingStore', () => {
   };
 
   /**
-   * 切换语言切换显示
-   */
-  const setLanguage = () => {
-    showLanguage.value = !showLanguage.value;
-  };
-
-  /**
    * 切换进度条显示
    */
   const setNprogress = () => {
@@ -314,7 +305,6 @@ export const useSettingStore = defineStore('settingStore', () => {
     showCrumbs,
     autoClose,
     showWorkTab,
-    showLanguage,
     showNprogress,
     colorWeak,
     showSettingGuide,
@@ -342,7 +332,6 @@ export const useSettingStore = defineStore('settingStore', () => {
     setShowRefreshButton,
     setCrumbs,
     setWorkTab,
-    setLanguage,
     setNprogress,
     setColorWeak,
     hideSettingGuide,
