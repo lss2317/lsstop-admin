@@ -6,7 +6,11 @@
           <ArtSvgIcon :icon="item.icon" />
         </div>
         <div class="flex-1">
-          <ArtCountTo class="text-[28px] font-semibold text-g-900" :target="item.num" :duration="1300" />
+          <ArtCountTo
+            class="text-[28px] font-semibold text-g-900"
+            :target="item.num"
+            :duration="1300"
+          />
           <p class="mt-1.5 text-sm text-g-500">{{ item.des }}</p>
         </div>
       </div>

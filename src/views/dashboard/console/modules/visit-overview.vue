@@ -7,7 +7,7 @@
     </div>
     <ArtLineChart
       height="calc(100% - 56px)"
-      :data="data"
+      :data="chartData"
       :xAxisData="xAxisData"
       :showAreaColor="true"
       :showAxisLine="false"
@@ -25,5 +25,5 @@
   }>();
 
   const xAxisData = computed(() => props.data.dailyStats.map((d) => formatDateShort(d.date)));
-  const data = computed(() => props.data.dailyStats.map((d) => d.count));
+  const chartData = computed(() => props.data.dailyStats.map((d) => d.count));
 </script>
