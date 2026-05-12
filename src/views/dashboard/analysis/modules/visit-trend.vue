@@ -17,46 +17,50 @@
 </template>
 
 <script setup lang="ts">
+  import type { AnalysisDailyItem } from '@/apis/dashboard/types';
   import { formatDateShort } from '@/utils/format';
 
-  // 近30天日期（由后端返回 yyyy-MM-dd 格式）
-  const dates = [
-    '2026-04-08',
-    '2026-04-09',
-    '2026-04-10',
-    '2026-04-11',
-    '2026-04-12',
-    '2026-04-13',
-    '2026-04-14',
-    '2026-04-15',
-    '2026-04-16',
-    '2026-04-17',
-    '2026-04-18',
-    '2026-04-19',
-    '2026-04-20',
-    '2026-04-21',
-    '2026-04-22',
-    '2026-04-23',
-    '2026-04-24',
-    '2026-04-25',
-    '2026-04-26',
-    '2026-04-27',
-    '2026-04-28',
-    '2026-04-29',
-    '2026-04-30',
-    '2026-05-01',
-    '2026-05-02',
-    '2026-05-03',
-    '2026-05-04',
-    '2026-05-05',
-    '2026-05-06',
-    '2026-05-07'
-  ];
-  const xAxisData = dates.map(formatDateShort);
+  /** GET /dashboard/analysis → uniqueVisitorTrend.dailyStats */
+  const props = withDefaults(
+    defineProps<{
+      stats?: AnalysisDailyItem[];
+    }>(),
+    {
+      stats: () => [
+        { date: '2026-04-08', count: 42 },
+        { date: '2026-04-09', count: 55 },
+        { date: '2026-04-10', count: 38 },
+        { date: '2026-04-11', count: 61 },
+        { date: '2026-04-12', count: 48 },
+        { date: '2026-04-13', count: 72 },
+        { date: '2026-04-14', count: 65 },
+        { date: '2026-04-15', count: 53 },
+        { date: '2026-04-16', count: 44 },
+        { date: '2026-04-17', count: 58 },
+        { date: '2026-04-18', count: 67 },
+        { date: '2026-04-19', count: 49 },
+        { date: '2026-04-20', count: 73 },
+        { date: '2026-04-21', count: 62 },
+        { date: '2026-04-22', count: 51 },
+        { date: '2026-04-23', count: 45 },
+        { date: '2026-04-24', count: 69 },
+        { date: '2026-04-25', count: 57 },
+        { date: '2026-04-26', count: 83 },
+        { date: '2026-04-27', count: 76 },
+        { date: '2026-04-28', count: 64 },
+        { date: '2026-04-29', count: 52 },
+        { date: '2026-04-30', count: 47 },
+        { date: '2026-05-01', count: 71 },
+        { date: '2026-05-02', count: 59 },
+        { date: '2026-05-03', count: 88 },
+        { date: '2026-05-04', count: 74 },
+        { date: '2026-05-05', count: 63 },
+        { date: '2026-05-06', count: 56 },
+        { date: '2026-05-07', count: 81 }
+      ]
+    }
+  );
 
-  // 近30天每日独立访客数（由后端返回）
-  const chartData = [
-    42, 55, 38, 61, 48, 72, 65, 53, 44, 58, 67, 49, 73, 62, 51, 45, 69, 57, 83, 76, 64, 52, 47, 71,
-    59, 88, 74, 63, 56, 81
-  ];
+  const xAxisData = computed(() => props.stats.map((item) => formatDateShort(item.date)));
+  const chartData = computed(() => props.stats.map((item) => item.count));
 </script>

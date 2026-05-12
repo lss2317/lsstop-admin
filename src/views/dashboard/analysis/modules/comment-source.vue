@@ -17,13 +17,34 @@
 </template>
 
 <script setup lang="ts">
-  /**
-   * 评论来源分布数据（对应 blog_comment.target_type）
-   * target_type: 1文章 2友链 3说说
-   */
-  const chartData = [
-    { name: '文章评论', value: 156 },
-    { name: '友链评论', value: 32 },
-    { name: '说说评论', value: 48 }
-  ];
+  import type { CommentSourceItem } from '@/apis/dashboard/types';
+
+  /** 评论目标类型 → 展示文案 */
+  const TARGET_TYPE_LABEL: Record<CommentSourceItem['targetType'], string> = {
+    1: '文章评论',
+    2: '友链评论',
+    3: '说说评论'
+  };
+
+  /** 评论来源分布（按目标类型统计） */
+  const props = withDefaults(
+    defineProps<{
+      sources?: CommentSourceItem[];
+    }>(),
+    {
+      sources: () => [
+        { targetType: 1, value: 156 },
+        { targetType: 2, value: 32 },
+        { targetType: 3, value: 48 }
+      ]
+    }
+  );
+
+  /** 将 CommentSourceItem[] 转换为图表所需的 { name, value }[] */
+  const chartData = computed(() =>
+    props.sources.map((item) => ({
+      name: TARGET_TYPE_LABEL[item.targetType] ?? '未知',
+      value: item.value
+    }))
+  );
 </script>

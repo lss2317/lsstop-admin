@@ -11,25 +11,36 @@
 </template>
 
 <script setup lang="ts">
-  /**
-   * 雷达图维度指标（对应 blog_tag 表中的热门标签）
-   */
-  const indicator = [
-    { name: 'Vue', max: 30 },
-    { name: 'React', max: 30 },
-    { name: 'Node.js', max: 30 },
-    { name: 'TypeScript', max: 30 },
-    { name: 'Docker', max: 30 },
-    { name: 'MySQL', max: 30 }
-  ];
+  import type { TagRadarItem } from '@/apis/dashboard/types';
 
-  /**
-   * 标签对应的文章数量（对应 blog_article_tag 关联统计）
-   */
-  const radarData = [
+  /** 标签热度 */
+  const props = withDefaults(
+    defineProps<{
+      tags?: TagRadarItem[];
+    }>(),
+    {
+      tags: () => [
+        { name: 'Vue', value: 22 },
+        { name: 'React', value: 12 },
+        { name: 'Node.js', value: 18 },
+        { name: 'TypeScript', value: 25 },
+        { name: 'Docker', value: 8 },
+        { name: 'MySQL', value: 15 }
+      ]
+    }
+  );
+
+  /** 雷达图维度指标：从数据中推导 max 值 */
+  const indicator = computed(() => {
+    const maxVal = Math.max(...props.tags.map((t) => t.value));
+    return props.tags.map((t) => ({ name: t.name, max: maxVal }));
+  });
+
+  /** 雷达图数据系列 */
+  const radarData = computed(() => [
     {
       name: '文章数量',
-      value: [22, 12, 18, 25, 8, 15]
+      value: props.tags.map((t) => t.value)
     }
-  ];
+  ]);
 </script>

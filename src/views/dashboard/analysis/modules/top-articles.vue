@@ -17,18 +17,29 @@
 </template>
 
 <script setup lang="ts">
-  /**
-   * 热门文章数据（对应 blog_article.view_count）
-   */
-  const articleNames = [
-    'Docker部署实战',
-    'TypeScript进阶',
-    'Vue3组合式API',
-    'Nest.js入门',
-    'Redis缓存策略',
-    'MySQL优化指南',
-    'Git工作流'
-  ];
+  import type { TopArticleItem } from '@/apis/dashboard/types';
 
-  const chartData = [320, 480, 560, 620, 750, 890, 1200];
+  /** 热门文章 Top7（按浏览量排序） */
+  const props = withDefaults(
+    defineProps<{
+      articles?: TopArticleItem[];
+    }>(),
+    {
+      articles: () => [
+        { name: 'Docker部署实战', viewCount: 320 },
+        { name: 'TypeScript进阶', viewCount: 480 },
+        { name: 'Vue3组合式API', viewCount: 560 },
+        { name: 'Nest.js入门', viewCount: 620 },
+        { name: 'Redis缓存策略', viewCount: 750 },
+        { name: 'MySQL优化指南', viewCount: 890 },
+        { name: 'Git工作流', viewCount: 1200 }
+      ]
+    }
+  );
+
+  /** 图表 X 轴标签（文章标题） */
+  const articleNames = computed(() => props.articles.map((a) => a.name));
+
+  /** 图表数据（浏览量） */
+  const chartData = computed(() => props.articles.map((a) => a.viewCount));
 </script>

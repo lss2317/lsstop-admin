@@ -1,8 +1,6 @@
-/**
- * 仪表盘接口类型定义
- */
+// ==================== Console ====================
 
-/** 统计卡片项 */
+/** 统计卡片 */
 export interface StatCardItem {
   /** 卡片标识（"totalVisits" | "totalUsers" | "totalComments" | "totalMessages"） */
   key: 'totalVisits' | 'totalUsers' | 'totalComments' | 'totalMessages';
@@ -10,35 +8,35 @@ export interface StatCardItem {
   num: number;
 }
 
-/** 每日统计项 */
-export interface DailyStatItem {
-  /** 日期（yyyy-MM-dd 格式） */
+/** 日统计点 */
+export interface ConsoleDailyItem {
+  /** 日期（yyyy-MM-dd） */
   date: string;
   /** 当日数值 */
   count: number;
 }
 
-/** 近七天评论统计 */
+/** 评论统计（近7天） */
 export interface CommentStat {
-  /** 近7天每日评论数 */
-  dailyStats: DailyStatItem[];
-  /** 7天评论总数 */
+  /** 每日评论数 */
+  dailyStats: ConsoleDailyItem[];
+  /** 7天总数 */
   totalCount: number;
   /** 今日新增 */
   todayCount: number;
   /** 日均评论 */
   dailyAvg: number;
-  /** 周同比（如"+15%"） */
+  /** 周同比，如 "+15%" */
   weekOverWeek: string;
 }
 
-/** 近十天访问量 */
+/** 访问量（近10天） */
 export interface VisitOverview {
-  /** 近10天每日访问量 */
-  dailyStats: DailyStatItem[];
+  /** 每日访问量 */
+  dailyStats: ConsoleDailyItem[];
 }
 
-/** 最近评论项 */
+/** 最近评论 */
 export interface RecentCommentItem {
   /** 头像 */
   avatar: string;
@@ -46,7 +44,7 @@ export interface RecentCommentItem {
   nickname: string;
   /** 评论内容 */
   content: string;
-  /** 评论目标类型：1=文章, 2=友链, 3=说说 */
+  /** 1=文章 2=友链 3=说说 */
   targetType: 1 | 2 | 3;
   /** 目标名称（文章标题/说说内容摘要；友链时为空字符串） */
   targetName: string;
@@ -64,13 +62,13 @@ export interface PendingReview {
 
 /** 内容概览 */
 export interface ContentOverview {
-  /** 文章总数 */
+  /** 文章数 */
   articleCount: number;
-  /** 分类总数 */
+  /** 分类数 */
   categoryCount: number;
-  /** 标签总数 */
+  /** 标签数 */
   tagCount: number;
-  /** 友链总数 */
+  /** 友链数 */
   friendLinkCount: number;
 }
 
@@ -90,13 +88,23 @@ export interface ConsoleData {
   contentOverview: ContentOverview;
 }
 
-/** 独立访客趋势（近30天） */
-export interface UniqueVisitorTrend {
-  /** 近30天每日独立访客数 */
-  dailyStats: DailyStatItem[];
+// ==================== Analysis ====================
+
+/** 日统计点 */
+export interface AnalysisDailyItem {
+  /** yyyy-MM-dd */
+  date: string;
+  /** 当日数值 */
+  count: number;
 }
 
-/** 热门文章项 */
+/** 独立访客趋势（近30天） */
+export interface UniqueVisitorTrend {
+  /** 每日独立访客数 */
+  dailyStats: AnalysisDailyItem[];
+}
+
+/** 热门文章 */
 export interface TopArticleItem {
   /** 文章标题 */
   name: string;
@@ -104,43 +112,45 @@ export interface TopArticleItem {
   viewCount: number;
 }
 
-/** 分类分布项 */
+/** 分类分布 */
 export interface CategoryItem {
-  /** 分类名称 */
+  /** 分类名 */
   name: string;
-  /** 文章数量 */
+  /** 文章数 */
   value: number;
 }
 
-/** 评论来源分布项 */
+/** 评论来源分布 */
 export interface CommentSourceItem {
-  /** 来源名称（文章评论/友链评论/说说评论） */
-  name: string;
-  /** 评论数量 */
+  /** 评论目标类型：1=文章 2=友链 3=说说 */
+  targetType: 1 | 2 | 3;
+  /** 评论数 */
   value: number;
 }
 
-/** 互动趋势 */
+/** 单日互动数据 */
+export interface DailyInteraction {
+  /** yyyy-MM-dd */
+  date: string;
+  /** 评论数 */
+  comment: number;
+  /** 留言数 */
+  message: number;
+  /** 点赞数 */
+  like: number;
+}
+
+/** 互动趋势（近7天） */
 export interface InteractionTrend {
-  /** 日期列表（yyyy-MM-dd 格式） */
-  dates: string[];
-  /** 各类型趋势数据 */
-  items: InteractionTrendItem[];
+  /** 每日互动数据 */
+  dailyData: DailyInteraction[];
 }
 
-/** 互动趋势数据项 */
-export interface InteractionTrendItem {
-  /** 类型名称（评论/留言/点赞） */
-  name: string;
-  /** 近7天每日数据 */
-  data: number[];
-}
-
-/** 标签热度项 */
+/** 标签热度 */
 export interface TagRadarItem {
-  /** 标签名称 */
+  /** 标签名 */
   name: string;
-  /** 文章数量 */
+  /** 文章数 */
   value: number;
 }
 

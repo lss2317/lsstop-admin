@@ -16,15 +16,25 @@
 </template>
 
 <script setup lang="ts">
-  /**
-   * 文章分类分布数据（对应 blog_category + blog_article）
-   */
-  const chartData = [
-    { name: '前端开发', value: 45 },
-    { name: '后端技术', value: 32 },
-    { name: '数据库', value: 18 },
-    { name: '运维部署', value: 12 },
-    { name: '工具效率', value: 8 },
-    { name: '其他', value: 5 }
-  ];
+  import type { CategoryItem } from '@/apis/dashboard/types';
+
+  /** 文章分类分布 */
+  const props = withDefaults(
+    defineProps<{
+      categories?: CategoryItem[];
+    }>(),
+    {
+      categories: () => [
+        { name: '前端开发', value: 45 },
+        { name: '后端技术', value: 32 },
+        { name: '数据库', value: 18 },
+        { name: '运维部署', value: 12 },
+        { name: '工具效率', value: 8 },
+        { name: '其他', value: 5 }
+      ]
+    }
+  );
+
+  /** CategoryItem 与 PieDataItem 结构兼容，直接透传 */
+  const chartData = computed(() => props.categories);
 </script>
