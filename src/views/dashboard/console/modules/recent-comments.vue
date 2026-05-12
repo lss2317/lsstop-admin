@@ -33,27 +33,11 @@
           ></p>
           <p class="text-xs text-g-400 mt-0.5 flex items-center min-w-0">
             <ArtSvgIcon
-              :icon="
-                item.targetType === 1
-                  ? 'ri:article-line'
-                  : item.targetType === 2
-                    ? 'ri:link'
-                    : 'ri:chat-smile-2-line'
-              "
+              :icon="TARGET_META[item.targetType].icon"
               class="mr-1 text-sm shrink-0"
-              :class="[
-                item.targetType === 1
-                  ? 'text-blue-500'
-                  : item.targetType === 2
-                    ? 'text-green-500'
-                    : 'text-orange-500'
-              ]"
+              :class="TARGET_META[item.targetType].color"
             />
-            <span class="truncate">
-              <template v-if="item.targetType === 1">评论了《{{ item.targetName }}》</template>
-              <template v-else-if="item.targetType === 2">评论了友链</template>
-              <template v-else>评论了说说「{{ item.targetName }}」</template>
-            </span>
+            <span class="truncate">{{ TARGET_META[item.targetType].format(item.targetName) }}</span>
           </p>
         </div>
       </div>
@@ -68,6 +52,20 @@
   defineProps<{
     data: RecentCommentItem[];
   }>();
+
+  /** 评论目标类型 → 图标、颜色、文案格式 */
+  const TARGET_META: Record<
+    RecentCommentItem['targetType'],
+    { icon: string; color: string; format: (name: string) => string }
+  > = {
+    1: { icon: 'ri:article-line', color: 'text-blue-500', format: (n) => `评论了《${n}》` },
+    2: { icon: 'ri:link', color: 'text-green-500', format: () => '评论了友链' },
+    3: {
+      icon: 'ri:chat-smile-2-line',
+      color: 'text-orange-500',
+      format: (n) => `评论了说说「${n}」`
+    }
+  };
 </script>
 
 <style scoped>

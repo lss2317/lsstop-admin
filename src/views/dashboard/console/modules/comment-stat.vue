@@ -37,9 +37,9 @@
 
   /** 底部统计指标（前端配置 label，后端提供 value） */
   const list = computed(() => [
-    { name: '总数', num: String(props.data.totalCount) },
-    { name: '今日新增', num: String(props.data.todayCount) },
-    { name: '日均评论', num: String(props.data.dailyAvg) },
+    { name: '总数', num: props.data.totalCount },
+    { name: '今日新增', num: props.data.todayCount },
+    { name: '日均评论', num: props.data.dailyAvg },
     { name: '周同比', num: props.data.weekOverWeek }
   ]);
 </script>

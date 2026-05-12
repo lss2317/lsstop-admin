@@ -27,7 +27,7 @@
   }>();
 
   /** 前端固定配置（图标、描述，按 key 索引） */
-  const cardMetaMap: Record<string, { des: string; icon: string }> = {
+  const cardMetaMap: Record<StatCardItem['key'], { des: string; icon: string }> = {
     totalVisits: { des: '总访问量', icon: 'ri:line-chart-line' },
     totalUsers: { des: '总用户数', icon: 'ri:user-line' },
     totalComments: { des: '总评论数', icon: 'ri:chat-3-line' },

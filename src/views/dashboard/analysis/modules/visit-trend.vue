@@ -20,7 +20,7 @@
   import type { AnalysisDailyItem } from '@/apis/dashboard/types';
   import { formatDateShort } from '@/utils/format';
 
-  /** GET /dashboard/analysis → uniqueVisitorTrend.dailyStats */
+  /** 近30天独立访客趋势 */
   const props = withDefaults(
     defineProps<{
       stats?: AnalysisDailyItem[];
