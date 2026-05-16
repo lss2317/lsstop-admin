@@ -29,33 +29,33 @@
 </template>
 
 <script setup lang="ts">
-  import type { FormRules } from 'element-plus'
-  import ArtForm from '@/components/core/forms/art-form/index.vue'
-  import type { FormItem } from '@/components/core/forms/art-form/index.vue'
+  import type { FormRules } from 'element-plus';
+  import ArtForm from '@/components/core/forms/art-form/index.vue';
+  import type { FormItem } from '@/components/core/forms/art-form/index.vue';
 
-  defineOptions({ name: 'OperationLogDialog' })
+  defineOptions({ name: 'OperationLogDialog' });
 
-  type DialogMode = 'add' | 'edit'
+  type DialogMode = 'add' | 'edit';
 
   /** 操作日志记录 */
   interface OperationLogRecord {
-    id: number
-    module: string
-    operationType: string
-    username: string
-    ip: string
-    status: string
-    durationMs: number
+    id: number;
+    module: string;
+    operationType: string;
+    username: string;
+    ip: string;
+    status: string;
+    durationMs: number;
   }
 
   /** 表单提交数据 */
   interface OperationLogFormData {
-    module?: string
-    operationType?: string
-    username?: string
-    ip?: string
-    status?: string
-    durationMs?: number
+    module?: string;
+    operationType?: string;
+    username?: string;
+    ip?: string;
+    status?: string;
+    durationMs?: number;
   }
 
   /** 系统模块选项 */
@@ -64,7 +64,7 @@
     { label: '项目管理', value: 'PROJECT' },
     { label: '任务管理', value: 'TASK' },
     { label: '系统管理', value: 'SYSTEM' }
-  ] as const
+  ] as const;
 
   /** 操作类型选项 */
   const OPERATION_TYPE_OPTIONS = [
@@ -74,44 +74,44 @@
     { label: '查询', value: 'QUERY' },
     { label: '导入', value: 'IMPORT' },
     { label: '导出', value: 'EXPORT' }
-  ] as const
+  ] as const;
 
   /** 状态选项 */
   const STATUS_OPTIONS = [
     { label: '成功', value: 'SUCCESS' },
     { label: '失败', value: 'FAIL' }
-  ] as const
+  ] as const;
 
   interface Props {
-    visible: boolean
-    type: DialogMode
-    row?: OperationLogRecord | null
+    visible: boolean;
+    type: DialogMode;
+    row?: OperationLogRecord | null;
   }
 
   interface Emits {
-    (e: 'update:visible', value: boolean): void
-    (e: 'submit', mode: DialogMode): void
+    (e: 'update:visible', value: boolean): void;
+    (e: 'submit', mode: DialogMode): void;
   }
 
   const props = withDefaults(defineProps<Props>(), {
     visible: false,
     type: 'add',
     row: null
-  })
-  const emit = defineEmits<Emits>()
+  });
+  const emit = defineEmits<Emits>();
 
   const dialogVisible = computed({
     get: () => props.visible,
     set: (value) => emit('update:visible', value)
-  })
-  const dialogMode = computed(() => props.type)
+  });
+  const dialogMode = computed(() => props.type);
   const dialogTitle = computed(() =>
     dialogMode.value === 'add' ? '新增操作日志' : '编辑操作日志'
-  )
-  const formRef = ref<InstanceType<typeof ArtForm>>()
-  const submitLoading = ref(false)
+  );
+  const formRef = ref<InstanceType<typeof ArtForm>>();
+  const submitLoading = ref(false);
 
-  const formSpan = 24
+  const formSpan = 24;
 
   const formItems = computed<FormItem[]>(() => [
     {
@@ -153,7 +153,7 @@
       type: 'number',
       placeholder: '请输入消耗时间'
     }
-  ])
+  ]);
 
   const rules = reactive<FormRules>({
     module: [{ required: true, message: '请选择系统模块', trigger: 'change' }],
@@ -162,7 +162,7 @@
       { required: true, message: '请输入操作人员', trigger: 'blur' },
       { min: 2, max: 50, message: '操作人员长度为 2-50 个字符', trigger: 'blur' }
     ]
-  })
+  });
 
   const createDefaultForm = (): OperationLogFormData => ({
     module: undefined,
@@ -171,9 +171,9 @@
     ip: undefined,
     status: undefined,
     durationMs: undefined
-  })
+  });
 
-  const form = reactive<OperationLogFormData>(createDefaultForm())
+  const form = reactive<OperationLogFormData>(createDefaultForm());
   const formFieldNames: Array<keyof OperationLogFormData> = [
     'module',
     'operationType',
@@ -181,62 +181,59 @@
     'ip',
     'status',
     'durationMs'
-  ]
-  const optionalFieldNames = new Set<keyof OperationLogFormData>([
-    'ip',
-    'durationMs'
-  ])
+  ];
+  const optionalFieldNames = new Set<keyof OperationLogFormData>(['ip', 'durationMs']);
 
   const resetDialog = () => {
-    Object.assign(form, createDefaultForm())
-    submitLoading.value = false
-    nextTick(() => formRef.value?.clearValidate())
-  }
+    Object.assign(form, createDefaultForm());
+    submitLoading.value = false;
+    nextTick(() => formRef.value?.clearValidate());
+  };
 
   const initDialog = () => {
-    resetDialog()
-    if (dialogMode.value !== 'edit' || !props.row) return
+    resetDialog();
+    if (dialogMode.value !== 'edit' || !props.row) return;
 
-    const rowRecord = props.row as unknown as Record<keyof OperationLogFormData, unknown>
+    const rowRecord = props.row as unknown as Record<keyof OperationLogFormData, unknown>;
     formFieldNames.forEach((key) => {
-      const value = rowRecord[key]
+      const value = rowRecord[key];
       if (value !== undefined && value !== null) {
-        ;(form as Record<keyof OperationLogFormData, unknown>)[key] = value
+        (form as Record<keyof OperationLogFormData, unknown>)[key] = value;
       }
-    })
-  }
+    });
+  };
 
   const buildPayload = (): OperationLogFormData =>
     Object.fromEntries(
       formFieldNames.flatMap((key) => {
-        const value = form[key]
-        if (value === undefined || value === null) return []
-        if (optionalFieldNames.has(key) && value === '') return []
-        return [[key, value]]
+        const value = form[key];
+        if (value === undefined || value === null) return [];
+        if (optionalFieldNames.has(key) && value === '') return [];
+        return [[key, value]];
       })
-    ) as unknown as OperationLogFormData
+    ) as unknown as OperationLogFormData;
 
   const handleSubmit = async () => {
-    if (!formRef.value) return
-    const valid = await formRef.value.validate().catch(() => false)
-    if (!valid) return
+    if (!formRef.value) return;
+    const valid = await formRef.value.validate().catch(() => false);
+    if (!valid) return;
 
-    submitLoading.value = true
+    submitLoading.value = true;
     // TODO: 对接真实接口
-    await new Promise((resolve) => setTimeout(resolve, 300))
-    submitLoading.value = false
-    emit('submit', dialogMode.value)
-  }
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    submitLoading.value = false;
+    emit('submit', dialogMode.value);
+  };
 
   watch(
     () => [props.visible, props.type, props.row],
     ([visible]) => {
       if (visible) {
-        initDialog()
+        initDialog();
       }
     },
     { immediate: true }
-  )
+  );
 </script>
 
 <style scoped>
