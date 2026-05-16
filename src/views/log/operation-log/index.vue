@@ -41,13 +41,6 @@
         @pagination:current-change="handleCurrentChange"
       />
 
-      <OperationLogDialog
-        v-model:visible="dialogVisible"
-        :type="dialogMode"
-        :row="currentRow"
-        @submit="handleDialogSubmit"
-      />
-
       <ElDrawer v-model="detailVisible" title="操作日志详情" size="min(800px, calc(100vw - 32px))">
         <ElDescriptions v-if="detailRow" :column="2" border>
           <ElDescriptionsItem label="日志编号">{{ detailRow.logNo }}</ElDescriptionsItem>
@@ -96,8 +89,6 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
-  import OperationLogDialog from './modules/operation-log-dialog.vue';
-
   defineOptions({ name: 'OperationLog' });
 
   /** 格式化日期时间为 yyyy-MM-dd HH:mm:ss */
@@ -139,8 +130,6 @@
     errorMessage?: string;
   }
 
-  type DialogMode = 'add' | 'edit';
-
   // ==================== Mock 数据 ====================
   const mockData: OperationLogItem[] = [
     {
@@ -157,8 +146,8 @@
       responseCode: 200,
       durationMs: 14,
       createdAt: '2026-05-16T10:08:53.105Z',
-      requestParams: '{"taskId":31,"comment":"同意"}',
-      responseParams: '{"code":0,"msg":"success"}'
+      requestParams: '{"taskId":31,"action":"approve","comment":"同意","attachments":["审批附件1.pdf","审批附件2.pdf"],"ccUserIds":[1001,1002],"priority":"high","deadline":"2026-05-18T18:00:00.000Z"}',
+      responseParams: '{"code":0,"msg":"success","data":{"taskId":31,"status":"approved","approvedBy":"Super","approvedAt":"2026-05-16T10:08:53.105Z","nextTaskId":32,"nextAssignee":"Finance","workflowStatus":"in_progress","history":[{"step":"提交申请","operator":"张三","time":"2026-05-15T09:00:00.000Z"},{"step":"部门审批","operator":"Super","time":"2026-05-16T10:08:53.105Z"},{"step":"财务审批","operator":null,"time":null}]}}'
     },
     {
       id: 853,
@@ -371,9 +360,6 @@
   };
   // ==================== Mock 数据 ====================
 
-  const dialogVisible = ref(false);
-  const dialogMode = ref<DialogMode>('add');
-  const currentRow = ref<OperationLogItem | null>(null);
   const detailVisible = ref(false);
   const detailRow = ref<OperationLogItem | null>(null);
   const selectedRows = ref<OperationLogItem[]>([]);
@@ -467,8 +453,6 @@
     replaceSearchParams,
     resetSearchParams,
     getData,
-    refreshCreate,
-    refreshUpdate,
     refreshRemove,
     handleSizeChange,
     handleCurrentChange,
@@ -495,25 +479,9 @@
     await resetSearchParams();
   };
 
-  const openAddDialog = () => {
-    dialogMode.value = 'add';
-    currentRow.value = null;
-    dialogVisible.value = true;
-  };
-
   const openDetailDrawer = async (row: OperationLogItem) => {
     detailRow.value = await fetchOperationLogDetail(row.id);
     detailVisible.value = true;
-  };
-
-  const handleDialogSubmit = async (mode: DialogMode) => {
-    if (mode === 'add') {
-      await refreshCreate();
-    } else {
-      await refreshUpdate();
-    }
-    dialogVisible.value = false;
-    currentRow.value = null;
   };
 
   const handleDelete = async (row: OperationLogItem) => {
