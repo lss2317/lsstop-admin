@@ -89,26 +89,8 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
+  import { formatDateTime, formatJson } from '@/utils/format';
   defineOptions({ name: 'OperationLog' });
-
-  /** 格式化日期时间为 yyyy-MM-dd HH:mm:ss */
-  const formatDateTime = (value: unknown): string => {
-    if (!value) return '-';
-    const d = new Date(value as string);
-    if (isNaN(d.getTime())) return String(value);
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  };
-
-  /** 格式化 JSON 字符串为美化缩进格式 */
-  const formatJson = (jsonStr: string | undefined): string => {
-    if (!jsonStr) return '-';
-    try {
-      return JSON.stringify(JSON.parse(jsonStr), null, 2);
-    } catch {
-      return jsonStr;
-    }
-  };
 
   /** 操作日志列表项（匹配后端实际字段） */
   interface OperationLogItem {
@@ -146,8 +128,10 @@
       responseCode: 200,
       durationMs: 14,
       createdAt: '2026-05-16T10:08:53.105Z',
-      requestParams: '{"taskId":31,"action":"approve","comment":"同意","attachments":["审批附件1.pdf","审批附件2.pdf"],"ccUserIds":[1001,1002],"priority":"high","deadline":"2026-05-18T18:00:00.000Z"}',
-      responseParams: '{"code":0,"msg":"success","data":{"taskId":31,"status":"approved","approvedBy":"Super","approvedAt":"2026-05-16T10:08:53.105Z","nextTaskId":32,"nextAssignee":"Finance","workflowStatus":"in_progress","history":[{"step":"提交申请","operator":"张三","time":"2026-05-15T09:00:00.000Z"},{"step":"部门审批","operator":"Super","time":"2026-05-16T10:08:53.105Z"},{"step":"财务审批","operator":null,"time":null}]}}'
+      requestParams:
+        '{"taskId":31,"action":"approve","comment":"同意","attachments":["审批附件1.pdf","审批附件2.pdf"],"ccUserIds":[1001,1002],"priority":"high","deadline":"2026-05-18T18:00:00.000Z"}',
+      responseParams:
+        '{"code":0,"msg":"success","data":{"taskId":31,"status":"approved","approvedBy":"Super","approvedAt":"2026-05-16T10:08:53.105Z","nextTaskId":32,"nextAssignee":"Finance","workflowStatus":"in_progress","history":[{"step":"提交申请","operator":"张三","time":"2026-05-15T09:00:00.000Z"},{"step":"部门审批","operator":"Super","time":"2026-05-16T10:08:53.105Z"},{"step":"财务审批","operator":null,"time":null}]}}'
     },
     {
       id: 853,
@@ -339,7 +323,9 @@
     }
   ];
 
-  const fetchOperationLogList = async (params: any) => {
+  const fetchOperationLogList = async (
+    params: any
+  ): Promise<Api.Common.PaginatedResponse<OperationLogItem>> => {
     const { current = 1, size = 10 } = params || {};
     const start = (current - 1) * size;
     return {
@@ -347,15 +333,15 @@
       current,
       size,
       total: mockData.length
-    } as any;
+    };
   };
   const fetchOperationLogDetail = async (id: number) => {
     return mockData.find((item) => item.id === id) || null;
   };
-  const fetchDeleteOperationLog = async () => {
+  const fetchDeleteOperationLog = async (_id: number) => {
     ElMessage.success('Mock: 删除成功');
   };
-  const fetchBatchDeleteOperationLog = async () => {
+  const fetchBatchDeleteOperationLog = async (_ids: number[]) => {
     ElMessage.success('Mock: 批量删除成功');
   };
   // ==================== Mock 数据 ====================

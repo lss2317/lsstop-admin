@@ -67,3 +67,30 @@ export function parseEmoji(content: string): string {
     return url ? `<img src="${url}" alt="${match}" class="comment-emoji" />` : match;
   });
 }
+
+/**
+ * 格式化日期时间为 yyyy-MM-dd HH:mm:ss
+ * @param value 日期字符串或 Date 对象
+ * @returns 格式化后的日期时间字符串，无效值返回 '-'
+ */
+export function formatDateTime(value: unknown): string {
+  if (!value) return '-';
+  const d = new Date(value as string);
+  if (isNaN(d.getTime())) return String(value);
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
+/**
+ * 格式化 JSON 字符串为美化缩进格式
+ * @param jsonStr 原始 JSON 字符串
+ * @returns 美化后的 JSON 字符串，空值或解析失败返回原值或 '-'
+ */
+export function formatJson(jsonStr: string | undefined): string {
+  if (!jsonStr) return '-';
+  try {
+    return JSON.stringify(JSON.parse(jsonStr), null, 2);
+  } catch {
+    return jsonStr;
+  }
+}
