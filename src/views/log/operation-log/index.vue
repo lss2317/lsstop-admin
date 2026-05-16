@@ -39,11 +39,7 @@
         @selection-change="handleSelectionChange"
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
-      >
-        <template #operationType="{ row }">
-          <ElTag type="info">{{ row.operationType }}</ElTag>
-        </template>
-      </ArtTable>
+      />
 
       <OperationLogDialog
         v-model:visible="dialogVisible"
@@ -52,7 +48,7 @@
         @submit="handleDialogSubmit"
       />
 
-      <ElDrawer v-model="detailVisible" title="操作日志详情" size="min(680px, calc(100vw - 32px))">
+      <ElDrawer v-model="detailVisible" title="操作日志详情" size="min(800px, calc(100vw - 32px))">
         <ElDescriptions v-if="detailRow" :column="2" border>
           <ElDescriptionsItem label="日志编号">{{ detailRow.logNo }}</ElDescriptionsItem>
           <ElDescriptionsItem label="系统模块">{{ detailRow.module }}</ElDescriptionsItem>
@@ -421,7 +417,12 @@
     { type: 'selection' },
     { prop: 'logNo', label: '日志编号', minWidth: 160, showOverflowTooltip: true },
     { prop: 'module', label: '系统模块', minWidth: 100 },
-    { prop: 'operationType', label: '操作类型', minWidth: 80, useSlot: true },
+    {
+      prop: 'operationType',
+      label: '操作类型',
+      minWidth: 80,
+      formatter: (row: OperationLogItem) => h(ElTag, { type: 'info' }, row.operationType)
+    },
     { prop: 'username', label: '操作人员', minWidth: 100 },
     { prop: 'ip', label: '操作地址', minWidth: 135 },
     {
