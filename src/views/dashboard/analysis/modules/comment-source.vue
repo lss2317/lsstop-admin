@@ -27,18 +27,9 @@
   };
 
   /** 评论来源分布（按目标类型统计） */
-  const props = withDefaults(
-    defineProps<{
-      sources?: CommentSourceItem[];
-    }>(),
-    {
-      sources: () => [
-        { targetType: 1, value: 156 },
-        { targetType: 2, value: 32 },
-        { targetType: 3, value: 48 }
-      ]
-    }
-  );
+  const props = defineProps<{
+    sources: CommentSourceItem[];
+  }>();
 
   /** 将 CommentSourceItem[] 转换为图表所需的 { name, value }[] */
   const chartData = computed(() =>

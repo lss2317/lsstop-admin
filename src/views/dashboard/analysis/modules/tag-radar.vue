@@ -14,26 +14,18 @@
   import type { TagRadarItem } from '@/apis/dashboard/types';
 
   /** 标签热度 */
-  const props = withDefaults(
-    defineProps<{
-      tags?: TagRadarItem[];
-    }>(),
-    {
-      tags: () => [
-        { name: 'Vue', value: 22 },
-        { name: 'React', value: 12 },
-        { name: 'Node.js', value: 18 },
-        { name: 'TypeScript', value: 25 },
-        { name: 'Docker', value: 8 },
-        { name: 'MySQL', value: 15 }
-      ]
-    }
-  );
+  const props = defineProps<{
+    tags: TagRadarItem[];
+  }>();
 
-  /** 雷达图维度指标：从数据中推导 max 值 */
+  /** 截断过长标签名 */
+  const truncate = (str: string, maxLen = 10) =>
+    str.length > maxLen ? str.slice(0, maxLen) + '...' : str;
+
+  /** 雷达图维度指标：从数据中推导 max 值，name 过长则截断 */
   const indicator = computed(() => {
     const maxVal = Math.max(...props.tags.map((t) => t.value));
-    return props.tags.map((t) => ({ name: t.name, max: maxVal }));
+    return props.tags.map((t) => ({ name: truncate(t.name), max: maxVal }));
   });
 
   /** 雷达图数据系列 */

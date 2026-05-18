@@ -19,22 +19,14 @@
   import type { CategoryItem } from '@/apis/dashboard/types';
 
   /** 文章分类分布 */
-  const props = withDefaults(
-    defineProps<{
-      categories?: CategoryItem[];
-    }>(),
-    {
-      categories: () => [
-        { name: '前端开发', value: 45 },
-        { name: '后端技术', value: 32 },
-        { name: '数据库', value: 18 },
-        { name: '运维部署', value: 12 },
-        { name: '工具效率', value: 8 },
-        { name: '其他', value: 5 }
-      ]
-    }
-  );
+  const props = defineProps<{
+    categories: CategoryItem[];
+  }>();
 
-  /** CategoryItem 与 PieDataItem 结构兼容，直接透传 */
-  const chartData = computed(() => props.categories);
+  /** 截断过长分类名 */
+  const truncate = (str: string, maxLen = 10) =>
+    str.length > maxLen ? str.slice(0, maxLen) + '...' : str;
+
+  /** CategoryItem 与 PieDataItem 结构兼容，name 过长则截断 */
+  const chartData = computed(() => props.categories.map((c) => ({ ...c, name: truncate(c.name) })));
 </script>
