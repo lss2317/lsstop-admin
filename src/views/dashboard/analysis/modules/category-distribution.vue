@@ -23,10 +23,20 @@
     categories: CategoryItem[];
   }>();
 
-  /** 截断过长分类名 */
-  const truncate = (str: string, maxLen = 10) =>
-    str.length > maxLen ? str.slice(0, maxLen) + '...' : str;
+  /** 聚合小分类、截断过长名称，避免图例溢出 */
+  const chartData = computed(() => {
+    const truncate = (s: string, max = 10) => (s.length > max ? s.slice(0, max) + '…' : s);
 
-  /** CategoryItem 与 PieDataItem 结构兼容，name 过长则截断 */
-  const chartData = computed(() => props.categories.map((c) => ({ ...c, name: truncate(c.name) })));
+    const list =
+      props.categories.length <= 6
+        ? props.categories
+        : (() => {
+            const sorted = [...props.categories].sort((a, b) => b.value - a.value);
+            const top5 = sorted.slice(0, 5);
+            const otherValue = sorted.slice(5).reduce((sum, c) => sum + c.value, 0);
+            return otherValue > 0 ? [...top5, { name: '其他', value: otherValue }] : top5;
+          })();
+
+    return list.map((c) => ({ ...c, name: truncate(c.name) }));
+  });
 </script>
