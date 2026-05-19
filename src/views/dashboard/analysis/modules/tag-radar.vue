@@ -3,7 +3,7 @@
     <div class="art-card-header">
       <div class="title">
         <h4>标签热度分析</h4>
-        <p>各标签下文章数量对比</p>
+        <p>热门标签文章数量对比</p>
       </div>
     </div>
     <ArtRadarChart height="calc(100% - 40px)" :indicator="indicator" :data="radarData" />
