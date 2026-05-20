@@ -42,7 +42,7 @@
       />
 
       <ElDrawer v-model="detailVisible" title="登录日志详情" size="min(800px, calc(100vw - 32px))">
-        <ElDescriptions v-if="detailRow" :column="2" border>
+        <ElDescriptions v-if="detailRow" :column="2" border label-width="85px">
           <ElDescriptionsItem label="日志编号">{{ detailRow.accessId }}</ElDescriptionsItem>
           <ElDescriptionsItem label="用户名称">{{ detailRow.userName }}</ElDescriptionsItem>
           <ElDescriptionsItem label="操作IP">{{ detailRow.address || '-' }}</ElDescriptionsItem>
@@ -99,7 +99,7 @@
       id: 1,
       accessId: 'LG20260519103000001abcdef1234567',
       userId: '1001',
-      userName: 'Super',
+      userName: '风清扬',
       address: '183.227.175.119',
       loginLocation: '广东省',
       os: 'OSX 10_15_7',
@@ -114,7 +114,7 @@
       id: 2,
       accessId: 'LG20260519091500002abcdef1234567',
       userId: '1002',
-      userName: 'admin',
+      userName: '令狐冲',
       address: '120.237.243.189',
       loginLocation: '北京市',
       os: 'Windows 10_0_19045',
@@ -129,7 +129,7 @@
       id: 3,
       accessId: 'LG20260519084500003abcdef1234567',
       userId: '1003',
-      userName: 'zhangsan',
+      userName: '任盈盈',
       address: '27.211.97.216',
       loginLocation: '上海市',
       os: 'OSX 10_15_7',
@@ -144,7 +144,7 @@
       id: 4,
       accessId: 'LG20260518182000004abcdef1234567',
       userId: '1001',
-      userName: 'Super',
+      userName: '杨过',
       address: '60.209.250.73',
       loginLocation: '山东省',
       os: 'OSX 10_15_7',
@@ -159,7 +159,7 @@
       id: 5,
       accessId: 'LG20260518151000005abcdef1234567',
       userId: '1004',
-      userName: 'lisi',
+      userName: '东方不败',
       address: '113.87.90.237',
       loginLocation: '浙江省',
       os: 'Windows 11_0_22631',
@@ -348,6 +348,10 @@
 
   :deep(.generated-operation-actions .el-button) {
     flex: 0 0 auto;
+  }
+
+  :deep(.el-descriptions__body .el-descriptions__table) {
+    table-layout: fixed;
   }
 
   .detail-json-title {

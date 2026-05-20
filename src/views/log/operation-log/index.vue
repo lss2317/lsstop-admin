@@ -42,7 +42,7 @@
       />
 
       <ElDrawer v-model="detailVisible" title="操作日志详情" size="min(800px, calc(100vw - 32px))">
-        <ElDescriptions v-if="detailRow" :column="2" border>
+        <ElDescriptions v-if="detailRow" :column="2" border label-width="85px">
           <ElDescriptionsItem label="日志编号">{{ detailRow.logNo }}</ElDescriptionsItem>
           <ElDescriptionsItem label="系统模块">{{ detailRow.module }}</ElDescriptionsItem>
           <ElDescriptionsItem label="操作类型"
@@ -517,6 +517,10 @@
 
   :deep(.generated-operation-actions .el-button) {
     flex: 0 0 auto;
+  }
+
+  :deep(.el-descriptions__body .el-descriptions__table) {
+    table-layout: fixed;
   }
 
   .detail-json-title {
