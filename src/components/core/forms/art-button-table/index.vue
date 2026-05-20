@@ -38,20 +38,23 @@
   const defaultButtons = {
     add: {
       icon: 'ri:add-fill',
-      class: 'bg-theme/12 text-theme hover:bg-theme hover:text-white transition-all duration-200'
+      class:
+        'bg-theme/12 text-theme hover:bg-theme/90 hover:text-white transition-all duration-200'
     },
     edit: {
       icon: 'ri:pencil-line',
       class:
-        'bg-secondary/12 text-secondary hover:bg-secondary hover:text-white transition-all duration-200'
+        'bg-secondary/12 text-secondary hover:bg-secondary/90 hover:text-white transition-all duration-200'
     },
     delete: {
       icon: 'ri:delete-bin-5-line',
-      class: 'bg-error/12 text-error hover:bg-error hover:text-white transition-all duration-200'
+      class:
+        'bg-danger/12 text-danger hover:bg-danger/90 hover:text-white transition-all duration-200'
     },
     view: {
       icon: 'ri:eye-line',
-      class: 'bg-info/12 text-info hover:bg-info hover:text-white transition-all duration-200'
+      class:
+        'bg-info/12 text-info hover:bg-info/90 hover:text-white transition-all duration-200'
     },
     more: { icon: 'ri:more-2-fill', class: '' }
   } as const;
