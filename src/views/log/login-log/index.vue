@@ -41,12 +41,12 @@
         @pagination:current-change="handleCurrentChange"
       />
 
-      <ElDrawer v-model="detailVisible" title="登录日志详情" size="min(520px, calc(100vw - 32px))">
-        <ElDescriptions v-if="detailRow" :column="1" border>
+      <ElDrawer v-model="detailVisible" title="登录日志详情" size="min(800px, calc(100vw - 32px))">
+        <ElDescriptions v-if="detailRow" :column="2" border>
           <ElDescriptionsItem label="日志编号">{{ detailRow.accessId }}</ElDescriptionsItem>
           <ElDescriptionsItem label="用户名称">{{ detailRow.userName }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="地址">{{ detailRow.address || '-' }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="登录地点">{{
+          <ElDescriptionsItem label="操作IP">{{ detailRow.address || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="ip所在地">{{
             detailRow.loginLocation || '-'
           }}</ElDescriptionsItem>
           <ElDescriptionsItem label="操作系统">{{ detailRow.os || '-' }}</ElDescriptionsItem>
@@ -56,9 +56,11 @@
               {{ detailRow.status === 'SUCCESS' ? '成功' : '失败' }}
             </ElTag>
           </ElDescriptionsItem>
-          <ElDescriptionsItem label="描述">{{ detailRow.description || '-' }}</ElDescriptionsItem>
           <ElDescriptionsItem label="时间">{{
             formatDateTime(detailRow.loginTime)
+          }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="登录信息" :span="2">{{
+            detailRow.description || '-'
           }}</ElDescriptionsItem>
         </ElDescriptions>
       </ElDrawer>
@@ -95,13 +97,13 @@
   const mockData: LoginLogItem[] = [
     {
       id: 1,
-      accessId: 'LG20260519103000001abcdef12345678',
+      accessId: 'LG20260519103000001abcdef1234567',
       userId: '1001',
       userName: 'Super',
       address: '183.227.175.119',
       loginLocation: '广东省',
-      os: 'macOS',
-      browser: 'Chrome 125',
+      os: 'OSX 10_15_7',
+      browser: 'Chrome 148.0.0.0',
       status: 'SUCCESS',
       description: '登录成功',
       loginTime: '2026-05-19T10:30:00.000Z',
@@ -110,13 +112,13 @@
     },
     {
       id: 2,
-      accessId: 'LG20260519091500002abcdef12345678',
+      accessId: 'LG20260519091500002abcdef1234567',
       userId: '1002',
       userName: 'admin',
       address: '120.237.243.189',
       loginLocation: '北京市',
-      os: 'Windows 10',
-      browser: 'Edge 125',
+      os: 'Windows 10_0_19045',
+      browser: 'Edge 148.0.0.0',
       status: 'SUCCESS',
       description: '登录成功',
       loginTime: '2026-05-19T09:15:00.000Z',
@@ -125,13 +127,13 @@
     },
     {
       id: 3,
-      accessId: 'LG20260519084500003abcdef12345678',
+      accessId: 'LG20260519084500003abcdef1234567',
       userId: '1003',
       userName: 'zhangsan',
       address: '27.211.97.216',
       loginLocation: '上海市',
-      os: 'macOS',
-      browser: 'Safari 17',
+      os: 'OSX 10_15_7',
+      browser: 'Safari 17.5.0.0',
       status: 'FAIL',
       description: '密码错误',
       loginTime: '2026-05-19T08:45:00.000Z',
@@ -140,13 +142,13 @@
     },
     {
       id: 4,
-      accessId: 'LG20260518182000004abcdef12345678',
+      accessId: 'LG20260518182000004abcdef1234567',
       userId: '1001',
       userName: 'Super',
       address: '60.209.250.73',
       loginLocation: '山东省',
-      os: 'macOS',
-      browser: 'Chrome 125',
+      os: 'OSX 10_15_7',
+      browser: 'Chrome 148.0.0.0',
       status: 'SUCCESS',
       description: '登录成功',
       loginTime: '2026-05-18T18:20:00.000Z',
@@ -155,13 +157,13 @@
     },
     {
       id: 5,
-      accessId: 'LG20260518151000005abcdef12345678',
+      accessId: 'LG20260518151000005abcdef1234567',
       userId: '1004',
       userName: 'lisi',
       address: '113.87.90.237',
       loginLocation: '浙江省',
-      os: 'Windows 11',
-      browser: 'Firefox 126',
+      os: 'Windows 11_0_22631',
+      browser: 'Firefox 148.0.0.0',
       status: 'FAIL',
       description: '账号已被锁定',
       loginTime: '2026-05-18T15:10:00.000Z',
@@ -223,8 +225,8 @@
     { type: 'selection' },
     { prop: 'accessId', label: '日志编号', minWidth: 160, showOverflowTooltip: true },
     { prop: 'userName', label: '用户名称', minWidth: 100 },
-    { prop: 'address', label: '地址', minWidth: 140 },
-    { prop: 'loginLocation', label: '登录地点', minWidth: 140 },
+    { prop: 'address', label: '操作IP', minWidth: 140 },
+    { prop: 'loginLocation', label: 'ip所在地', minWidth: 140 },
     { prop: 'os', label: '操作系统', minWidth: 110 },
     { prop: 'browser', label: '浏览器', minWidth: 120 },
     {
@@ -238,7 +240,7 @@
           row.status === 'SUCCESS' ? '成功' : '失败'
         )
     },
-    { prop: 'description', label: '描述', minWidth: 140 },
+    { prop: 'description', label: '登录信息', minWidth: 140 },
     {
       prop: 'loginTime',
       label: '时间',

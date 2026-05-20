@@ -38,8 +38,7 @@
   const defaultButtons = {
     add: {
       icon: 'ri:add-fill',
-      class:
-        'bg-theme/12 text-theme hover:bg-theme/90 hover:text-white transition-all duration-200'
+      class: 'bg-theme/12 text-theme hover:bg-theme/90 hover:text-white transition-all duration-200'
     },
     edit: {
       icon: 'ri:pencil-line',
@@ -53,8 +52,7 @@
     },
     view: {
       icon: 'ri:eye-line',
-      class:
-        'bg-info/12 text-info hover:bg-info/90 hover:text-white transition-all duration-200'
+      class: 'bg-info/12 text-info hover:bg-info/90 hover:text-white transition-all duration-200'
     },
     more: { icon: 'ri:more-2-fill', class: '' }
   } as const;
