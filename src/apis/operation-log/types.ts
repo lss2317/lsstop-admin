@@ -18,6 +18,8 @@ export interface OperationLogItem {
   requestUrl: string;
   /** 操作用户ID（16位唯一标识） */
   userId: string;
+  /** 操作人员昵称（页面展示） */
+  nickname: string;
   /** IP地址 */
   ipAddress: string;
   /** IP归属地 */

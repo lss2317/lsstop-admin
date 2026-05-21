@@ -48,17 +48,17 @@
           <ElDescriptionsItem label="操作类型"
             ><ElTag type="info">{{ detailRow.operationType }}</ElTag></ElDescriptionsItem
           >
-          <ElDescriptionsItem label="操作人员">{{ detailRow.userId }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="请求地址">{{ detailRow.requestUrl }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="用户ID">{{ detailRow.userId }}</ElDescriptionsItem>
           <ElDescriptionsItem label="操作IP">{{ detailRow.ipAddress }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="请求地址">{{ detailRow.requestUrl }}</ElDescriptionsItem>
           <ElDescriptionsItem label="IP归属地">{{ detailRow.ipRegion || '-' }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="浏览器">{{ detailRow.browser || '-' }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="操作系统">{{ detailRow.os || '-' }}</ElDescriptionsItem>
           <ElDescriptionsItem label="状态">
             <ElTag :type="detailRow.state === 0 ? 'success' : 'danger'">
               {{ detailRow.state === 0 ? '成功' : '失败' }}
             </ElTag>
           </ElDescriptionsItem>
+          <ElDescriptionsItem label="浏览器">{{ detailRow.browser || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="操作系统">{{ detailRow.os || '-' }}</ElDescriptionsItem>
           <ElDescriptionsItem label="消耗时间">{{ detailRow.costTime }} 毫秒</ElDescriptionsItem>
           <ElDescriptionsItem label="操作时间">{{
             formatDateTime(detailRow.createTime)
@@ -66,6 +66,7 @@
           <ElDescriptionsItem label="操作描述">{{
             detailRow.description || '-'
           }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="操作人员">{{ detailRow.nickname }}</ElDescriptionsItem>
           <ElDescriptionsItem label="错误信息" :span="2">{{
             detailRow.errorMsg || '-'
           }}</ElDescriptionsItem>
@@ -103,6 +104,7 @@
       description: '审批通过流程任务',
       requestUrl: '/api/v1/workflows/tasks/31/approve',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '安',
       ipAddress: '183.227.175.119',
       ipRegion: '重庆市',
       browser: 'Chrome 125.0.0.0',
@@ -122,6 +124,7 @@
       description: '审批通过流程任务',
       requestUrl: '/api/v1/workflows/tasks/30/approve',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '张三',
       ipAddress: '183.227.175.119',
       ipRegion: '重庆市',
       browser: 'Chrome 125.0.0.0',
@@ -139,6 +142,7 @@
       description: '发起工作流审批实例',
       requestUrl: '/api/v1/workflows/instances',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '风清扬',
       ipAddress: '183.227.175.119',
       ipRegion: '重庆市',
       browser: 'Chrome 125.0.0.0',
@@ -156,6 +160,7 @@
       description: '提交用户反馈',
       requestUrl: '/api/v1/feedback',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '代码诗人',
       ipAddress: '27.211.97.216',
       ipRegion: '山东省青岛市',
       browser: 'Edge 125.0.0.0',
@@ -173,6 +178,7 @@
       description: '提交用户反馈',
       requestUrl: '/api/v1/feedback',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '北方的狼啊',
       ipAddress: '27.211.97.216',
       ipRegion: '山东省青岛市',
       browser: 'Edge 125.0.0.0',
@@ -190,6 +196,7 @@
       description: '发起工作流审批实例',
       requestUrl: '/api/v1/workflows/instances',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '从前有座山山里有座庙庙里有个老和尚在给小和尚讲那过去的故事呀',
       ipAddress: '60.209.250.73',
       ipRegion: '山东省青岛市',
       browser: 'Chrome 124.0.0.0',
@@ -207,6 +214,7 @@
       description: '复制商品',
       requestUrl: '/api/v1/mall/products/19/copy',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '从前有座山山里有个庙',
       ipAddress: '120.237.243.189',
       ipRegion: '广东省深圳市',
       browser: 'Chrome 124.0.0.0',
@@ -224,6 +232,7 @@
       description: '下线内容',
       requestUrl: '/api/v1/contents/8/offline',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '那个喜欢写代码的小明',
       ipAddress: '27.226.12.19',
       ipRegion: '福建省厦门市',
       browser: 'Firefox 126.0.0.0',
@@ -241,6 +250,7 @@
       description: '发布内容',
       requestUrl: '/api/v1/contents/8/publish',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '这段超长昵称用于测试边界',
       ipAddress: '27.226.12.19',
       ipRegion: '福建省厦门市',
       browser: 'Firefox 126.0.0.0',
@@ -258,6 +268,7 @@
       description: '更新个人资料',
       requestUrl: '/api/v1/user/profile/me',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: '那位路过的假面骑士DarkDecade',
       ipAddress: '60.177.36.242',
       ipRegion: '浙江省杭州市',
       browser: 'Safari 17.0.0.0',
@@ -275,6 +286,7 @@
       description: '提交用户反馈',
       requestUrl: '/api/v1/feedback',
       userId: 'U0a1b2c3d4e5f6g7',
+      nickname: 'VueMaster2024ProMaxUltra',
       ipAddress: '124.238.79.236',
       ipRegion: '河北省廊坊市',
       browser: 'Chrome 124.0.0.0',
@@ -293,6 +305,7 @@
       description: '删除商品分类',
       requestUrl: '/api/v1/mall/categories/7',
       userId: 'U1x2y3z4w5v6u7t8',
+      nickname: 'ThirtyCharactersLongNickname30',
       ipAddress: '113.87.90.237',
       ipRegion: '广东省深圳市',
       browser: 'Chrome 125.0.0.0',
@@ -378,6 +391,7 @@
       formatter: (row: OperationLogItem) => h(ElTag, { type: 'info' }, row.operationType)
     },
     { prop: 'userId', label: '用户ID', minWidth: 160, showOverflowTooltip: true },
+    { prop: 'nickname', label: '操作人员', minWidth: 160, showOverflowTooltip: true },
     { prop: 'ipAddress', label: '操作地址', minWidth: 135 },
     { prop: 'ipRegion', label: 'IP归属地', minWidth: 120 },
     {
