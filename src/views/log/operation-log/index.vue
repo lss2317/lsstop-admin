@@ -43,40 +43,41 @@
 
       <ElDrawer v-model="detailVisible" title="操作日志详情" size="min(800px, calc(100vw - 32px))">
         <ElDescriptions v-if="detailRow" :column="2" border label-width="85px">
-          <ElDescriptionsItem label="日志编号">{{ detailRow.logNo }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="日志编号">{{ detailRow.logNumber }}</ElDescriptionsItem>
           <ElDescriptionsItem label="系统模块">{{ detailRow.module }}</ElDescriptionsItem>
           <ElDescriptionsItem label="操作类型"
             ><ElTag type="info">{{ detailRow.operationType }}</ElTag></ElDescriptionsItem
           >
-          <ElDescriptionsItem label="操作人员">{{ detailRow.username }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="请求方式">{{ detailRow.method }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="请求地址">{{ detailRow.path }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="操作IP">{{ detailRow.ip }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="响应码">{{ detailRow.responseCode }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="操作人员">{{ detailRow.userId }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="请求地址">{{ detailRow.requestUrl }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="操作IP">{{ detailRow.ipAddress }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="IP归属地">{{ detailRow.ipRegion || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="浏览器">{{ detailRow.browser || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="操作系统">{{ detailRow.os || '-' }}</ElDescriptionsItem>
           <ElDescriptionsItem label="状态">
-            <ElTag :type="detailRow.status === 'SUCCESS' ? 'success' : 'danger'">
-              {{ detailRow.status === 'SUCCESS' ? '成功' : '失败' }}
+            <ElTag :type="detailRow.state === 0 ? 'success' : 'danger'">
+              {{ detailRow.state === 0 ? '成功' : '失败' }}
             </ElTag>
           </ElDescriptionsItem>
-          <ElDescriptionsItem label="消耗时间">{{ detailRow.durationMs }} 毫秒</ElDescriptionsItem>
+          <ElDescriptionsItem label="消耗时间">{{ detailRow.costTime }} 毫秒</ElDescriptionsItem>
           <ElDescriptionsItem label="操作时间">{{
-            formatDateTime(detailRow.createdAt)
+            formatDateTime(detailRow.createTime)
           }}</ElDescriptionsItem>
           <ElDescriptionsItem label="操作描述">{{
             detailRow.description || '-'
           }}</ElDescriptionsItem>
           <ElDescriptionsItem label="错误信息" :span="2">{{
-            detailRow.errorMessage || '-'
+            detailRow.errorMsg || '-'
           }}</ElDescriptionsItem>
         </ElDescriptions>
         <div v-if="detailRow" style="margin-top: 16px">
           <div class="detail-json-section">
             <div class="detail-json-title">请求参数</div>
-            <pre class="detail-json-content">{{ formatJson(detailRow.requestParams) }}</pre>
+            <pre class="detail-json-content">{{ formatJson(detailRow.requestParam) }}</pre>
           </div>
           <div class="detail-json-section" style="margin-top: 16px">
             <div class="detail-json-title">返回参数</div>
-            <pre class="detail-json-content">{{ formatJson(detailRow.responseParams) }}</pre>
+            <pre class="detail-json-content">{{ formatJson(detailRow.responseParam) }}</pre>
           </div>
         </div>
       </ElDrawer>
@@ -89,237 +90,218 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
+  import type { OperationLogItem } from '@/apis/operation-log/types';
   import { formatDateTime, formatJson } from '@/utils/format';
   defineOptions({ name: 'OperationLog' });
-
-  /** 操作日志列表项（匹配后端实际字段） */
-  interface OperationLogItem {
-    id: number;
-    logNo: string;
-    module: string;
-    operationType: string;
-    description: string;
-    method: string;
-    path: string;
-    username: string;
-    ip: string;
-    status: string;
-    responseCode: number;
-    durationMs: number;
-    createdAt: string;
-    requestParams: string;
-    responseParams: string;
-    errorMessage?: string;
-  }
 
   // ==================== Mock 数据 ====================
   const mockData: OperationLogItem[] = [
     {
-      id: 854,
-      logNo: 'OP17789261331046238350482765910',
+      logNumber: 'OP17789261331046238350482765910',
       module: '审批待办',
       operationType: '通过',
       description: '审批通过流程任务',
-      method: 'POST',
-      path: '/api/v1/workflows/tasks/31/approve',
-      username: 'Super',
-      ip: '183.227.175.119',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 14,
-      createdAt: '2026-05-16T10:08:53.105Z',
-      requestParams:
+      requestUrl: '/api/v1/workflows/tasks/31/approve',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '183.227.175.119',
+      ipRegion: '重庆市',
+      browser: 'Chrome 125.0.0.0',
+      os: 'Windows 10.0.0.0',
+      state: 0,
+      costTime: 14,
+      createTime: '2026-05-16T10:08:53.105Z',
+      requestParam:
         '{"taskId":31,"action":"approve","comment":"同意","attachments":["审批附件1.pdf","审批附件2.pdf"],"ccUserIds":[1001,1002],"priority":"high","deadline":"2026-05-18T18:00:00.000Z"}',
-      responseParams:
+      responseParam:
         '{"code":0,"msg":"success","data":{"taskId":31,"status":"approved","approvedBy":"Super","approvedAt":"2026-05-16T10:08:53.105Z","nextTaskId":32,"nextAssignee":"Finance","workflowStatus":"in_progress","history":[{"step":"提交申请","operator":"张三","time":"2026-05-15T09:00:00.000Z"},{"step":"部门审批","operator":"Super","time":"2026-05-16T10:08:53.105Z"},{"step":"财务审批","operator":null,"time":null}]}}'
     },
     {
-      id: 853,
-      logNo: 'OP17789261285539707880937251476',
+      logNumber: 'OP17789261285539707880937251476',
       module: '审批待办',
       operationType: '通过',
       description: '审批通过流程任务',
-      method: 'POST',
-      path: '/api/v1/workflows/tasks/30/approve',
-      username: 'Super',
-      ip: '183.227.175.119',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 17,
-      createdAt: '2026-05-16T10:08:48.554Z',
-      requestParams: '{"taskId":30,"comment":"同意"}',
-      responseParams: '{"code":0,"msg":"success"}'
+      requestUrl: '/api/v1/workflows/tasks/30/approve',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '183.227.175.119',
+      ipRegion: '重庆市',
+      browser: 'Chrome 125.0.0.0',
+      os: 'Windows 10.0.0.0',
+      state: 0,
+      costTime: 17,
+      createTime: '2026-05-16T10:08:48.554Z',
+      requestParam: '{"taskId":30,"comment":"同意"}',
+      responseParam: '{"code":0,"msg":"success"}'
     },
     {
-      id: 852,
-      logNo: 'OP17789260815583818426109438527',
+      logNumber: 'OP17789260815583818426109438527',
       module: '审批中心',
       operationType: '发起',
       description: '发起工作流审批实例',
-      method: 'POST',
-      path: '/api/v1/workflows/instances',
-      username: 'Super',
-      ip: '183.227.175.119',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 19,
-      createdAt: '2026-05-16T10:08:01.558Z',
-      requestParams: '{"workflowId":1,"title":"请假申请"}',
-      responseParams: '{"code":0,"msg":"success","data":{"instanceId":42}}'
+      requestUrl: '/api/v1/workflows/instances',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '183.227.175.119',
+      ipRegion: '重庆市',
+      browser: 'Chrome 125.0.0.0',
+      os: 'Windows 10.0.0.0',
+      state: 0,
+      costTime: 19,
+      createTime: '2026-05-16T10:08:01.558Z',
+      requestParam: '{"workflowId":1,"title":"请假申请"}',
+      responseParam: '{"code":0,"msg":"success","data":{"instanceId":42}}'
     },
     {
-      id: 851,
-      logNo: 'OP17789247916787019847204859637',
+      logNumber: 'OP17789247916787019847204859637',
       module: '反馈中心',
       operationType: '提交',
       description: '提交用户反馈',
-      method: 'POST',
-      path: '/api/v1/feedback',
-      username: 'Super',
-      ip: '27.211.97.216',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 5,
-      createdAt: '2026-05-16T09:46:31.678Z',
-      requestParams: '{"type":"bug","content":"页面加载慢"}',
-      responseParams: '{"code":0,"msg":"success"}'
+      requestUrl: '/api/v1/feedback',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '27.211.97.216',
+      ipRegion: '山东省青岛市',
+      browser: 'Edge 125.0.0.0',
+      os: 'OSX 10_15_7',
+      state: 0,
+      costTime: 5,
+      createTime: '2026-05-16T09:46:31.678Z',
+      requestParam: '{"type":"bug","content":"页面加载慢"}',
+      responseParam: '{"code":0,"msg":"success"}'
     },
     {
-      id: 850,
-      logNo: 'OP17789247495704319351938462571',
+      logNumber: 'OP17789247495704319351938462571',
       module: '反馈中心',
       operationType: '提交',
       description: '提交用户反馈',
-      method: 'POST',
-      path: '/api/v1/feedback',
-      username: 'Super',
-      ip: '27.211.97.216',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 8,
-      createdAt: '2026-05-16T09:45:49.570Z',
-      requestParams: '{"type":"feature","content":"希望增加导出功能"}',
-      responseParams: '{"code":0,"msg":"success"}'
+      requestUrl: '/api/v1/feedback',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '27.211.97.216',
+      ipRegion: '山东省青岛市',
+      browser: 'Edge 125.0.0.0',
+      os: 'OSX 10_15_7',
+      state: 0,
+      costTime: 8,
+      createTime: '2026-05-16T09:45:49.570Z',
+      requestParam: '{"type":"feature","content":"希望增加导出功能"}',
+      responseParam: '{"code":0,"msg":"success"}'
     },
     {
-      id: 849,
-      logNo: 'OP17789171672767854530627495183',
+      logNumber: 'OP17789171672767854530627495183',
       module: '审批中心',
       operationType: '发起',
       description: '发起工作流审批实例',
-      method: 'POST',
-      path: '/api/v1/workflows/instances',
-      username: 'Super',
-      ip: '60.209.250.73',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 18,
-      createdAt: '2026-05-16T07:39:27.277Z',
-      requestParams: '{"workflowId":2,"title":"报销申请"}',
-      responseParams: '{"code":0,"msg":"success","data":{"instanceId":43}}'
+      requestUrl: '/api/v1/workflows/instances',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '60.209.250.73',
+      ipRegion: '山东省青岛市',
+      browser: 'Chrome 124.0.0.0',
+      os: 'Windows 11.0.0.0',
+      state: 0,
+      costTime: 18,
+      createTime: '2026-05-16T07:39:27.277Z',
+      requestParam: '{"workflowId":2,"title":"报销申请"}',
+      responseParam: '{"code":0,"msg":"success","data":{"instanceId":43}}'
     },
     {
-      id: 848,
-      logNo: 'OP17789025757700749948295163720',
+      logNumber: 'OP17789025757700749948295163720',
       module: '商城商品',
       operationType: '复制',
       description: '复制商品',
-      method: 'POST',
-      path: '/api/v1/mall/products/19/copy',
-      username: 'Super',
-      ip: '120.237.243.189',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 13,
-      createdAt: '2026-05-16T03:36:15.771Z',
-      requestParams: '{}',
-      responseParams: '{"code":0,"msg":"success","data":{"id":20}}'
+      requestUrl: '/api/v1/mall/products/19/copy',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '120.237.243.189',
+      ipRegion: '广东省深圳市',
+      browser: 'Chrome 124.0.0.0',
+      os: 'Windows 11.0.0.0',
+      state: 0,
+      costTime: 13,
+      createTime: '2026-05-16T03:36:15.771Z',
+      requestParam: '{}',
+      responseParam: '{"code":0,"msg":"success","data":{"id":20}}'
     },
     {
-      id: 847,
-      logNo: 'OP17789010489166590753194725861',
+      logNumber: 'OP17789010489166590753194725861',
       module: '内容管理',
       operationType: '下线',
       description: '下线内容',
-      method: 'PATCH',
-      path: '/api/v1/contents/8/offline',
-      username: 'Super',
-      ip: '27.226.12.19',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 3,
-      createdAt: '2026-05-16T03:10:48.916Z',
-      requestParams: '{}',
-      responseParams: '{"code":0,"msg":"success"}'
+      requestUrl: '/api/v1/contents/8/offline',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '27.226.12.19',
+      ipRegion: '福建省厦门市',
+      browser: 'Firefox 126.0.0.0',
+      os: 'Ubuntu 22.0.4.0',
+      state: 0,
+      costTime: 3,
+      createTime: '2026-05-16T03:10:48.916Z',
+      requestParam: '{}',
+      responseParam: '{"code":0,"msg":"success"}'
     },
     {
-      id: 846,
-      logNo: 'OP17789010408707919216820491763',
+      logNumber: 'OP17789010408707919216820491763',
       module: '内容管理',
       operationType: '发布',
       description: '发布内容',
-      method: 'PATCH',
-      path: '/api/v1/contents/8/publish',
-      username: 'Super',
-      ip: '27.226.12.19',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 4,
-      createdAt: '2026-05-16T03:10:40.871Z',
-      requestParams: '{}',
-      responseParams: '{"code":0,"msg":"success"}'
+      requestUrl: '/api/v1/contents/8/publish',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '27.226.12.19',
+      ipRegion: '福建省厦门市',
+      browser: 'Firefox 126.0.0.0',
+      os: 'Ubuntu 22.0.4.0',
+      state: 0,
+      costTime: 4,
+      createTime: '2026-05-16T03:10:40.871Z',
+      requestParam: '{}',
+      responseParam: '{"code":0,"msg":"success"}'
     },
     {
-      id: 845,
-      logNo: 'OP17788963108449786583715049261',
+      logNumber: 'OP17788963108449786583715049261',
       module: '个人中心',
       operationType: '编辑',
       description: '更新个人资料',
-      method: 'PATCH',
-      path: '/api/v1/user/profile/me',
-      username: 'Super',
-      ip: '60.177.36.242',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 38,
-      createdAt: '2026-05-16T01:51:50.845Z',
-      requestParams: '{"nickname":"Admin","avatar":"xxx.png"}',
-      responseParams: '{"code":0,"msg":"success"}'
+      requestUrl: '/api/v1/user/profile/me',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '60.177.36.242',
+      ipRegion: '浙江省杭州市',
+      browser: 'Safari 17.0.0.0',
+      os: 'OSX 10_15_7',
+      state: 0,
+      costTime: 38,
+      createTime: '2026-05-16T01:51:50.845Z',
+      requestParam: '{"nickname":"Admin","avatar":"xxx.png"}',
+      responseParam: '{"code":0,"msg":"success"}'
     },
     {
-      id: 838,
-      logNo: 'OP17787669277918983725839104726',
+      logNumber: 'OP17787669277918983725839104726',
       module: '反馈中心',
       operationType: '提交',
       description: '提交用户反馈',
-      method: 'POST',
-      path: '/api/v1/feedback',
-      username: 'Super',
-      ip: '124.238.79.236',
-      status: 'FAIL',
-      responseCode: 400,
-      durationMs: 1,
-      createdAt: '2026-05-14T13:55:27.791Z',
-      requestParams: '{"type":"bug","content":""}',
-      responseParams: '{"code":400,"msg":"内容不能为空"}',
-      errorMessage: 'Bad Request Exception'
+      requestUrl: '/api/v1/feedback',
+      userId: 'U0a1b2c3d4e5f6g7',
+      ipAddress: '124.238.79.236',
+      ipRegion: '河北省廊坊市',
+      browser: 'Chrome 124.0.0.0',
+      os: 'Windows 10.0.0.0',
+      state: 1,
+      costTime: 1,
+      createTime: '2026-05-14T13:55:27.791Z',
+      requestParam: '{"type":"bug","content":""}',
+      responseParam: '{"code":400,"msg":"内容不能为空"}',
+      errorMsg: 'Bad Request Exception'
     },
     {
-      id: 835,
-      logNo: 'OP17787665038878306036482915730',
+      logNumber: 'OP17787665038878306036482915730',
       module: '商城分类',
       operationType: '删除',
       description: '删除商品分类',
-      method: 'DELETE',
-      path: '/api/v1/mall/categories/7',
-      username: 'admin',
-      ip: '113.87.90.237',
-      status: 'SUCCESS',
-      responseCode: 200,
-      durationMs: 4,
-      createdAt: '2026-05-14T13:48:23.887Z',
-      requestParams: '{}',
-      responseParams: '{"code":0,"msg":"success"}'
+      requestUrl: '/api/v1/mall/categories/7',
+      userId: 'U1x2y3z4w5v6u7t8',
+      ipAddress: '113.87.90.237',
+      ipRegion: '广东省深圳市',
+      browser: 'Chrome 125.0.0.0',
+      os: 'OSX 10_15_7',
+      state: 0,
+      costTime: 4,
+      createTime: '2026-05-14T13:48:23.887Z',
+      requestParam: '{}',
+      responseParam: '{"code":0,"msg":"success"}'
     }
   ];
 
@@ -335,13 +317,13 @@
       total: mockData.length
     };
   };
-  const fetchOperationLogDetail = async (id: number) => {
-    return mockData.find((item) => item.id === id) || null;
+  const fetchOperationLogDetail = async (logNumber: string) => {
+    return mockData.find((item) => item.logNumber === logNumber) || null;
   };
-  const fetchDeleteOperationLog = async (_id: number) => {
+  const fetchDeleteOperationLog = async (_logNumber: string) => {
     ElMessage.success('Mock: 删除成功');
   };
-  const fetchBatchDeleteOperationLog = async (_ids: number[]) => {
+  const fetchBatchDeleteOperationLog = async (_logNumbers: string[]) => {
     ElMessage.success('Mock: 批量删除成功');
   };
   // ==================== Mock 数据 ====================
@@ -353,7 +335,7 @@
   const createDefaultSearchForm = () => ({
     module: undefined as string | undefined,
     operationType: undefined as string | undefined,
-    username: undefined as string | undefined
+    userId: undefined as string | undefined
   });
 
   const searchForm = reactive(createDefaultSearchForm());
@@ -373,9 +355,9 @@
     },
     {
       label: '操作人员',
-      key: 'username',
+      key: 'userId',
       type: 'input',
-      props: { clearable: true, placeholder: '搜索操作人员' }
+      props: { clearable: true, placeholder: '搜索用户ID' }
     }
   ]);
 
@@ -387,7 +369,7 @@
 
   const createColumns = (): ColumnOption<OperationLogItem>[] => [
     { type: 'selection' },
-    { prop: 'logNo', label: '日志编号', minWidth: 160, showOverflowTooltip: true },
+    { prop: 'logNumber', label: '日志编号', minWidth: 160, showOverflowTooltip: true },
     { prop: 'module', label: '系统模块', minWidth: 100 },
     {
       prop: 'operationType',
@@ -395,30 +377,31 @@
       minWidth: 80,
       formatter: (row: OperationLogItem) => h(ElTag, { type: 'info' }, row.operationType)
     },
-    { prop: 'username', label: '操作人员', minWidth: 100 },
-    { prop: 'ip', label: '操作地址', minWidth: 135 },
+    { prop: 'userId', label: '操作人员', minWidth: 160, showOverflowTooltip: true },
+    { prop: 'ipAddress', label: '操作地址', minWidth: 135 },
+    { prop: 'ipRegion', label: 'IP归属地', minWidth: 120 },
     {
-      prop: 'status',
+      prop: 'state',
       label: '状态',
       minWidth: 80,
       formatter: (row: OperationLogItem) =>
         h(
           ElTag,
-          { type: row.status === 'SUCCESS' ? 'success' : 'danger' },
-          row.status === 'SUCCESS' ? '成功' : '失败'
+          { type: row.state === 0 ? 'success' : 'danger' },
+          row.state === 0 ? '成功' : '失败'
         )
     },
     {
-      prop: 'createdAt',
+      prop: 'createTime',
       label: '操作日期',
       minWidth: 170,
-      formatter: (row: OperationLogItem) => formatDateTime(row.createdAt)
+      formatter: (row: OperationLogItem) => formatDateTime(row.createTime)
     },
     {
-      prop: 'durationMs',
+      prop: 'costTime',
       label: '消耗时间',
       minWidth: 100,
-      formatter: (row: OperationLogItem) => `${row.durationMs}ms`
+      formatter: (row: OperationLogItem) => `${row.costTime}ms`
     },
     {
       prop: 'operation',
@@ -466,13 +449,13 @@
   };
 
   const openDetailDrawer = async (row: OperationLogItem) => {
-    detailRow.value = await fetchOperationLogDetail(row.id);
+    detailRow.value = await fetchOperationLogDetail(row.logNumber);
     detailVisible.value = true;
   };
 
   const handleDelete = async (row: OperationLogItem) => {
-    await ElMessageBox.confirm(`确认删除"${row.logNo}"吗？`, '删除确认', { type: 'warning' });
-    await fetchDeleteOperationLog(row.id);
+    await ElMessageBox.confirm(`确认删除"${row.logNumber}"吗？`, '删除确认', { type: 'warning' });
+    await fetchDeleteOperationLog(row.logNumber);
     await refreshRemove();
   };
 
@@ -492,7 +475,7 @@
         type: 'warning'
       }
     );
-    await fetchBatchDeleteOperationLog(selectedRows.value.map((row) => row.id));
+    await fetchBatchDeleteOperationLog(selectedRows.value.map((row) => row.logNumber));
     selectedRows.value = [];
     await refreshRemove();
   };
