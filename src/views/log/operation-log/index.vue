@@ -377,7 +377,7 @@
       minWidth: 80,
       formatter: (row: OperationLogItem) => h(ElTag, { type: 'info' }, row.operationType)
     },
-    { prop: 'userId', label: '操作人员', minWidth: 160, showOverflowTooltip: true },
+    { prop: 'userId', label: '用户ID', minWidth: 160, showOverflowTooltip: true },
     { prop: 'ipAddress', label: '操作地址', minWidth: 135 },
     { prop: 'ipRegion', label: 'IP归属地', minWidth: 120 },
     {
