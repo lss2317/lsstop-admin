@@ -33,6 +33,7 @@
     showAxisLabel: true,
     showAxisLine: true,
     showSplitLine: true,
+    splitNumber: 4,
 
     // 交互配置
     showTooltip: true,
@@ -156,6 +157,7 @@
         tooltip: props.showTooltip ? getTooltipStyle() : undefined,
         xAxis: {
           type: 'value',
+          splitNumber: props.splitNumber,
           axisTick: getAxisTickStyle(),
           axisLine: getAxisLineStyle(props.showAxisLine),
           axisLabel: getAxisLabelStyle(props.showAxisLabel),
