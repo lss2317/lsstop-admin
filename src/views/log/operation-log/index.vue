@@ -363,11 +363,19 @@
     {
       label: '操作类型',
       key: 'operationType',
-      type: 'input',
-      props: { clearable: true, placeholder: '搜索操作类型' }
+      type: 'select',
+      props: {
+        clearable: true,
+        placeholder: '选择操作类型',
+        options: [
+          { label: '新增', value: '新增' },
+          { label: '修改', value: '修改' },
+          { label: '删除', value: '删除' }
+        ]
+      }
     },
     {
-      label: '操作人员',
+      label: '用户ID',
       key: 'userId',
       type: 'input',
       props: { clearable: true, placeholder: '搜索用户ID' }
