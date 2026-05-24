@@ -46,7 +46,9 @@
           <ElDescriptionsItem label="日志编号">{{ detailRow.logNumber }}</ElDescriptionsItem>
           <ElDescriptionsItem label="系统模块">{{ detailRow.module }}</ElDescriptionsItem>
           <ElDescriptionsItem label="操作类型"
-            ><ElTag type="info">{{ detailRow.operationType }}</ElTag></ElDescriptionsItem
+            ><ElTag :type="operationTagType(detailRow.operationType)">{{
+              detailRow.operationType
+            }}</ElTag></ElDescriptionsItem
           >
           <ElDescriptionsItem label="用户ID">{{ detailRow.userId }}</ElDescriptionsItem>
           <ElDescriptionsItem label="操作IP">{{ detailRow.ipAddress }}</ElDescriptionsItem>
@@ -149,22 +151,37 @@
 
   const createColumns = (): ColumnOption<OperationLogItem>[] => [
     { type: 'selection' },
-    { prop: 'logNumber', label: '日志编号', minWidth: 160, showOverflowTooltip: true },
-    { prop: 'module', label: '系统模块', minWidth: 110 },
+    {
+      prop: 'logNumber',
+      label: '日志编号',
+      minWidth: 160,
+      showOverflowTooltip: true,
+      align: 'center'
+    },
+    { prop: 'module', label: '系统模块', minWidth: 110, align: 'center' },
     {
       prop: 'operationType',
       label: '操作类型',
       minWidth: 80,
-      formatter: (row: OperationLogItem) => h(ElTag, { type: 'info' }, row.operationType)
+      align: 'center',
+      formatter: (row: OperationLogItem) =>
+        h(ElTag, { type: operationTagType(row.operationType) }, row.operationType)
     },
-    { prop: 'userId', label: '用户ID', minWidth: 160, showOverflowTooltip: true },
-    { prop: 'nickname', label: '操作人员', minWidth: 160, showOverflowTooltip: true },
-    { prop: 'ipAddress', label: '操作地址', minWidth: 135 },
-    { prop: 'ipRegion', label: 'IP归属地', minWidth: 120 },
+    { prop: 'userId', label: '用户ID', minWidth: 160, showOverflowTooltip: true, align: 'center' },
+    {
+      prop: 'nickname',
+      label: '操作人员',
+      minWidth: 160,
+      showOverflowTooltip: true,
+      align: 'center'
+    },
+    { prop: 'ipAddress', label: '操作地址', minWidth: 135, align: 'center' },
+    { prop: 'ipRegion', label: 'IP归属地', minWidth: 120, align: 'center' },
     {
       prop: 'state',
       label: '状态',
       minWidth: 80,
+      align: 'center',
       formatter: (row: OperationLogItem) =>
         h(
           ElTag,
@@ -176,12 +193,14 @@
       prop: 'createTime',
       label: '操作日期',
       minWidth: 170,
+      align: 'center',
       formatter: (row: OperationLogItem) => formatDateTime(row.createTime)
     },
     {
       prop: 'costTime',
       label: '消耗时间',
       minWidth: 100,
+      align: 'center',
       formatter: (row: OperationLogItem) => `${row.costTime}ms`
     },
     {
@@ -232,6 +251,15 @@
   const openDetailDrawer = (row: OperationLogItem) => {
     detailRow.value = row;
     detailVisible.value = true;
+  };
+
+  const operationTagType = (type: string): 'success' | 'warning' | 'danger' | 'info' => {
+    const map: Record<string, 'success' | 'warning' | 'danger'> = {
+      新增: 'success',
+      修改: 'warning',
+      删除: 'danger'
+    };
+    return map[type] || 'info';
   };
 
   const handleDelete = async (row: OperationLogItem) => {
