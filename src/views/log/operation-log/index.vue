@@ -126,7 +126,7 @@
         placeholder: '选择操作类型',
         options: [
           { label: '新增', value: '新增' },
-          { label: '修改', value: '修改' },
+          { label: '编辑', value: '编辑' },
           { label: '删除', value: '删除' }
         ]
       }
@@ -253,7 +253,7 @@
     switch (type) {
       case '新增':
         return 'success';
-      case '修改':
+      case '编辑':
         return 'warning';
       case '删除':
         return 'danger';
