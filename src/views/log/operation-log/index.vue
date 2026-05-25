@@ -254,12 +254,16 @@
   };
 
   const operationTagType = (type: string): 'success' | 'warning' | 'danger' | 'info' => {
-    const map: Record<string, 'success' | 'warning' | 'danger'> = {
-      新增: 'success',
-      修改: 'warning',
-      删除: 'danger'
-    };
-    return map[type] || 'info';
+    switch (type) {
+      case '新增':
+        return 'success';
+      case '修改':
+        return 'warning';
+      case '删除':
+        return 'danger';
+      default:
+        return 'info';
+    }
   };
 
   const handleDelete = async (row: OperationLogItem) => {
