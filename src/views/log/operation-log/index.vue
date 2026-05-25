@@ -94,11 +94,7 @@
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
   import type { OperationLogItem } from '@/apis/operation-log/types';
-  import {
-    fetchOperationLogList,
-    fetchDeleteOperationLog,
-    fetchBatchDeleteOperationLog
-  } from '@/apis/operation-log';
+  import { fetchOperationLogList, fetchDeleteOperationLog } from '@/apis/operation-log';
   import { formatDateTime, formatJson } from '@/utils/format';
   defineOptions({ name: 'OperationLog' });
 
@@ -268,7 +264,8 @@
 
   const handleDelete = async (row: OperationLogItem) => {
     await ElMessageBox.confirm(`确认删除"${row.logNumber}"吗？`, '删除确认', { type: 'warning' });
-    await fetchDeleteOperationLog(row.logNumber);
+    await fetchDeleteOperationLog({ logNumbers: [row.logNumber] });
+    ElMessage.success('删除成功');
     await refreshRemove();
   };
 
@@ -288,10 +285,11 @@
         type: 'warning'
       }
     );
-    await fetchBatchDeleteOperationLog({
+    await fetchDeleteOperationLog({
       logNumbers: selectedRows.value.map((row) => row.logNumber)
     });
     selectedRows.value = [];
+    ElMessage.success('删除成功');
     await refreshRemove();
   };
 

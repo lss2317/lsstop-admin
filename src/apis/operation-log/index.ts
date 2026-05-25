@@ -22,23 +22,12 @@ export function fetchOperationLogList(params: OperationLogSearchParams) {
 }
 
 /**
- * 删除单条操作日志
- * @param logNumber 日志编号
- */
-export function fetchDeleteOperationLog(logNumber: string) {
-  return request.post<void>({
-    url: '/operation-log/delete',
-    data: { logNumber }
-  });
-}
-
-/**
- * 批量删除操作日志
+ * 删除操作日志（支持单条/批量）
  * @param params 日志编号列表
  */
-export function fetchBatchDeleteOperationLog(params: BatchDeleteParams) {
+export function fetchDeleteOperationLog(params: BatchDeleteParams) {
   return request.post<void>({
-    url: '/operation-log/batch-delete',
+    url: '/operation-log/delete',
     data: params
   });
 }
