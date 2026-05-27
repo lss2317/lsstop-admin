@@ -59,7 +59,7 @@
             }}</ElTag></ElDescriptionsItem
           >
           <ElDescriptionsItem label="用户ID">{{ detailRow.userId }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="操作IP">{{ detailRow.ipAddress }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="IP地址">{{ detailRow.ipAddress }}</ElDescriptionsItem>
           <ElDescriptionsItem label="请求地址">{{ detailRow.requestUrl }}</ElDescriptionsItem>
           <ElDescriptionsItem label="IP归属地">{{ detailRow.ipRegion || '-' }}</ElDescriptionsItem>
           <ElDescriptionsItem label="状态">
@@ -185,7 +185,7 @@
       showOverflowTooltip: true,
       align: 'center'
     },
-    { prop: 'ipAddress', label: '操作地址', minWidth: 135, align: 'center' },
+    { prop: 'ipAddress', label: 'IP地址', minWidth: 135, align: 'center' },
     { prop: 'ipRegion', label: 'IP归属地', minWidth: 120, align: 'center' },
     {
       prop: 'state',
