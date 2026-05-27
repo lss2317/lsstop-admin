@@ -4,6 +4,8 @@
  * @module apis/operation-log
  */
 import request from '@/utils/http';
+import axios from 'axios';
+import { useUserStore } from '@/store/modules/user';
 import type {
   OperationLogSearchParams,
   OperationLogListResponse,
@@ -30,4 +32,20 @@ export function fetchDeleteOperationLog(params: BatchDeleteParams) {
     url: '/operation-log/delete',
     data: params
   });
+}
+
+/**
+ * 导出操作日志（后端生成 Excel，返回 Blob）
+ * @param params 搜索参数（不含分页）
+ */
+export async function fetchOperationLogExport(
+  params: Omit<OperationLogSearchParams, 'current' | 'size'>
+): Promise<Blob> {
+  const userStore = useUserStore();
+  const res = await axios.get('/api/admin/operation-log/export', {
+    params,
+    responseType: 'blob',
+    headers: { Authorization: `Bearer ${userStore.accessToken}` }
+  });
+  return res.data;
 }
