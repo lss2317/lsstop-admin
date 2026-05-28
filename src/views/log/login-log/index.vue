@@ -48,7 +48,9 @@
             detailRow.nickname || '未知用户'
           }}</ElDescriptionsItem>
           <ElDescriptionsItem label="登录方式">
-            <ElTag>{{ loginTypeLabel(detailRow.loginType) }}</ElTag>
+            <ElTag :type="loginTypeTagType(detailRow.loginType)">{{
+              loginTypeLabel(detailRow.loginType)
+            }}</ElTag>
           </ElDescriptionsItem>
           <ElDescriptionsItem label="操作标识">{{
             detailRow.loginIdentifier || '-'
@@ -59,7 +61,9 @@
             </ElTag>
           </ElDescriptionsItem>
           <ElDescriptionsItem label="操作类型">
-            <ElTag>{{ actionTypeLabel(detailRow.actionType) }}</ElTag>
+            <ElTag :type="actionTypeTagType(detailRow.actionType)">{{
+              actionTypeLabel(detailRow.actionType)
+            }}</ElTag>
           </ElDescriptionsItem>
           <ElDescriptionsItem label="操作来源">
             <ElTag>{{ sourceTypeLabel(detailRow.type) }}</ElTag>
@@ -133,11 +137,11 @@
       ipRegion: '上海市',
       browser: 'Safari 17.5.0.0',
       os: 'OSX 10_15_7',
-      type: 1,
-      state: 1,
-      actionType: 3,
+      type: 0,
+      state: 0,
+      actionType: 1,
       loginIdentifier: 'weibo_uid_789',
-      message: '注册成功'
+      message: '登录成功'
     },
     {
       logNumber: 'LG20260518182000004',
@@ -186,6 +190,70 @@
       actionType: 2,
       loginIdentifier: undefined,
       message: '退出登录'
+    },
+    {
+      logNumber: 'LG20260518093000007',
+      userId: '1002',
+      nickname: '令狐冲',
+      loginType: undefined,
+      loginTime: '2026-05-18T09:30:00.000Z',
+      ipAddress: '120.237.243.189',
+      ipRegion: '北京市',
+      browser: 'Edge 148.0.0.0',
+      os: 'Windows 10_0_19045',
+      type: 1,
+      state: 1,
+      actionType: 2,
+      loginIdentifier: undefined,
+      message: '退出登录'
+    },
+    {
+      logNumber: 'LG20260518081500008',
+      userId: '1005',
+      nickname: '岳不群',
+      loginType: 1,
+      loginTime: '2026-05-18T08:15:00.000Z',
+      ipAddress: '202.96.128.68',
+      ipRegion: '上海市',
+      browser: 'Chrome 148.0.0.0',
+      os: 'OSX 10_15_7',
+      type: 1,
+      state: 0,
+      actionType: 3,
+      loginIdentifier: 'yue@example.com',
+      message: '注册成功'
+    },
+    {
+      logNumber: 'LG20260517220000009',
+      userId: '1006',
+      nickname: '林平之',
+      loginType: 1,
+      loginTime: '2026-05-17T22:00:00.000Z',
+      ipAddress: '14.145.63.91',
+      ipRegion: '广东省',
+      browser: 'Safari 17.5.0.0',
+      os: 'OSX 10_15_7',
+      type: 0,
+      state: 1,
+      actionType: 3,
+      loginIdentifier: 'lin@example.com',
+      message: '邮箱已被注册'
+    },
+    {
+      logNumber: 'LG20260517153000010',
+      userId: '1001',
+      nickname: '风清扬',
+      loginType: 1,
+      loginTime: '2026-05-17T15:30:00.000Z',
+      ipAddress: '223.104.145.212',
+      ipRegion: '广东省',
+      browser: 'Chrome 148.0.0.0',
+      os: 'OSX 10_15_7',
+      type: 1,
+      state: 1,
+      actionType: 1,
+      loginIdentifier: 'admin@example.com',
+      message: '密码错误'
     }
   ];
 
@@ -269,7 +337,8 @@
       label: '登录方式',
       minWidth: 80,
       align: 'center',
-      formatter: (row: LoginLogItem) => h(ElTag, loginTypeLabel(row.loginType))
+      formatter: (row: LoginLogItem) =>
+        h(ElTag, { type: loginTypeTagType(row.loginType) }, loginTypeLabel(row.loginType))
     },
     {
       prop: 'state',
@@ -291,7 +360,7 @@
       minWidth: 80,
       align: 'center',
       formatter: (row: LoginLogItem) =>
-        h(ElTag, actionTypeLabel(row.actionType))
+        h(ElTag, { type: actionTypeTagType(row.actionType) }, actionTypeLabel(row.actionType))
     },
     {
       prop: 'type',
@@ -370,6 +439,19 @@
     }
   };
 
+  const actionTypeTagType = (type: number): 'success' | 'warning' | 'primary' | 'info' => {
+    switch (type) {
+      case 1:
+        return 'success';
+      case 2:
+        return 'warning';
+      case 3:
+        return 'primary';
+      default:
+        return 'info';
+    }
+  };
+
   const loginTypeLabel = (type: number | undefined): string => {
     switch (type) {
       case 1:
@@ -380,6 +462,21 @@
         return '微博';
       default:
         return '未知';
+    }
+  };
+
+  const loginTypeTagType = (
+    type: number | undefined
+  ): 'primary' | 'success' | 'danger' | 'info' => {
+    switch (type) {
+      case 1:
+        return 'primary';
+      case 2:
+        return 'success';
+      case 3:
+        return 'danger';
+      default:
+        return 'info';
     }
   };
 
