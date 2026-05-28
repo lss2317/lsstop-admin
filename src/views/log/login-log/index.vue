@@ -40,27 +40,39 @@
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
       />
-
-      <ElDrawer v-model="detailVisible" title="登录日志详情" size="min(800px, calc(100vw - 32px))">
+      <ElDrawer v-model="detailVisible" title="认证日志详情" size="min(800px, calc(100vw - 32px))">
         <ElDescriptions v-if="detailRow" :column="2" border label-width="85px">
-          <ElDescriptionsItem label="日志编号">{{ detailRow.accessId }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="用户名称">{{ detailRow.userName }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="操作IP">{{ detailRow.address || '-' }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="ip所在地">{{
-            detailRow.loginLocation || '-'
+          <ElDescriptionsItem label="日志编号">{{ detailRow.logNumber }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="用户ID">{{ detailRow.userId || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="用户昵称">{{
+            detailRow.nickname || '未知用户'
           }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="操作系统">{{ detailRow.os || '-' }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="浏览器">{{ detailRow.browser || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="登录方式">
+            <ElTag>{{ loginTypeLabel(detailRow.loginType) }}</ElTag>
+          </ElDescriptionsItem>
+          <ElDescriptionsItem label="操作标识">{{
+            detailRow.loginIdentifier || '-'
+          }}</ElDescriptionsItem>
           <ElDescriptionsItem label="状态">
-            <ElTag :type="detailRow.status === 'SUCCESS' ? 'success' : 'danger'">
-              {{ detailRow.status === 'SUCCESS' ? '成功' : '失败' }}
+            <ElTag :type="detailRow.state === 0 ? 'success' : 'danger'">
+              {{ detailRow.state === 0 ? '成功' : '失败' }}
             </ElTag>
           </ElDescriptionsItem>
-          <ElDescriptionsItem label="时间">{{
+          <ElDescriptionsItem label="操作类型">
+            <ElTag>{{ actionTypeLabel(detailRow.actionType) }}</ElTag>
+          </ElDescriptionsItem>
+          <ElDescriptionsItem label="操作来源">
+            <ElTag>{{ sourceTypeLabel(detailRow.type) }}</ElTag>
+          </ElDescriptionsItem>
+          <ElDescriptionsItem label="登录IP">{{ detailRow.ipAddress || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="IP所在地">{{ detailRow.ipRegion || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="操作系统">{{ detailRow.os || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="浏览器">{{ detailRow.browser || '-' }}</ElDescriptionsItem>
+          <ElDescriptionsItem label="操作时间">{{
             formatDateTime(detailRow.loginTime)
           }}</ElDescriptionsItem>
-          <ElDescriptionsItem label="登录信息" :span="2">{{
-            detailRow.description || '-'
+          <ElDescriptionsItem label="操作信息" :span="2">{{
+            detailRow.message || '-'
           }}</ElDescriptionsItem>
         </ElDescriptions>
       </ElDrawer>
@@ -73,102 +85,107 @@
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
+  import type { LoginLogItem } from '@/apis/login-log/types';
   import { formatDateTime } from '@/utils/format';
   defineOptions({ name: 'LoginLog' });
-
-  /** 登录日志列表项 */
-  interface LoginLogItem {
-    id: number;
-    accessId: string;
-    userId: string;
-    userName: string;
-    address: string;
-    loginLocation: string;
-    os: string;
-    browser: string;
-    status: string;
-    description: string;
-    loginTime: string;
-    createdAt: string;
-    updatedAt: string;
-  }
 
   // ==================== Mock 数据 ====================
   const mockData: LoginLogItem[] = [
     {
-      id: 1,
-      accessId: 'LG20260519103000001abcdef1234567',
+      logNumber: 'LG20260519103000001',
       userId: '1001',
-      userName: '风清扬',
-      address: '183.227.175.119',
-      loginLocation: '广东省',
-      os: 'OSX 10_15_7',
-      browser: 'Chrome 148.0.0.0',
-      status: 'SUCCESS',
-      description: '登录成功',
+      nickname: '风清扬',
+      loginType: 1,
       loginTime: '2026-05-19T10:30:00.000Z',
-      createdAt: '2026-05-19T10:30:00.000Z',
-      updatedAt: '2026-05-19T10:30:00.000Z'
-    },
-    {
-      id: 2,
-      accessId: 'LG20260519091500002abcdef1234567',
-      userId: '1002',
-      userName: '令狐冲',
-      address: '120.237.243.189',
-      loginLocation: '北京市',
-      os: 'Windows 10_0_19045',
-      browser: 'Edge 148.0.0.0',
-      status: 'SUCCESS',
-      description: '登录成功',
-      loginTime: '2026-05-19T09:15:00.000Z',
-      createdAt: '2026-05-19T09:15:00.000Z',
-      updatedAt: '2026-05-19T09:15:00.000Z'
-    },
-    {
-      id: 3,
-      accessId: 'LG20260519084500003abcdef1234567',
-      userId: '1003',
-      userName: '任盈盈',
-      address: '27.211.97.216',
-      loginLocation: '上海市',
-      os: 'OSX 10_15_7',
-      browser: 'Safari 17.5.0.0',
-      status: 'FAIL',
-      description: '密码错误',
-      loginTime: '2026-05-19T08:45:00.000Z',
-      createdAt: '2026-05-19T08:45:00.000Z',
-      updatedAt: '2026-05-19T08:45:00.000Z'
-    },
-    {
-      id: 4,
-      accessId: 'LG20260518182000004abcdef1234567',
-      userId: '1001',
-      userName: '杨过',
-      address: '60.209.250.73',
-      loginLocation: '山东省',
-      os: 'OSX 10_15_7',
+      ipAddress: '183.227.175.119',
+      ipRegion: '广东省',
       browser: 'Chrome 148.0.0.0',
-      status: 'SUCCESS',
-      description: '登录成功',
-      loginTime: '2026-05-18T18:20:00.000Z',
-      createdAt: '2026-05-18T18:20:00.000Z',
-      updatedAt: '2026-05-18T18:20:00.000Z'
+      os: 'OSX 10_15_7',
+      type: 1,
+      state: 0,
+      actionType: 1,
+      loginIdentifier: 'admin@example.com',
+      message: '登录成功'
     },
     {
-      id: 5,
-      accessId: 'LG20260518151000005abcdef1234567',
+      logNumber: 'LG20260519091500002',
+      userId: '1002',
+      nickname: '令狐冲',
+      loginType: 2,
+      loginTime: '2026-05-19T09:15:00.000Z',
+      ipAddress: '120.237.243.189',
+      ipRegion: '北京市',
+      browser: 'Edge 148.0.0.0',
+      os: 'Windows 10_0_19045',
+      type: 1,
+      state: 0,
+      actionType: 1,
+      loginIdentifier: 'openid_qq_123456',
+      message: '登录成功'
+    },
+    {
+      logNumber: 'LG20260519084500003',
+      userId: '1003',
+      nickname: '任盈盈',
+      loginType: 3,
+      loginTime: '2026-05-19T08:45:00.000Z',
+      ipAddress: '27.211.97.216',
+      ipRegion: '上海市',
+      browser: 'Safari 17.5.0.0',
+      os: 'OSX 10_15_7',
+      type: 1,
+      state: 1,
+      actionType: 3,
+      loginIdentifier: 'weibo_uid_789',
+      message: '注册成功'
+    },
+    {
+      logNumber: 'LG20260518182000004',
+      userId: '',
+      nickname: '',
+      loginType: 1,
+      loginTime: '2026-05-18T18:20:00.000Z',
+      ipAddress: '60.209.250.73',
+      ipRegion: '山东省',
+      browser: 'Chrome 148.0.0.0',
+      os: 'OSX 10_15_7',
+      type: 0,
+      state: 0,
+      actionType: 1,
+      loginIdentifier: 'user@blog.com',
+      message: '登录成功'
+    },
+    {
+      logNumber: 'LG20260518151000005',
       userId: '1004',
-      userName: '东方不败',
-      address: '113.87.90.237',
-      loginLocation: '浙江省',
-      os: 'Windows 11_0_22631',
-      browser: 'Firefox 148.0.0.0',
-      status: 'FAIL',
-      description: '账号已被锁定',
+      nickname: '东方不败',
+      loginType: 2,
       loginTime: '2026-05-18T15:10:00.000Z',
-      createdAt: '2026-05-18T15:10:00.000Z',
-      updatedAt: '2026-05-18T15:10:00.000Z'
+      ipAddress: '113.87.90.237',
+      ipRegion: '浙江省',
+      browser: 'Firefox 148.0.0.0',
+      os: 'Windows 11_0_22631',
+      type: 2,
+      state: 1,
+      actionType: 1,
+      loginIdentifier: 'openid_qq_654321',
+      message: '账号已被锁定'
+    },
+    {
+      logNumber: 'LG20260518102000006',
+      userId: '1002',
+      nickname: '令狐冲',
+      loginType: undefined,
+      loginTime: '2026-05-18T10:20:00.000Z',
+      ipAddress: '120.237.243.189',
+      ipRegion: '北京市',
+      browser: 'Edge 148.0.0.0',
+      os: 'Windows 10_0_19045',
+      type: 0,
+      state: 0,
+      actionType: 2,
+      loginIdentifier: undefined,
+      message: '退出登录'
     }
   ];
 
@@ -177,8 +194,8 @@
   ): Promise<Api.Common.PaginatedResponse<LoginLogItem>> => {
     const { current = 1, size = 10 } = params || {};
     let filtered = [...mockData];
-    if (params.userName) {
-      filtered = filtered.filter((item) => item.userName.includes(params.userName));
+    if (params.nickname) {
+      filtered = filtered.filter((item) => item.nickname.includes(params.nickname));
     }
     const start = (current - 1) * size;
     return {
@@ -188,10 +205,10 @@
       total: filtered.length
     };
   };
-  const fetchLoginLogDetail = async (id: number) => {
-    return mockData.find((item) => item.id === id) || null;
+  const fetchLoginLogDetail = async (row: LoginLogItem) => {
+    return row;
   };
-  const fetchDeleteLoginLog = async (_id: number) => {
+  const fetchDeleteLoginLog = async (_logNumber: string) => {
     ElMessage.success('Mock: 删除成功');
   };
   // ==================== Mock 数据 ====================
@@ -201,17 +218,17 @@
   const selectedRows = ref<LoginLogItem[]>([]);
 
   const createDefaultSearchForm = () => ({
-    userName: undefined as string | undefined
+    nickname: undefined as string | undefined
   });
 
   const searchForm = reactive(createDefaultSearchForm());
 
   const searchItems = computed(() => [
     {
-      label: '用户名称',
-      key: 'userName',
+      label: '用户昵称',
+      key: 'nickname',
       type: 'input',
-      props: { clearable: true, placeholder: '搜索用户名称' }
+      props: { clearable: true, placeholder: '搜索用户昵称' }
     }
   ]);
 
@@ -223,28 +240,76 @@
 
   const createColumns = (): ColumnOption<LoginLogItem>[] => [
     { type: 'selection' },
-    { prop: 'accessId', label: '日志编号', minWidth: 160, showOverflowTooltip: true },
-    { prop: 'userName', label: '用户名称', minWidth: 100 },
-    { prop: 'address', label: '操作IP', minWidth: 140 },
-    { prop: 'loginLocation', label: 'ip所在地', minWidth: 140 },
-    { prop: 'os', label: '操作系统', minWidth: 110 },
-    { prop: 'browser', label: '浏览器', minWidth: 120 },
     {
-      prop: 'status',
+      prop: 'logNumber',
+      label: '日志编号',
+      minWidth: 160,
+      showOverflowTooltip: true,
+      align: 'center'
+    },
+    {
+      prop: 'userId',
+      label: '用户ID',
+      minWidth: 160,
+      showOverflowTooltip: true,
+      align: 'center',
+      formatter: (row: LoginLogItem) => row.userId || '-'
+    },
+    {
+      prop: 'nickname',
+      label: '用户昵称',
+      minWidth: 160,
+      showOverflowTooltip: true,
+      align: 'center',
+      formatter: (row: LoginLogItem) => row.nickname || '未知用户'
+    },
+    { prop: 'message', label: '操作信息', minWidth: 140, align: 'center' },
+    {
+      prop: 'loginType',
+      label: '登录方式',
+      minWidth: 80,
+      align: 'center',
+      formatter: (row: LoginLogItem) => h(ElTag, loginTypeLabel(row.loginType))
+    },
+    {
+      prop: 'state',
       label: '状态',
       minWidth: 80,
+      align: 'center',
       formatter: (row: LoginLogItem) =>
         h(
           ElTag,
-          { type: row.status === 'SUCCESS' ? 'success' : 'danger' },
-          row.status === 'SUCCESS' ? '成功' : '失败'
+          { type: row.state === 0 ? 'success' : 'danger' },
+          row.state === 0 ? '成功' : '失败'
         )
     },
-    { prop: 'description', label: '登录信息', minWidth: 140 },
+    { prop: 'ipAddress', label: '登录IP', minWidth: 135, align: 'center' },
+    { prop: 'ipRegion', label: 'IP所在地', minWidth: 120, align: 'center' },
+    {
+      prop: 'actionType',
+      label: '操作类型',
+      minWidth: 80,
+      align: 'center',
+      formatter: (row: LoginLogItem) =>
+        h(ElTag, actionTypeLabel(row.actionType))
+    },
+    {
+      prop: 'type',
+      label: '操作来源',
+      minWidth: 80,
+      align: 'center',
+      formatter: (row: LoginLogItem) =>
+        h(
+          ElTag,
+          { type: row.type === 2 ? 'danger' : row.type === 1 ? 'primary' : 'info' },
+          sourceTypeLabel(row.type)
+        )
+    },
     {
       prop: 'loginTime',
-      label: '时间',
+      label: '操作时间',
       minWidth: 170,
+      align: 'center',
       formatter: (row: LoginLogItem) => formatDateTime(row.loginTime)
     },
     {
@@ -292,14 +357,53 @@
     await resetSearchParams();
   };
 
+  const actionTypeLabel = (type: number): string => {
+    switch (type) {
+      case 1:
+        return '登录';
+      case 2:
+        return '退出';
+      case 3:
+        return '注册';
+      default:
+        return '未知';
+    }
+  };
+
+  const loginTypeLabel = (type: number | undefined): string => {
+    switch (type) {
+      case 1:
+        return '邮箱';
+      case 2:
+        return 'QQ';
+      case 3:
+        return '微博';
+      default:
+        return '未知';
+    }
+  };
+
+  const sourceTypeLabel = (type: number): string => {
+    switch (type) {
+      case 0:
+        return '前台';
+      case 1:
+        return '后台';
+      case 2:
+        return '非法';
+      default:
+        return '未知';
+    }
+  };
+
   const openDetailDrawer = async (row: LoginLogItem) => {
-    detailRow.value = await fetchLoginLogDetail(row.id);
+    detailRow.value = await fetchLoginLogDetail(row);
     detailVisible.value = true;
   };
 
   const handleDelete = async (row: LoginLogItem) => {
-    await ElMessageBox.confirm(`确认删除"${row.accessId}"吗？`, '删除确认', { type: 'warning' });
-    await fetchDeleteLoginLog(row.id);
+    await ElMessageBox.confirm(`确认删除"${row.logNumber}"吗？`, '删除确认', { type: 'warning' });
+    await fetchDeleteLoginLog(row.logNumber);
     await refreshRemove();
   };
 
@@ -307,7 +411,7 @@
     selectedRows.value = selection;
   };
 
-  const fetchBatchDeleteLoginLog = async (_ids: number[]) => {
+  const fetchBatchDeleteLoginLog = async (_logNumbers: string[]) => {
     ElMessage.success('Mock: 批量删除成功');
   };
 
@@ -317,13 +421,13 @@
       return;
     }
     await ElMessageBox.confirm(
-      `确认删除选中的 ${selectedRows.value.length} 条登录日志吗？`,
+      `确认删除选中的 ${selectedRows.value.length} 条认证日志吗？`,
       '批量删除确认',
       {
         type: 'warning'
       }
     );
-    await fetchBatchDeleteLoginLog(selectedRows.value.map((row) => row.id));
+    await fetchBatchDeleteLoginLog(selectedRows.value.map((row) => row.logNumber));
     selectedRows.value = [];
     await refreshRemove();
   };
