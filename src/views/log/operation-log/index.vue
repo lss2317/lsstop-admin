@@ -129,7 +129,7 @@
       label: '系统模块',
       key: 'module',
       type: 'input',
-      props: { clearable: true, placeholder: '搜索系统模块' }
+      props: { clearable: true, placeholder: '搜索系统模块', maxlength: 10 }
     },
     {
       label: '操作类型',
@@ -149,7 +149,7 @@
       label: '用户ID',
       key: 'userId',
       type: 'input',
-      props: { clearable: true, placeholder: '搜索用户ID' }
+      props: { clearable: true, placeholder: '搜索用户ID', maxlength: 16 }
     }
   ]);
 

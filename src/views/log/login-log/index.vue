@@ -90,211 +90,9 @@
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
   import type { LoginLogItem } from '@/apis/login-log/types';
+  import { fetchLoginLogList, fetchDeleteLoginLog } from '@/apis/login-log';
   import { formatDateTime } from '@/utils/format';
   defineOptions({ name: 'LoginLog' });
-
-  // ==================== Mock 数据 ====================
-  const mockData: LoginLogItem[] = [
-    {
-      logNumber: 'LG20260519103000001',
-      userId: '1001',
-      nickname: '风清扬',
-      loginType: 1,
-      loginTime: '2026-05-19T10:30:00.000Z',
-      ipAddress: '183.227.175.119',
-      ipRegion: '广东省',
-      browser: 'Chrome 148.0.0.0',
-      os: 'OSX 10_15_7',
-      type: 1,
-      state: 0,
-      actionType: 1,
-      loginIdentifier: 'admin@example.com',
-      message: '登录成功'
-    },
-    {
-      logNumber: 'LG20260519091500002',
-      userId: '1002',
-      nickname: '令狐冲',
-      loginType: 2,
-      loginTime: '2026-05-19T09:15:00.000Z',
-      ipAddress: '120.237.243.189',
-      ipRegion: '北京市',
-      browser: 'Edge 148.0.0.0',
-      os: 'Windows 10_0_19045',
-      type: 1,
-      state: 0,
-      actionType: 1,
-      loginIdentifier: 'openid_qq_123456',
-      message: '登录成功'
-    },
-    {
-      logNumber: 'LG20260519084500003',
-      userId: '1003',
-      nickname: '任盈盈',
-      loginType: 3,
-      loginTime: '2026-05-19T08:45:00.000Z',
-      ipAddress: '27.211.97.216',
-      ipRegion: '上海市',
-      browser: 'Safari 17.5.0.0',
-      os: 'OSX 10_15_7',
-      type: 0,
-      state: 0,
-      actionType: 1,
-      loginIdentifier: 'weibo_uid_789',
-      message: '登录成功'
-    },
-    {
-      logNumber: 'LG20260518182000004',
-      userId: '',
-      nickname: '',
-      loginType: 1,
-      loginTime: '2026-05-18T18:20:00.000Z',
-      ipAddress: '60.209.250.73',
-      ipRegion: '山东省',
-      browser: 'Chrome 148.0.0.0',
-      os: 'OSX 10_15_7',
-      type: 0,
-      state: 0,
-      actionType: 1,
-      loginIdentifier: 'user@blog.com',
-      message: '登录成功'
-    },
-    {
-      logNumber: 'LG20260518151000005',
-      userId: '1004',
-      nickname: '东方不败',
-      loginType: 2,
-      loginTime: '2026-05-18T15:10:00.000Z',
-      ipAddress: '113.87.90.237',
-      ipRegion: '浙江省',
-      browser: 'Firefox 148.0.0.0',
-      os: 'Windows 11_0_22631',
-      type: 2,
-      state: 1,
-      actionType: 1,
-      loginIdentifier: 'openid_qq_654321',
-      message: '账号已被锁定'
-    },
-    {
-      logNumber: 'LG20260518102000006',
-      userId: '1002',
-      nickname: '令狐冲',
-      loginType: undefined,
-      loginTime: '2026-05-18T10:20:00.000Z',
-      ipAddress: '120.237.243.189',
-      ipRegion: '北京市',
-      browser: 'Edge 148.0.0.0',
-      os: 'Windows 10_0_19045',
-      type: 0,
-      state: 0,
-      actionType: 2,
-      loginIdentifier: undefined,
-      message: '退出登录'
-    },
-    {
-      logNumber: 'LG20260518093000007',
-      userId: '1002',
-      nickname: '令狐冲',
-      loginType: undefined,
-      loginTime: '2026-05-18T09:30:00.000Z',
-      ipAddress: '120.237.243.189',
-      ipRegion: '北京市',
-      browser: 'Edge 148.0.0.0',
-      os: 'Windows 10_0_19045',
-      type: 1,
-      state: 1,
-      actionType: 2,
-      loginIdentifier: undefined,
-      message: '退出登录'
-    },
-    {
-      logNumber: 'LG20260518081500008',
-      userId: '1005',
-      nickname: '岳不群',
-      loginType: 1,
-      loginTime: '2026-05-18T08:15:00.000Z',
-      ipAddress: '202.96.128.68',
-      ipRegion: '上海市',
-      browser: 'Chrome 148.0.0.0',
-      os: 'OSX 10_15_7',
-      type: 1,
-      state: 0,
-      actionType: 3,
-      loginIdentifier: 'yue@example.com',
-      message: '注册成功'
-    },
-    {
-      logNumber: 'LG20260517220000009',
-      userId: '1006',
-      nickname: '林平之',
-      loginType: 1,
-      loginTime: '2026-05-17T22:00:00.000Z',
-      ipAddress: '14.145.63.91',
-      ipRegion: '广东省',
-      browser: 'Safari 17.5.0.0',
-      os: 'OSX 10_15_7',
-      type: 0,
-      state: 1,
-      actionType: 3,
-      loginIdentifier: 'lin@example.com',
-      message: '邮箱已被注册'
-    },
-    {
-      logNumber: 'LG20260517153000010',
-      userId: '1001',
-      nickname: '风清扬',
-      loginType: 1,
-      loginTime: '2026-05-17T15:30:00.000Z',
-      ipAddress: '223.104.145.212',
-      ipRegion: '广东省',
-      browser: 'Chrome 148.0.0.0',
-      os: 'OSX 10_15_7',
-      type: 1,
-      state: 1,
-      actionType: 1,
-      loginIdentifier: 'admin@example.com',
-      message: '密码错误'
-    }
-  ];
-
-  const fetchLoginLogList = async (
-    params: any
-  ): Promise<Api.Common.PaginatedResponse<LoginLogItem>> => {
-    const { current = 1, size = 10 } = params || {};
-    let filtered = [...mockData];
-    if (params.userId) {
-      filtered = filtered.filter((item) => item.userId.includes(params.userId));
-    }
-    if (params.noUserId) {
-      filtered = filtered.filter((item) => !item.userId || item.userId === '');
-    }
-    if (params.actionType !== undefined) {
-      filtered = filtered.filter((item) => item.actionType === params.actionType);
-    }
-    if (params.state !== undefined) {
-      filtered = filtered.filter((item) => item.state === params.state);
-    }
-    if (params.type !== undefined) {
-      filtered = filtered.filter((item) => item.type === params.type);
-    }
-    if (params.loginType !== undefined) {
-      filtered = filtered.filter((item) => item.loginType === params.loginType);
-    }
-    const start = (current - 1) * size;
-    return {
-      records: filtered.slice(start, start + size),
-      current,
-      size,
-      total: filtered.length
-    };
-  };
-  const fetchLoginLogDetail = async (row: LoginLogItem) => {
-    return row;
-  };
-  const fetchDeleteLoginLog = async (_logNumber: string) => {
-    ElMessage.success('Mock: 删除成功');
-  };
-  // ==================== Mock 数据 ====================
 
   const detailVisible = ref(false);
   const detailRow = ref<LoginLogItem | null>(null);
@@ -316,7 +114,7 @@
       label: '用户ID',
       key: 'userId',
       type: 'input',
-      props: { clearable: true, placeholder: '搜索用户ID' }
+      props: { clearable: true, placeholder: '搜索用户ID', maxlength: 16 }
     },
     {
       label: '操作类型',
@@ -374,13 +172,13 @@
       }
     },
     {
-      label: '无用户ID',
+      label: '未知用户',
       key: 'noUserId',
       type: 'select',
       props: {
         clearable: true,
-        placeholder: '筛空值',
-        options: [{ label: '仅看无ID', value: true }]
+        placeholder: '筛选未知用户',
+        options: [{ label: '仅看未知用户', value: true }]
       }
     }
   ]);
@@ -585,23 +383,20 @@
     }
   };
 
-  const openDetailDrawer = async (row: LoginLogItem) => {
-    detailRow.value = await fetchLoginLogDetail(row);
+  const openDetailDrawer = (row: LoginLogItem) => {
+    detailRow.value = row;
     detailVisible.value = true;
   };
 
   const handleDelete = async (row: LoginLogItem) => {
     await ElMessageBox.confirm(`确认删除"${row.logNumber}"吗？`, '删除确认', { type: 'warning' });
-    await fetchDeleteLoginLog(row.logNumber);
+    await fetchDeleteLoginLog({ logNumbers: [row.logNumber] });
+    ElMessage.success('删除成功');
     await refreshRemove();
   };
 
   const handleSelectionChange = (selection: LoginLogItem[]) => {
     selectedRows.value = selection;
-  };
-
-  const fetchBatchDeleteLoginLog = async (_logNumbers: string[]) => {
-    ElMessage.success('Mock: 批量删除成功');
   };
 
   const handleBatchDelete = async () => {
@@ -616,7 +411,10 @@
         type: 'warning'
       }
     );
-    await fetchBatchDeleteLoginLog(selectedRows.value.map((row) => row.logNumber));
+    await fetchDeleteLoginLog({
+      logNumbers: selectedRows.value.map((row) => row.logNumber)
+    });
+    ElMessage.success('删除成功');
     selectedRows.value = [];
     await refreshRemove();
   };
