@@ -262,8 +262,23 @@
   ): Promise<Api.Common.PaginatedResponse<LoginLogItem>> => {
     const { current = 1, size = 10 } = params || {};
     let filtered = [...mockData];
-    if (params.nickname) {
-      filtered = filtered.filter((item) => item.nickname.includes(params.nickname));
+    if (params.userId) {
+      filtered = filtered.filter((item) => item.userId.includes(params.userId));
+    }
+    if (params.noUserId) {
+      filtered = filtered.filter((item) => !item.userId || item.userId === '');
+    }
+    if (params.actionType !== undefined) {
+      filtered = filtered.filter((item) => item.actionType === params.actionType);
+    }
+    if (params.state !== undefined) {
+      filtered = filtered.filter((item) => item.state === params.state);
+    }
+    if (params.type !== undefined) {
+      filtered = filtered.filter((item) => item.type === params.type);
+    }
+    if (params.loginType !== undefined) {
+      filtered = filtered.filter((item) => item.loginType === params.loginType);
     }
     const start = (current - 1) * size;
     return {
@@ -286,17 +301,87 @@
   const selectedRows = ref<LoginLogItem[]>([]);
 
   const createDefaultSearchForm = () => ({
-    nickname: undefined as string | undefined
+    userId: undefined as string | undefined,
+    actionType: undefined as number | undefined,
+    state: undefined as number | undefined,
+    type: undefined as number | undefined,
+    loginType: undefined as number | undefined,
+    noUserId: undefined as boolean | undefined
   });
 
   const searchForm = reactive(createDefaultSearchForm());
 
   const searchItems = computed(() => [
     {
-      label: '用户昵称',
-      key: 'nickname',
+      label: '用户ID',
+      key: 'userId',
       type: 'input',
-      props: { clearable: true, placeholder: '搜索用户昵称' }
+      props: { clearable: true, placeholder: '搜索用户ID' }
+    },
+    {
+      label: '操作类型',
+      key: 'actionType',
+      type: 'select',
+      props: {
+        clearable: true,
+        placeholder: '选择操作类型',
+        options: [
+          { label: '登录', value: 1 },
+          { label: '退出', value: 2 },
+          { label: '注册', value: 3 }
+        ]
+      }
+    },
+    {
+      label: '状态',
+      key: 'state',
+      type: 'select',
+      props: {
+        clearable: true,
+        placeholder: '选择状态',
+        options: [
+          { label: '成功', value: 0 },
+          { label: '失败', value: 1 }
+        ]
+      }
+    },
+    {
+      label: '操作来源',
+      key: 'type',
+      type: 'select',
+      props: {
+        clearable: true,
+        placeholder: '选择操作来源',
+        options: [
+          { label: '前台', value: 0 },
+          { label: '后台', value: 1 },
+          { label: '非法', value: 2 }
+        ]
+      }
+    },
+    {
+      label: '登录方式',
+      key: 'loginType',
+      type: 'select',
+      props: {
+        clearable: true,
+        placeholder: '选择登录方式',
+        options: [
+          { label: '邮箱', value: 1 },
+          { label: 'QQ', value: 2 },
+          { label: '微博', value: 3 }
+        ]
+      }
+    },
+    {
+      label: '无用户ID',
+      key: 'noUserId',
+      type: 'select',
+      props: {
+        clearable: true,
+        placeholder: '筛空值',
+        options: [{ label: '仅看无ID', value: true }]
+      }
     }
   ]);
 
@@ -412,9 +497,16 @@
     }
   });
 
-  const buildSearchParams = (): Record<string, unknown> => ({
-    ...searchForm
-  });
+  const buildSearchParams = (): Record<string, unknown> => {
+    const params: Record<string, unknown> = {};
+    if (searchForm.userId) params.userId = searchForm.userId;
+    if (searchForm.actionType !== undefined) params.actionType = searchForm.actionType;
+    if (searchForm.state !== undefined) params.state = searchForm.state;
+    if (searchForm.type !== undefined) params.type = searchForm.type;
+    if (searchForm.loginType !== undefined) params.loginType = searchForm.loginType;
+    if (searchForm.noUserId !== undefined) params.noUserId = searchForm.noUserId;
+    return params;
+  };
 
   const handleSearch = () => {
     replaceSearchParams(buildSearchParams());
