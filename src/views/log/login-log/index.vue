@@ -26,7 +26,15 @@
             >
               删除
             </ElButton>
-            <ElButton type="primary" plain @click="handleExport">导出</ElButton>
+            <ElButton
+              type="primary"
+              plain
+              :loading="exportLoading"
+              :disabled="!data.length"
+              @click="handleExport"
+            >
+              导出
+            </ElButton>
           </ElSpace>
         </template>
       </ArtTableHeader>
@@ -90,13 +98,15 @@
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
   import type { LoginLogItem } from '@/apis/login-log/types';
-  import { fetchLoginLogList, fetchDeleteLoginLog } from '@/apis/login-log';
+  import { fetchLoginLogList, fetchDeleteLoginLog, fetchLoginLogExport } from '@/apis/login-log';
+  import FileSaver from 'file-saver';
   import { formatDateTime } from '@/utils/format';
   defineOptions({ name: 'LoginLog' });
 
   const detailVisible = ref(false);
   const detailRow = ref<LoginLogItem | null>(null);
   const selectedRows = ref<LoginLogItem[]>([]);
+  const exportLoading = ref(false);
 
   const createDefaultSearchForm = () => ({
     userId: undefined as string | undefined,
@@ -419,8 +429,28 @@
     await refreshRemove();
   };
 
-  const handleExport = () => {
-    ElMessage.success('Mock: 导出成功');
+  const handleExport = async () => {
+    if (exportLoading.value) return;
+    try {
+      await ElMessageBox.confirm('确认导出当前筛选条件下的所有认证日志吗？', '导出确认', {
+        type: 'success'
+      });
+      exportLoading.value = true;
+      const exportParams = Object.fromEntries(
+        Object.entries(searchForm).filter(([, v]) => v !== undefined && v !== '')
+      ) as Record<string, string>;
+      const blob = await fetchLoginLogExport(exportParams);
+      const filename = `认证日志_${new Date().toISOString().slice(0, 10)}.xlsx`;
+      FileSaver.saveAs(blob, filename);
+      ElMessage.success('导出成功');
+    } catch (error) {
+      if (error !== 'cancel') {
+        console.error('导出失败:', error);
+        ElMessage.error('导出失败');
+      }
+    } finally {
+      exportLoading.value = false;
+    }
   };
 </script>
 
