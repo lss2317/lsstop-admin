@@ -47,6 +47,13 @@
       :role-data="currentRoleData"
       @success="refreshData"
     />
+
+    <!-- 接口权限弹窗 -->
+    <RoleApiPermissionDialog
+      v-model="apiPermissionDialog"
+      :role-data="currentRoleData"
+      @success="refreshData"
+    />
   </div>
 </template>
 
@@ -61,11 +68,13 @@
   import RoleSearch from './modules/role-search.vue';
   import RoleEditDialog from './modules/role-edit-dialog.vue';
   import RolePermissionDialog from './modules/role-permission-dialog.vue';
+  import RoleApiPermissionDialog from './modules/role-api-permission-dialog.vue';
 
   defineOptions({ name: 'Role' });
 
   const dialogVisible = ref(false);
   const permissionDialog = ref(false);
+  const apiPermissionDialog = ref(false);
   const dialogType = ref<'add' | 'edit'>('add');
   const currentRoleData = ref<RoleItem | undefined>(undefined);
   const showSearchBar = ref(false);
@@ -134,6 +143,11 @@
                 icon: 'ri:user-3-line'
               },
               {
+                key: 'apiPermission',
+                label: '接口权限',
+                icon: 'ri:code-line'
+              },
+              {
                 key: 'edit',
                 label: '编辑角色',
                 icon: 'ri:edit-2-line'
@@ -194,6 +208,9 @@
       case 'permission':
         showPermissionDialog(row);
         break;
+      case 'apiPermission':
+        showApiPermissionDialog(row);
+        break;
       case 'edit':
         showDialog('edit', row);
         break;
@@ -205,6 +222,11 @@
 
   const showPermissionDialog = (row?: RoleItem) => {
     permissionDialog.value = true;
+    currentRoleData.value = row;
+  };
+
+  const showApiPermissionDialog = (row?: RoleItem) => {
+    apiPermissionDialog.value = true;
     currentRoleData.value = row;
   };
 
