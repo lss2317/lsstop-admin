@@ -210,7 +210,7 @@
   } = useTable({
     core: {
       apiFn: fetchOperationLogList,
-      apiParams: { current: 1, size: 10 },
+      apiParams: { current: 1, size: 20 },
       columnsFactory: createColumns
     }
   });
