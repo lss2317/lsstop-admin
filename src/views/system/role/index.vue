@@ -70,7 +70,13 @@
   const currentRoleData = ref<RoleItem | undefined>(undefined);
   const showSearchBar = ref(false);
 
-  const searchForm = reactive({
+  interface SearchForm {
+    name?: string;
+    code?: string;
+    status?: number;
+  }
+
+  const searchForm = reactive<SearchForm>({
     name: undefined,
     code: undefined,
     status: undefined
@@ -98,14 +104,13 @@
       label: '角色状态',
       width: 100,
       formatter: (row: RoleItem) => {
-        const statusConfig = row.status === 1
-          ? { type: 'success', text: '启用' }
-          : { type: 'warning', text: '禁用' }
+        const statusConfig =
+          row.status === 1 ? { type: 'success', text: '启用' } : { type: 'warning', text: '禁用' };
         return h(
           ElTag,
           { type: statusConfig.type as 'success' | 'warning' },
           () => statusConfig.text
-        )
+        );
       }
     },
     {
@@ -173,7 +178,7 @@
    * 搜索处理
    * @param params 搜索参数
    */
-  const handleSearch = (params: typeof searchForm) => {
+  const handleSearch = (params: SearchForm) => {
     replaceSearchParams(params as Record<string, unknown>);
     getData();
   };

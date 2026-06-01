@@ -2,7 +2,7 @@
   <ElDialog
     v-model="visible"
     title="菜单权限"
-    width="520px"
+    width="700px"
     align-center
     class="el-dialog-border"
     @close="handleClose"
@@ -29,13 +29,11 @@
       </ElTree>
     </ElScrollbar>
     <template #footer>
-      <ElButton @click="outputSelectedData" style="margin-left: 8px">获取选中数据</ElButton>
-
       <ElButton @click="toggleExpandAll">{{ isExpandAll ? '全部收起' : '全部展开' }}</ElButton>
       <ElButton @click="toggleSelectAll" style="margin-left: 8px">{{
         isSelectAll ? '取消全选' : '全部选择'
       }}</ElButton>
-      <ElButton type="primary" @click="savePermission">保存</ElButton>
+      <ElButton type="primary" @click="savePermission" style="margin-left: 8px">保存</ElButton>
     </template>
   </ElDialog>
 </template>

@@ -2,16 +2,16 @@
   <ElDialog
     v-model="visible"
     :title="dialogType === 'add' ? '新增角色' : '编辑角色'"
-    width="30%"
+    width="500px"
     align-center
     @close="handleClose"
   >
-    <ElForm ref="formRef" :model="form" :rules="rules" label-width="120px">
-      <ElFormItem label="角色名称" prop="name">
-        <ElInput v-model="form.name" placeholder="请输入角色名称" />
+    <ElForm ref="formRef" :model="form" :rules="rules" label-width="80px" label-position="right">
+      <ElFormItem label="角色名称" prop="name" required>
+        <ElInput v-model="form.name" placeholder="请输入角色名称" clearable />
       </ElFormItem>
-      <ElFormItem label="角色编码" prop="code">
-        <ElInput v-model="form.code" placeholder="请输入角色编码" />
+      <ElFormItem label="角色编码" prop="code" required>
+        <ElInput v-model="form.code" placeholder="请输入角色编码" clearable />
       </ElFormItem>
       <ElFormItem label="描述" prop="description">
         <ElInput
@@ -19,15 +19,19 @@
           type="textarea"
           :rows="3"
           placeholder="请输入角色描述"
+          maxlength="200"
+          show-word-limit
         />
       </ElFormItem>
-      <ElFormItem label="启用">
+      <ElFormItem label="启用" prop="status">
         <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
       </ElFormItem>
     </ElForm>
     <template #footer>
-      <ElButton @click="handleClose">取消</ElButton>
-      <ElButton type="primary" @click="handleSubmit">提交</ElButton>
+      <div class="dialog-footer">
+        <ElButton @click="handleClose">取消</ElButton>
+        <ElButton type="primary" @click="handleSubmit">提交</ElButton>
+      </div>
     </template>
   </ElDialog>
 </template>
@@ -160,3 +164,33 @@
     }
   };
 </script>
+
+<style scoped lang="scss">
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+  }
+
+  :deep(.el-form-item__label) {
+    font-weight: 500;
+    color: #606266;
+  }
+
+  :deep(.el-input__wrapper) {
+    box-shadow: 0 0 0 1px #dcdfe6 inset;
+    transition: all 0.3s;
+
+    &:hover {
+      box-shadow: 0 0 0 1px #c0c4cc inset;
+    }
+
+    &.is-focus {
+      box-shadow: 0 0 0 1px #409eff inset;
+    }
+  }
+</style>
