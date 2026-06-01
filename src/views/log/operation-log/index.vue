@@ -1,16 +1,16 @@
 <template>
   <div class="art-full-height">
-    <ArtSearchBar
+    <OperationLogSearch
+      v-show="showSearchBar"
       v-model="searchForm"
-      :items="searchItems"
-      label-width="76px"
       @search="handleSearch"
-      @reset="handleReset"
-    />
+      @reset="resetSearchParams"
+    ></OperationLogSearch>
 
-    <ElCard class="art-table-card" shadow="never" style="margin-top: 12px">
+    <ElCard class="art-table-card" :style="{ 'margin-top': showSearchBar ? '12px' : '0' }">
       <ArtTableHeader
         v-model:columns="columnChecks"
+        v-model:showSearchBar="showSearchBar"
         :loading="loading"
         :data="data"
         :selected-data="selectedRows"
@@ -109,49 +109,20 @@
   } from '@/apis/operation-log';
   import FileSaver from 'file-saver';
   import { formatDateTime, formatJson } from '@/utils/format';
+  import OperationLogSearch, { type SearchForm } from './modules/operation-log-search.vue';
   defineOptions({ name: 'OperationLog' });
 
   const detailVisible = ref(false);
   const detailRow = ref<OperationLogItem | null>(null);
   const selectedRows = ref<OperationLogItem[]>([]);
   const exportLoading = ref(false);
+  const showSearchBar = ref(false);
 
-  const createDefaultSearchForm = () => ({
-    module: undefined as string | undefined,
-    operationType: undefined as string | undefined,
-    userId: undefined as string | undefined
+  const searchForm = reactive<SearchForm>({
+    module: undefined,
+    operationType: undefined,
+    userId: undefined
   });
-
-  const searchForm = reactive(createDefaultSearchForm());
-
-  const searchItems = computed(() => [
-    {
-      label: '系统模块',
-      key: 'module',
-      type: 'input',
-      props: { clearable: true, placeholder: '搜索系统模块', maxlength: 10 }
-    },
-    {
-      label: '操作类型',
-      key: 'operationType',
-      type: 'select',
-      props: {
-        clearable: true,
-        placeholder: '选择操作类型',
-        options: [
-          { label: '新增', value: '新增' },
-          { label: '编辑', value: '编辑' },
-          { label: '删除', value: '删除' }
-        ]
-      }
-    },
-    {
-      label: '用户ID',
-      key: 'userId',
-      type: 'input',
-      props: { clearable: true, placeholder: '搜索用户ID', maxlength: 16 }
-    }
-  ]);
 
   const renderOperationActions = (row: OperationLogItem) =>
     h('div', { class: 'generated-operation-actions' }, [
@@ -244,18 +215,13 @@
     }
   });
 
-  const buildSearchParams = (): Record<string, unknown> => ({
-    ...searchForm
-  });
-
-  const handleSearch = () => {
-    replaceSearchParams(buildSearchParams());
-    void getData();
-  };
-
-  const handleReset = async () => {
-    Object.assign(searchForm, createDefaultSearchForm());
-    await resetSearchParams();
+  /**
+   * 搜索处理
+   * @param params 搜索参数
+   */
+  const handleSearch = (params: SearchForm) => {
+    replaceSearchParams(params as Record<string, unknown>);
+    getData();
   };
 
   const openDetailDrawer = (row: OperationLogItem) => {
@@ -316,7 +282,7 @@
       exportLoading.value = true;
       const exportParams = Object.fromEntries(
         Object.entries(searchForm).filter(([, v]) => v !== undefined && v !== '')
-      ) as Record<string, string>;
+      ) as unknown as Record<string, string>;
       const blob = await fetchOperationLogExport(exportParams);
       const filename = `操作日志_${new Date().toISOString().slice(0, 10)}.xlsx`;
       FileSaver.saveAs(blob, filename);

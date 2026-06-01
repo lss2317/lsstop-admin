@@ -1,16 +1,16 @@
 <template>
   <div class="art-full-height">
-    <ArtSearchBar
+    <LoginLogSearch
+      v-show="showSearchBar"
       v-model="searchForm"
-      :items="searchItems"
-      label-width="76px"
       @search="handleSearch"
-      @reset="handleReset"
-    />
+      @reset="resetSearchParams"
+    ></LoginLogSearch>
 
-    <ElCard class="art-table-card" shadow="never" style="margin-top: 12px">
+    <ElCard class="art-table-card" :style="{ 'margin-top': showSearchBar ? '12px' : '0' }">
       <ArtTableHeader
         v-model:columns="columnChecks"
+        v-model:showSearchBar="showSearchBar"
         :loading="loading"
         :data="data"
         :selected-data="selectedRows"
@@ -101,97 +101,23 @@
   import { fetchLoginLogList, fetchDeleteLoginLog, fetchLoginLogExport } from '@/apis/login-log';
   import FileSaver from 'file-saver';
   import { formatDateTime } from '@/utils/format';
+  import LoginLogSearch, { type SearchForm } from './modules/login-log-search.vue';
   defineOptions({ name: 'LoginLog' });
 
   const detailVisible = ref(false);
   const detailRow = ref<LoginLogItem | null>(null);
   const selectedRows = ref<LoginLogItem[]>([]);
   const exportLoading = ref(false);
+  const showSearchBar = ref(false);
 
-  const createDefaultSearchForm = () => ({
-    userId: undefined as string | undefined,
-    actionType: undefined as number | undefined,
-    state: undefined as number | undefined,
-    type: undefined as number | undefined,
-    loginType: undefined as number | undefined,
-    noUserId: undefined as boolean | undefined
+  const searchForm = reactive<SearchForm>({
+    userId: undefined,
+    actionType: undefined,
+    state: undefined,
+    type: undefined,
+    loginType: undefined,
+    noUserId: undefined
   });
-
-  const searchForm = reactive(createDefaultSearchForm());
-
-  const searchItems = computed(() => [
-    {
-      label: '用户ID',
-      key: 'userId',
-      type: 'input',
-      props: { clearable: true, placeholder: '搜索用户ID', maxlength: 16 }
-    },
-    {
-      label: '操作类型',
-      key: 'actionType',
-      type: 'select',
-      props: {
-        clearable: true,
-        placeholder: '选择操作类型',
-        options: [
-          { label: '登录', value: 1 },
-          { label: '退出', value: 2 },
-          { label: '注册', value: 3 }
-        ]
-      }
-    },
-    {
-      label: '状态',
-      key: 'state',
-      type: 'select',
-      props: {
-        clearable: true,
-        placeholder: '选择状态',
-        options: [
-          { label: '成功', value: 0 },
-          { label: '失败', value: 1 }
-        ]
-      }
-    },
-    {
-      label: '操作来源',
-      key: 'type',
-      type: 'select',
-      props: {
-        clearable: true,
-        placeholder: '选择操作来源',
-        options: [
-          { label: '前台', value: 0 },
-          { label: '后台', value: 1 },
-          { label: '非法', value: 2 }
-        ]
-      }
-    },
-    {
-      label: '登录方式',
-      key: 'loginType',
-      type: 'select',
-      props: {
-        clearable: true,
-        placeholder: '选择登录方式',
-        options: [
-          { label: '邮箱', value: 1 },
-          { label: 'QQ', value: 2 },
-          { label: '微博', value: 3 }
-        ]
-      }
-    },
-    {
-      label: '未知用户',
-      key: 'noUserId',
-      type: 'select',
-      props: {
-        clearable: true,
-        placeholder: '筛选未知用户',
-        options: [{ label: '仅看未知用户', value: true }]
-      }
-    }
-  ]);
 
   const renderOperationActions = (row: LoginLogItem) =>
     h('div', { class: 'generated-operation-actions' }, [
@@ -305,25 +231,13 @@
     }
   });
 
-  const buildSearchParams = (): Record<string, unknown> => {
-    const params: Record<string, unknown> = {};
-    if (searchForm.userId) params.userId = searchForm.userId;
-    if (searchForm.actionType !== undefined) params.actionType = searchForm.actionType;
-    if (searchForm.state !== undefined) params.state = searchForm.state;
-    if (searchForm.type !== undefined) params.type = searchForm.type;
-    if (searchForm.loginType !== undefined) params.loginType = searchForm.loginType;
-    if (searchForm.noUserId !== undefined) params.noUserId = searchForm.noUserId;
-    return params;
-  };
-
-  const handleSearch = () => {
-    replaceSearchParams(buildSearchParams());
-    void getData();
-  };
-
-  const handleReset = async () => {
-    Object.assign(searchForm, createDefaultSearchForm());
-    await resetSearchParams();
+  /**
+   * 搜索处理
+   * @param params 搜索参数
+   */
+  const handleSearch = (params: SearchForm) => {
+    replaceSearchParams(params as Record<string, unknown>);
+    getData();
   };
 
   const actionTypeLabel = (type: number): string => {
@@ -438,7 +352,7 @@
       exportLoading.value = true;
       const exportParams = Object.fromEntries(
         Object.entries(searchForm).filter(([, v]) => v !== undefined && v !== '')
-      ) as Record<string, string>;
+      ) as unknown as Record<string, string>;
       const blob = await fetchLoginLogExport(exportParams);
       const filename = `认证日志_${new Date().toISOString().slice(0, 10)}.xlsx`;
       FileSaver.saveAs(blob, filename);
