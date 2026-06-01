@@ -1,0 +1,101 @@
+<template>
+  <ArtSearchBar
+    ref="searchBarRef"
+    v-model="formData"
+    :items="formItems"
+    :rules="rules"
+    @reset="handleReset"
+    @search="handleSearch"
+  >
+  </ArtSearchBar>
+</template>
+
+<script setup lang="ts">
+  interface SearchForm {
+    name?: string;
+    code?: string;
+    status?: number;
+  }
+
+  interface Props {
+    modelValue: SearchForm;
+  }
+
+  interface Emits {
+    (e: 'update:modelValue', value: SearchForm): void;
+    (e: 'search', params: SearchForm): void;
+    (e: 'reset'): void;
+  }
+
+  const props = defineProps<Props>();
+  const emit = defineEmits<Emits>();
+
+  const searchBarRef = ref();
+
+  /**
+   * 表单数据双向绑定
+   */
+  const formData = computed({
+    get: () => props.modelValue,
+    set: (val) => emit('update:modelValue', val)
+  });
+
+  /**
+   * 表单校验规则
+   */
+  const rules = {};
+
+  /**
+   * 角色状态选项
+   */
+  const statusOptions = ref([
+    { label: '启用', value: 1 },
+    { label: '禁用', value: 0 }
+  ]);
+
+  /**
+   * 搜索表单配置项
+   */
+  const formItems = computed(() => [
+    {
+      label: '角色名称',
+      key: 'name',
+      type: 'input',
+      placeholder: '请输入角色名称',
+      clearable: true
+    },
+    {
+      label: '角色编码',
+      key: 'code',
+      type: 'input',
+      placeholder: '请输入角色编码',
+      clearable: true
+    },
+    {
+      label: '角色状态',
+      key: 'status',
+      type: 'select',
+      props: {
+        placeholder: '请选择状态',
+        options: statusOptions.value,
+        clearable: true
+      }
+    }
+  ]);
+
+  /**
+   * 处理重置事件
+   */
+  const handleReset = () => {
+    emit('reset');
+  };
+
+  /**
+   * 处理搜索事件
+   * 验证表单后触发搜索
+   */
+  const handleSearch = async (params: SearchForm) => {
+    await searchBarRef.value.validate();
+    emit('search', params);
+  };
+</script>
