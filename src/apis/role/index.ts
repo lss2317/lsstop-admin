@@ -4,12 +4,7 @@
  * @module apis/role
  */
 import request from '@/utils/http';
-import type {
-  RoleSearchParams,
-  RoleListResponse,
-  RoleFormParams,
-  BatchDeleteParams
-} from './types';
+import type { RoleSearchParams, RoleListResponse, RoleFormParams } from './types';
 
 // ==================== 实力 Mock 数据 ====================
 
@@ -116,9 +111,8 @@ function mockFetchEditRole(data: RoleFormParams): void {
 /**
  * 模拟删除角色
  */
-function mockFetchDeleteRole(params: BatchDeleteParams): void {
-  const idsToDelete = new Set(params.ids);
-  const index = mockRoleList.findIndex((item) => idsToDelete.has(item.id!));
+function mockFetchDeleteRole(id: number): void {
+  const index = mockRoleList.findIndex((item) => item.id === id);
   if (index !== -1) {
     mockRoleList.splice(index, 1);
   }
@@ -153,23 +147,18 @@ export function fetchAddRole(data: RoleFormParams) {
  * @param data 角色信息（包含id）
  */
 export function fetchUpdateRole(data: RoleFormParams) {
-  return request.post<void>({
+  return request.put<void>({
     url: '/role/update',
     data
   });
 }
 
 /**
- * 删除角色（支持单条/批量）
- * @param params 角色ID列表
+ * 删除角色
+ * @param id 角色ID
  */
-export function fetchDeleteRole(params: BatchDeleteParams) {
-  // 使用实力 mock 数据
-  mockFetchDeleteRole(params);
-  return Promise.resolve();
-
-  // return request.post<void>({
-  //   url: '/role/delete',
-  //   data: params
-  // });
+export function fetchDeleteRole(id: number) {
+  return request.del<void>({
+    url: `/role/delete/${id}`
+  });
 }

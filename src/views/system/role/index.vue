@@ -243,9 +243,9 @@
       .then(async () => {
         try {
           const { fetchDeleteRole } = await import('@/apis/role');
-          await fetchDeleteRole({ ids: [row.id] });
+          await fetchDeleteRole(row.id);
           ElMessage.success('删除成功');
-          refreshData();
+          await refreshData();
         } catch (error) {
           console.error('删除失败:', error);
         }
