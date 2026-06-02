@@ -127,7 +127,9 @@
   /**
    * 获取HTTP方法标签样式
    */
-  const getMethodTagType = (method: string): 'success' | 'warning' | 'danger' | 'info' | 'primary' => {
+  const getMethodTagType = (
+    method: string
+  ): 'success' | 'warning' | 'danger' | 'info' | 'primary' => {
     switch (method.toUpperCase()) {
       case 'GET':
         return 'success';
@@ -234,21 +236,21 @@
 </script>
 
 <style scoped lang="scss">
-.api-node {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex: 1;
-}
+  .api-node {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
 
-.api-name {
-  font-weight: 500;
-  color: #303133;
-}
+  .api-name {
+    font-weight: 500;
+    color: #303133;
+  }
 
-.api-path {
-  color: #909399;
-  font-size: 12px;
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
-}
+  .api-path {
+    color: #909399;
+    font-size: 12px;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  }
 </style>

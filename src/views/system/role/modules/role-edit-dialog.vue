@@ -8,10 +8,23 @@
   >
     <ElForm ref="formRef" :model="form" :rules="rules" label-width="80px" label-position="right">
       <ElFormItem label="角色名称" prop="roleName" required>
-        <ElInput v-model="form.roleName" placeholder="请输入角色名称" clearable />
+        <ElInput
+          v-model="form.roleName"
+          placeholder="请输入角色名称"
+          clearable
+          maxlength="20"
+          @blur="form.roleName = form.roleName.trim()"
+        />
       </ElFormItem>
       <ElFormItem label="角色编码" prop="roleCode" required>
-        <ElInput v-model="form.roleCode" placeholder="请输入角色编码" clearable />
+        <ElInput
+          v-model="form.roleCode"
+          placeholder="请输入角色编码"
+          clearable
+          maxlength="20"
+          @keydown.space.prevent
+          @blur="form.roleCode = form.roleCode.replace(/\s/g, '')"
+        />
       </ElFormItem>
       <ElFormItem label="描述" prop="description">
         <ElInput
@@ -19,7 +32,7 @@
           type="textarea"
           :rows="3"
           placeholder="请输入角色描述"
-          maxlength="200"
+          maxlength="100"
           show-word-limit
         />
       </ElFormItem>
@@ -79,7 +92,7 @@
     ],
     roleCode: [
       { required: true, message: '请输入角色编码', trigger: 'blur' },
-      { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
+      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
     description: [{ required: true, message: '请输入角色描述', trigger: 'blur' }]
   });
@@ -149,9 +162,9 @@
 
     try {
       await formRef.value.validate();
-      const { fetchAddRole, fetchEditRole } = await import('@/apis/role');
+      const { fetchAddRole, fetchUpdateRole } = await import('@/apis/role');
       if (props.dialogType === 'edit') {
-        await fetchEditRole(form);
+        await fetchUpdateRole(form);
         ElMessage.success('修改成功');
       } else {
         await fetchAddRole(form);

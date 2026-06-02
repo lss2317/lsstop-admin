@@ -64,6 +64,7 @@
   import type { RoleItem } from '@/apis/role/types';
   import { fetchRoleList } from '@/apis/role';
   import { ElTag, ElMessageBox } from 'element-plus';
+  import { formatDateTime } from '@/utils/format';
   import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue';
   import RoleSearch from './modules/role-search.vue';
   import RoleEditDialog from './modules/role-edit-dialog.vue';
@@ -114,7 +115,9 @@
       width: 100,
       formatter: (row: RoleItem) => {
         const statusConfig =
-          row.isEnabled === 1 ? { type: 'success', text: '启用' } : { type: 'warning', text: '禁用' };
+          row.isEnabled === 1
+            ? { type: 'success', text: '启用' }
+            : { type: 'warning', text: '禁用' };
         return h(
           ElTag,
           { type: statusConfig.type as 'success' | 'warning' },
@@ -126,7 +129,8 @@
       prop: 'createTime',
       label: '创建日期',
       width: 180,
-      sortable: true
+      sortable: true,
+      formatter: (row: RoleItem) => formatDateTime(row.createTime)
     },
     {
       prop: 'operation',

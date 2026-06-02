@@ -70,7 +70,7 @@ function mockFetchRoleList(params: RoleSearchParams): RoleListResponse {
 
   // 返回带时间戳的数据
   return {
-    list: list.map((item) => ({
+    records: list.map((item) => ({
       id: item.id!,
       roleName: item.roleName,
       roleCode: item.roleCode,
@@ -78,6 +78,8 @@ function mockFetchRoleList(params: RoleSearchParams): RoleListResponse {
       isEnabled: item.isEnabled,
       createTime: '2026-04-08 04:13:13'
     })),
+    current,
+    size,
     total
   };
 }
@@ -129,13 +131,10 @@ function mockFetchDeleteRole(params: BatchDeleteParams): void {
  * @param params 搜索与分页参数
  */
 export function fetchRoleList(params: RoleSearchParams) {
-  // 使用实力 mock 数据
-  return Promise.resolve(mockFetchRoleList(params));
-
-  // return request.get<RoleListResponse>({
-  //   url: '/role/list',
-  //   params
-  // });
+  return request.get<RoleListResponse>({
+    url: '/role/list',
+    params
+  });
 }
 
 /**
@@ -143,29 +142,21 @@ export function fetchRoleList(params: RoleSearchParams) {
  * @param data 角色信息
  */
 export function fetchAddRole(data: RoleFormParams) {
-  // 使用实力 mock 数据
-  mockFetchAddRole(data);
-  return Promise.resolve();
-
-  // return request.post<void>({
-  //   url: '/role/add',
-  //   data
-  // });
+  return request.post<void>({
+    url: '/role/add',
+    data
+  });
 }
 
 /**
- * 编辑角色
+ * 更新角色
  * @param data 角色信息（包含id）
  */
-export function fetchEditRole(data: RoleFormParams) {
-  // 使用实力 mock 数据
-  mockFetchEditRole(data);
-  return Promise.resolve();
-
-  // return request.post<void>({
-  //   url: '/role/edit',
-  //   data
-  // });
+export function fetchUpdateRole(data: RoleFormParams) {
+  return request.post<void>({
+    url: '/role/update',
+    data
+  });
 }
 
 /**
