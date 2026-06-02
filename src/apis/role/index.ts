@@ -17,31 +17,31 @@ import type {
 const mockRoleList: RoleFormParams[] = [
   {
     id: 1,
-    name: '超级管理员',
-    code: 'R_SUPER',
+    roleName: '超级管理员',
+    roleCode: 'R_SUPER',
     description: '系统超级管理员',
-    status: 1
+    isEnabled: 1
   },
   {
     id: 2,
-    name: '管理员',
-    code: 'R_ADMIN',
+    roleName: '管理员',
+    roleCode: 'R_ADMIN',
     description: '系统管理员',
-    status: 1
+    isEnabled: 1
   },
   {
     id: 3,
-    name: '普通用户',
-    code: 'R_USER',
+    roleName: '普通用户',
+    roleCode: 'R_USER',
     description: '默认注册用户',
-    status: 1
+    isEnabled: 1
   },
   {
     id: 7,
-    name: '演示管理员',
-    code: 'R_DEMO_ADMIN',
+    roleName: '演示管理员',
+    roleCode: 'R_DEMO_ADMIN',
     description: '演示站管理员，仅用于功能演示',
-    status: 1
+    isEnabled: 1
   }
 ];
 
@@ -52,13 +52,13 @@ let mockIdCounter = 8;
  * 模拟获取角色列表（分页）
  */
 function mockFetchRoleList(params: RoleSearchParams): RoleListResponse {
-  const { name, code, status, current = 1, size = 10 } = params;
+  const { roleName, roleCode, isEnabled, current = 1, size = 10 } = params;
 
   // 过滤数据
   let filtered = mockRoleList.filter((item) => {
-    if (name && !item.name.includes(name)) return false;
-    if (code && !item.code.includes(code)) return false;
-    if (status !== undefined && item.status !== status) return false;
+    if (roleName && !item.roleName.includes(roleName)) return false;
+    if (roleCode && !item.roleCode.includes(roleCode)) return false;
+    if (isEnabled !== undefined && item.isEnabled !== isEnabled) return false;
     return true;
   });
 
@@ -72,12 +72,11 @@ function mockFetchRoleList(params: RoleSearchParams): RoleListResponse {
   return {
     list: list.map((item) => ({
       id: item.id!,
-      name: item.name,
-      code: item.code,
+      roleName: item.roleName,
+      roleCode: item.roleCode,
       description: item.description,
-      status: item.status,
-      createTime: '2026-04-08 04:13:13',
-      updateTime: '2026-05-25 22:56:26'
+      isEnabled: item.isEnabled,
+      createTime: '2026-04-08 04:13:13'
     })),
     total
   };
@@ -89,10 +88,10 @@ function mockFetchRoleList(params: RoleSearchParams): RoleListResponse {
 function mockFetchAddRole(data: RoleFormParams): void {
   mockRoleList.push({
     id: mockIdCounter++,
-    name: data.name,
-    code: data.code,
+    roleName: data.roleName,
+    roleCode: data.roleCode,
     description: data.description,
-    status: data.status
+    isEnabled: data.isEnabled
   });
 }
 
@@ -104,10 +103,10 @@ function mockFetchEditRole(data: RoleFormParams): void {
   if (index !== -1) {
     mockRoleList[index] = {
       id: data.id!,
-      name: data.name,
-      code: data.code,
+      roleName: data.roleName,
+      roleCode: data.roleCode,
       description: data.description,
-      status: data.status
+      isEnabled: data.isEnabled
     };
   }
 }

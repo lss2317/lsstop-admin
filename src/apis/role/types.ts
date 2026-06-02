@@ -12,27 +12,25 @@ export interface RoleItem {
   /** 角色ID */
   id: number;
   /** 角色名称 */
-  name: string;
+  roleName: string;
   /** 角色编码 */
-  code: string;
+  roleCode: string;
   /** 角色描述 */
   description: string;
-  /** 角色状态：0-禁用 1-启用 */
-  status: RoleStatus;
+  /** 是否启用：0-禁用 1-启用 */
+  isEnabled: RoleStatus;
   /** 创建时间 */
   createTime: string;
-  /** 更新时间 */
-  updateTime: string;
 }
 
 /** 角色列表搜索参数 */
 export interface RoleSearchParams {
   /** 角色名称（模糊搜索） */
-  name?: string;
+  roleName?: string;
   /** 角色编码 */
-  code?: string;
-  /** 角色状态 */
-  status?: RoleStatus;
+  roleCode?: string;
+  /** 是否启用 */
+  isEnabled?: RoleStatus;
   /** 当前页 */
   current: number;
   /** 每页条数 */
@@ -52,13 +50,13 @@ export interface RoleFormParams {
   /** 角色ID（编辑时传入） */
   id?: number;
   /** 角色名称 */
-  name: string;
+  roleName: string;
   /** 角色编码 */
-  code: string;
+  roleCode: string;
   /** 角色描述 */
   description: string;
-  /** 角色状态 */
-  status: RoleStatus;
+  /** 是否启用 */
+  isEnabled: RoleStatus;
 }
 
 /** 批量删除参数 */

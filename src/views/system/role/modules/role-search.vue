@@ -12,9 +12,9 @@
 
 <script setup lang="ts">
   interface SearchForm {
-    name?: string;
-    code?: string;
-    status?: number;
+    roleName?: string;
+    roleCode?: string;
+    isEnabled?: number;
   }
 
   interface Props {
@@ -59,21 +59,21 @@
   const formItems = computed(() => [
     {
       label: '角色名称',
-      key: 'name',
+      key: 'roleName',
       type: 'input',
       placeholder: '请输入角色名称',
       clearable: true
     },
     {
       label: '角色编码',
-      key: 'code',
+      key: 'roleCode',
       type: 'input',
       placeholder: '请输入角色编码',
       clearable: true
     },
     {
       label: '角色状态',
-      key: 'status',
+      key: 'isEnabled',
       type: 'select',
       props: {
         placeholder: '请选择状态',

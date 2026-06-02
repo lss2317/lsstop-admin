@@ -80,25 +80,25 @@
   const showSearchBar = ref(false);
 
   interface SearchForm {
-    name?: string;
-    code?: string;
-    status?: number;
+    roleName?: string;
+    roleCode?: string;
+    isEnabled?: number;
   }
 
   const searchForm = reactive<SearchForm>({
-    name: undefined,
-    code: undefined,
-    status: undefined
+    roleName: undefined,
+    roleCode: undefined,
+    isEnabled: undefined
   });
 
   const createColumns = (): ColumnOption<RoleItem>[] => [
     {
-      prop: 'name',
+      prop: 'roleName',
       label: '角色名称',
       minWidth: 120
     },
     {
-      prop: 'code',
+      prop: 'roleCode',
       label: '角色编码',
       minWidth: 120
     },
@@ -109,12 +109,12 @@
       showOverflowTooltip: true
     },
     {
-      prop: 'status',
+      prop: 'isEnabled',
       label: '角色状态',
       width: 100,
       formatter: (row: RoleItem) => {
         const statusConfig =
-          row.status === 1 ? { type: 'success', text: '启用' } : { type: 'warning', text: '禁用' };
+          row.isEnabled === 1 ? { type: 'success', text: '启用' } : { type: 'warning', text: '禁用' };
         return h(
           ElTag,
           { type: statusConfig.type as 'success' | 'warning' },
@@ -231,7 +231,7 @@
   };
 
   const deleteRole = (row: RoleItem) => {
-    ElMessageBox.confirm(`确定删除角色"${row.name}"吗？此操作不可恢复！`, '删除确认', {
+    ElMessageBox.confirm(`确定删除角色“${row.roleName}”吗？此操作不可恢复！`, '删除确认', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning'

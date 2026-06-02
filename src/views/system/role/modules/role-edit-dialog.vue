@@ -7,11 +7,11 @@
     @close="handleClose"
   >
     <ElForm ref="formRef" :model="form" :rules="rules" label-width="80px" label-position="right">
-      <ElFormItem label="角色名称" prop="name" required>
-        <ElInput v-model="form.name" placeholder="请输入角色名称" clearable />
+      <ElFormItem label="角色名称" prop="roleName" required>
+        <ElInput v-model="form.roleName" placeholder="请输入角色名称" clearable />
       </ElFormItem>
-      <ElFormItem label="角色编码" prop="code" required>
-        <ElInput v-model="form.code" placeholder="请输入角色编码" clearable />
+      <ElFormItem label="角色编码" prop="roleCode" required>
+        <ElInput v-model="form.roleCode" placeholder="请输入角色编码" clearable />
       </ElFormItem>
       <ElFormItem label="描述" prop="description">
         <ElInput
@@ -23,8 +23,8 @@
           show-word-limit
         />
       </ElFormItem>
-      <ElFormItem label="启用" prop="status">
-        <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
+      <ElFormItem label="启用" prop="isEnabled">
+        <ElSwitch v-model="form.isEnabled" :active-value="1" :inactive-value="0" />
       </ElFormItem>
     </ElForm>
     <template #footer>
@@ -73,11 +73,11 @@
    * 表单验证规则
    */
   const rules = reactive<FormRules>({
-    name: [
+    roleName: [
       { required: true, message: '请输入角色名称', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
-    code: [
+    roleCode: [
       { required: true, message: '请输入角色编码', trigger: 'blur' },
       { min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: 'blur' }
     ],
@@ -88,10 +88,10 @@
    * 表单数据
    */
   const form = reactive<RoleFormParams>({
-    name: '',
-    code: '',
+    roleName: '',
+    roleCode: '',
     description: '',
-    status: 1
+    isEnabled: 1
   });
 
   /**
@@ -124,10 +124,10 @@
       Object.assign(form, props.roleData);
     } else {
       Object.assign(form, {
-        name: '',
-        code: '',
+        roleName: '',
+        roleCode: '',
         description: '',
-        status: 1
+        isEnabled: 1
       });
     }
   };
