@@ -4,7 +4,13 @@
  * @module apis/role
  */
 import request from '@/utils/http';
-import type { RoleSearchParams, RoleListResponse, RoleFormParams } from './types';
+import type {
+  RoleSearchParams,
+  RoleListResponse,
+  RoleFormParams,
+  MenuPermissionNode,
+  SaveMenuPermissionParams
+} from './types';
 
 // ==================== 实力 Mock 数据 ====================
 
@@ -160,5 +166,39 @@ export function fetchUpdateRole(data: RoleFormParams) {
 export function fetchDeleteRole(id: number) {
   return request.del<void>({
     url: `/role/delete/${id}`
+  });
+}
+
+// ==================== 角色权限接口 ====================
+
+/**
+ * 获取全量菜单树（用于权限配置弹窗）
+ * 返回所有菜单及按钮权限节点，不受角色限制
+ */
+export function fetchMenuPermissionTree() {
+  return request.get<MenuPermissionNode[]>({
+    url: '/role/menu-permission/tree'
+  });
+}
+
+/**
+ * 获取角色已有的菜单权限 ID 列表（弹窗打开时调用）
+ * @param roleId 角色ID
+ */
+export function fetchRoleMenuPermission(roleId: number) {
+  return request.get<number[]>({
+    url: '/role/menu-permission',
+    params: { roleId }
+  });
+}
+
+/**
+ * 保存角色的菜单权限
+ * @param data 菜单权限保存参数
+ */
+export function fetchSaveMenuPermission(data: SaveMenuPermissionParams) {
+  return request.put<void>({
+    url: '/role/menu-permission',
+    data
   });
 }

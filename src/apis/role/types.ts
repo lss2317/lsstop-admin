@@ -68,3 +68,25 @@ export interface BatchDeleteParams {
   /** 角色ID列表 */
   ids: number[];
 }
+
+// ==================== 菜单权限 ====================
+
+/** 菜单权限树节点（精简版，仅用于权限配置弹窗） */
+export interface MenuPermissionNode {
+  /** 菜单ID */
+  id: number;
+  /** 唯一标识，作为 tree node-key */
+  name: string;
+  /** 菜单标题 */
+  title: string;
+  /** 子节点 */
+  children?: MenuPermissionNode[];
+}
+
+/** 保存菜单权限参数 */
+export interface SaveMenuPermissionParams {
+  /** 角色ID */
+  roleId: number;
+  /** 选中的菜单 ID 列表（全选 + 半选合并） */
+  menuIds: number[];
+}
