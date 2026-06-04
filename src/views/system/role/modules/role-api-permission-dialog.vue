@@ -7,7 +7,7 @@
     class="el-dialog-border"
     @close="handleClose"
   >
-    <ElScrollbar height="70vh">
+    <ElScrollbar height="70vh" v-loading="loading">
       <ElTree
         ref="treeRef"
         :data="apiPermissionList"
@@ -39,7 +39,12 @@
 </template>
 
 <script setup lang="ts">
-  import type { RoleItem } from '@/apis/role/types';
+  import type { RoleItem, ApiPermissionNode } from '@/apis/role/types';
+  import {
+    fetchApiPermissionTree,
+    fetchRoleApiPermission,
+    fetchSaveApiPermission
+  } from '@/apis/role';
 
   interface Props {
     modelValue: boolean;
@@ -61,6 +66,12 @@
   const treeRef = ref();
   const isExpandAll = ref(true);
   const isSelectAll = ref(false);
+  const loading = ref(false);
+
+  /**
+   * 接口权限树数据
+   */
+  const apiPermissionList = ref<ApiPermissionNode[]>([]);
 
   /**
    * 弹窗显示状态双向绑定
@@ -79,50 +90,27 @@
   };
 
   /**
-   * 示例接口权限数据
+   * 监听弹窗打开，加载接口权限数据
    */
-  const apiPermissionList = ref([
-    {
-      id: 'api_1',
-      name: '用户管理',
-      children: [
-        { id: 'api_1_1', name: '查询用户列表', path: '/api/user/list', method: 'GET' },
-        { id: 'api_1_2', name: '新增用户', path: '/api/user/add', method: 'POST' },
-        { id: 'api_1_3', name: '编辑用户', path: '/api/user/edit', method: 'PUT' },
-        { id: 'api_1_4', name: '删除用户', path: '/api/user/delete', method: 'DELETE' }
-      ]
-    },
-    {
-      id: 'api_2',
-      name: '角色管理',
-      children: [
-        { id: 'api_2_1', name: '查询角色列表', path: '/api/role/list', method: 'GET' },
-        { id: 'api_2_2', name: '新增角色', path: '/api/role/add', method: 'POST' },
-        { id: 'api_2_3', name: '编辑角色', path: '/api/role/edit', method: 'PUT' },
-        { id: 'api_2_4', name: '删除角色', path: '/api/role/delete', method: 'DELETE' }
-      ]
-    },
-    {
-      id: 'api_3',
-      name: '菜单管理',
-      children: [
-        { id: 'api_3_1', name: '查询菜单列表', path: '/api/menu/list', method: 'GET' },
-        { id: 'api_3_2', name: '新增菜单', path: '/api/menu/add', method: 'POST' },
-        { id: 'api_3_3', name: '编辑菜单', path: '/api/menu/edit', method: 'PUT' },
-        { id: 'api_3_4', name: '删除菜单', path: '/api/menu/delete', method: 'DELETE' }
-      ]
-    },
-    {
-      id: 'api_4',
-      name: '日志管理',
-      children: [
-        { id: 'api_4_1', name: '查询操作日志', path: '/api/log/operation/list', method: 'GET' },
-        { id: 'api_4_2', name: '查询登录日志', path: '/api/log/login/list', method: 'GET' },
-        { id: 'api_4_3', name: '导出操作日志', path: '/api/log/operation/export', method: 'POST' },
-        { id: 'api_4_4', name: '导出登录日志', path: '/api/log/login/export', method: 'POST' }
-      ]
+  watch(
+    () => props.modelValue,
+    async (newVal) => {
+      if (newVal && props.roleData) {
+        loading.value = true;
+        try {
+          const [tree, permission] = await Promise.all([
+            fetchApiPermissionTree(),
+            fetchRoleApiPermission(props.roleData.id)
+          ]);
+          apiPermissionList.value = tree;
+          await nextTick();
+          treeRef.value?.setCheckedKeys(permission);
+        } finally {
+          loading.value = false;
+        }
+      }
     }
-  ]);
+  );
 
   /**
    * 获取HTTP方法标签样式
@@ -145,14 +133,17 @@
   };
 
   /**
-   * 获取所有叶子节点key
+   * 获取所有叶子节点的 key
    */
-  const getAllLeafKeys = (nodes: any[]): string[] => {
-    const keys: string[] = [];
-    const traverse = (nodeList: any[]): void => {
+  const getAllLeafKeys = (nodes: ApiPermissionNode[]): number[] => {
+    const keys: number[] = [];
+    const traverse = (nodeList: ApiPermissionNode[]): void => {
       nodeList.forEach((node) => {
-        if (node.id && !node.children) keys.push(node.id);
-        if (node.children?.length) traverse(node.children);
+        if (node.children?.length) {
+          traverse(node.children);
+        } else {
+          keys.push(node.id);
+        }
       });
     };
     traverse(nodes);
@@ -205,30 +196,27 @@
   };
 
   /**
-   * 监听弹窗打开，初始化权限数据
-   */
-  watch(
-    () => props.modelValue,
-    (newVal) => {
-      if (newVal && props.roleData) {
-        console.log('设置接口权限:', props.roleData);
-      }
-    }
-  );
-
-  /**
    * 关闭弹窗并清空选中状态
    */
   const handleClose = () => {
     visible.value = false;
+    apiPermissionList.value = [];
     treeRef.value?.setCheckedKeys([]);
+    isSelectAll.value = false;
   };
 
   /**
    * 保存接口权限配置
    */
-  const savePermission = () => {
-    // TODO: 调用保存接口权限接口
+  const savePermission = async () => {
+    if (!props.roleData) return;
+
+    const apiIds: number[] = treeRef.value?.getCheckedKeys() ?? [];
+
+    await fetchSaveApiPermission({
+      roleId: props.roleData.id,
+      apiIds
+    });
     ElMessage.success('接口权限保存成功');
     emit('success');
     handleClose();

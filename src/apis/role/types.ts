@@ -63,14 +63,6 @@ export interface RoleFormParams {
   isEnabled: RoleStatus;
 }
 
-/** 批量删除参数 */
-export interface BatchDeleteParams {
-  /** 角色ID列表 */
-  ids: number[];
-}
-
-// ==================== 菜单权限 ====================
-
 /** 菜单权限树节点（精简版，仅用于权限配置弹窗） */
 export interface MenuPermissionNode {
   /** 菜单ID */
@@ -89,4 +81,26 @@ export interface SaveMenuPermissionParams {
   roleId: number;
   /** 选中的菜单 ID 列表（全选 + 半选合并） */
   menuIds: number[];
+}
+
+/** 接口权限树节点（用于接口权限配置弹窗） */
+export interface ApiPermissionNode {
+  /** 接口ID */
+  id: number;
+  /** 接口名称 */
+  name: string;
+  /** 接口路径 */
+  path?: string;
+  /** HTTP 方法 */
+  method?: string;
+  /** 子节点 */
+  children?: ApiPermissionNode[];
+}
+
+/** 保存接口权限参数 */
+export interface SaveApiPermissionParams {
+  /** 角色ID */
+  roleId: number;
+  /** 选中的接口 ID 列表（全选 + 半选合并） */
+  apiIds: number[];
 }
