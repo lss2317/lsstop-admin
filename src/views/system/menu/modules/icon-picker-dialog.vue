@@ -2,7 +2,8 @@
   <ElDialog
     :model-value="modelValue"
     title="选择图标"
-    width="780px"
+    width="680px"
+    top="12vh"
     :append-to-body="true"
     @update:model-value="emit('update:modelValue', $event)"
     @closed="handleClosed"
@@ -13,7 +14,7 @@
           v-model="searchText"
           placeholder="搜索图标名称，如 user、menu、setting"
           clearable
-          prefix-icon="ri:search-line"
+          :prefix-icon="Search"
         />
         <div class="tag-group">
           <ElTag type="primary" effect="plain" size="small">Remix Icon</ElTag>
@@ -21,17 +22,17 @@
         </div>
       </div>
 
-      <ElScrollbar max-height="60vh">
+      <ElScrollbar max-height="52vh">
         <div class="icon-grid">
-          <div
-            v-for="icon in filteredIcons"
-            :key="icon"
-            class="icon-item"
-            :class="{ active: selectedIcon === icon }"
-            @click="selectedIcon = icon"
-          >
-            <ArtSvgIcon :icon="icon" class="text-xl" />
-          </div>
+          <ElTooltip v-for="icon in filteredIcons" :key="icon" :content="icon" placement="top">
+            <div
+              class="icon-item"
+              :class="{ active: selectedIcon === icon }"
+              @click="selectedIcon = icon"
+            >
+              <ArtSvgIcon :icon="icon" style="font-size: 22px" />
+            </div>
+          </ElTooltip>
         </div>
         <div v-if="filteredIcons.length === 0" class="empty-tip">
           未找到匹配的图标
@@ -52,6 +53,7 @@
 
 <script setup lang="ts">
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
+  import { Search } from '@element-plus/icons-vue'
 
   interface Props {
     modelValue: boolean
@@ -122,31 +124,34 @@
 
     .icon-grid {
       display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      gap: 8px;
-      padding: 4px;
+      grid-template-columns: repeat(8, 68px);
+      gap: 10px;
+      justify-content: center;
     }
 
     .icon-item {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      aspect-ratio: 1;
+      width: 68px;
+      height: 68px;
       border-radius: 8px;
       cursor: pointer;
-      background: var(--el-fill-color-lighter);
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      color: #4b5563;
       transition: all 0.2s;
 
       &:hover {
-        background: var(--el-color-primary-light-8);
+        background: #f3f4f6;
         color: var(--el-color-primary);
+        border-color: #d1d5db;
       }
 
       &.active {
-        background: var(--el-color-primary-light-7);
+        background: #f9fafb;
         color: var(--el-color-primary);
-        box-shadow: 0 0 0 2px var(--el-color-primary);
+        border: 2px solid var(--el-color-primary);
       }
     }
 
@@ -159,7 +164,7 @@
     .footer-info {
       margin-top: 12px;
       font-size: 12px;
-      color: var(--el-text-color-secondary);
+      color: #666;
     }
   }
 </style>
