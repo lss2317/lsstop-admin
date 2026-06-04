@@ -3,7 +3,7 @@
     :title="dialogTitle"
     :model-value="visible"
     @update:model-value="handleCancel"
-    size="min(720px, calc(100vw - 48px))"
+    size="min(860px, calc(100vw - 48px))"
     @closed="handleClosed"
   >
     <ElScrollbar height="calc(100vh - 132px)" wrap-class="pr-2">
@@ -27,7 +27,24 @@
             <ElRadioButton value="link">外链</ElRadioButton>
           </ElRadioGroup>
         </template>
+
+        <template #icon>
+          <div class="icon-field">
+            <div v-if="form.icon" class="icon-preview">
+              <ArtSvgIcon :icon="form.icon" />
+            </div>
+            <span v-if="form.icon" class="icon-name">{{ form.icon }}</span>
+            <span v-else class="icon-placeholder">如：ri:user-line</span>
+            <ElButton size="small" @click="showIconPicker = true">选择图标</ElButton>
+          </div>
+        </template>
       </ArtForm>
+
+      <IconPickerDialog
+        v-model="showIconPicker"
+        :default-value="form.icon"
+        @confirm="handleIconConfirm"
+      />
     </ElScrollbar>
 
     <template #footer>
@@ -42,6 +59,8 @@
 <script setup lang="ts">
   import type { FormRules } from 'element-plus'
   import { ElIcon, ElTooltip } from 'element-plus'
+  import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
+  import IconPickerDialog from './icon-picker-dialog.vue'
   import { QuestionFilled } from '@element-plus/icons-vue'
   import { formatMenuTitle } from '@/utils/router'
   import type { AppRouteRecord } from '@/types/router'
@@ -113,6 +132,11 @@
 
   const formRef = ref()
   const isEdit = ref(false)
+  const showIconPicker = ref(false)
+
+  const handleIconConfirm = (icon: string) => {
+    form.icon = icon
+  }
 
   /** 上级菜单选项 */
   const parentMenuOptions = ref<Array<{ label: string; value: number }>>([])
@@ -201,7 +225,7 @@
             props: { placeholder: '如：/system' }
           },
           { label: '权限标识', key: 'label', type: 'input', props: { placeholder: '如：System' } },
-          { label: '图标', key: 'icon', type: 'input', props: { placeholder: '如：ri:user-line' } },
+          { label: '图标', key: 'icon' },
           {
             label: '菜单排序',
             key: 'sort',
@@ -229,7 +253,7 @@
             type: 'input',
             props: { placeholder: '如：system/user' }
           },
-          { label: '图标', key: 'icon', type: 'input', props: { placeholder: '如：ri:user-line' } },
+          { label: '图标', key: 'icon' },
           {
             label: '菜单排序',
             key: 'sort',
@@ -290,7 +314,7 @@
             type: 'input',
             props: { placeholder: '如：https://www.example.com' }
           },
-          { label: '图标', key: 'icon', type: 'input', props: { placeholder: '如：ri:link' } },
+          { label: '图标', key: 'icon' },
           {
             label: '菜单排序',
             key: 'sort',
@@ -312,7 +336,7 @@
             props: { placeholder: '如：https://www.example.com' }
           },
           { label: '权限标识', key: 'label', type: 'input', props: { placeholder: '如：Link' } },
-          { label: '图标', key: 'icon', type: 'input', props: { placeholder: '如：ri:external-link-line' } },
+          { label: '图标', key: 'icon' },
           {
             label: '菜单排序',
             key: 'sort',
@@ -469,5 +493,40 @@
     display: flex;
     justify-content: flex-end;
     gap: 12px;
+  }
+
+  .icon-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+
+    .icon-preview {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      background: var(--el-fill-color-lighter);
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .icon-name {
+      font-size: 13px;
+      color: var(--el-text-color-regular);
+      flex: 1;
+    }
+
+    .icon-placeholder {
+      font-size: 13px;
+      color: var(--el-text-color-placeholder);
+      flex: 1;
+    }
+
+    .el-button {
+      flex-shrink: 0;
+    }
   }
 </style>
