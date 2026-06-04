@@ -34,14 +34,10 @@
             </div>
           </ElTooltip>
         </div>
-        <div v-if="filteredIcons.length === 0" class="empty-tip">
-          未找到匹配的图标
-        </div>
+        <div v-if="filteredIcons.length === 0" class="empty-tip"> 未找到匹配的图标 </div>
       </ElScrollbar>
 
-      <div class="footer-info">
-        共 {{ filteredIcons.length }} 个图标，支持直接搜索图标名称。
-      </div>
+      <div class="footer-info"> 共 {{ filteredIcons.length }} 个图标，支持直接搜索图标名称。 </div>
     </div>
 
     <template #footer>
@@ -52,55 +48,55 @@
 </template>
 
 <script setup lang="ts">
-  import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue'
-  import { Search } from '@element-plus/icons-vue'
+  import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
+  import { Search } from '@element-plus/icons-vue';
 
   interface Props {
-    modelValue: boolean
-    defaultValue?: string
+    modelValue: boolean;
+    defaultValue?: string;
   }
 
   interface Emits {
-    (e: 'update:modelValue', value: boolean): void
-    (e: 'confirm', icon: string): void
+    (e: 'update:modelValue', value: boolean): void;
+    (e: 'confirm', icon: string): void;
   }
 
-  const props = defineProps<Props>()
-  const emit = defineEmits<Emits>()
+  const props = defineProps<Props>();
+  const emit = defineEmits<Emits>();
 
-  const searchText = ref('')
-  const selectedIcon = ref('')
+  const searchText = ref('');
+  const selectedIcon = ref('');
 
-  import riIconsData from '@iconify-json/ri/icons.json'
+  import riIconsData from '@iconify-json/ri/icons.json';
 
   /** 从 @iconify-json/ri 动态读取全部图标名称 */
-  const ICONS = Object.keys(riIconsData.icons).map((name) => `ri:${name}`)
+  const ICONS = Object.keys(riIconsData.icons).map((name) => `ri:${name}`);
 
   const filteredIcons = computed(() => {
-    const q = searchText.value.toLowerCase().trim()
-    if (!q) return ICONS
-    return ICONS.filter((icon) => icon.toLowerCase().includes(q))
-  })
+    const q = searchText.value.toLowerCase().trim();
+    if (!q) return ICONS;
+    return ICONS.filter((icon) => icon.toLowerCase().includes(q));
+  });
 
   const handleConfirm = () => {
     if (selectedIcon.value) {
-      emit('confirm', selectedIcon.value)
+      emit('confirm', selectedIcon.value);
     }
-    emit('update:modelValue', false)
-  }
+    emit('update:modelValue', false);
+  };
 
   const handleClosed = () => {
-    searchText.value = ''
-  }
+    searchText.value = '';
+  };
 
   watch(
     () => props.modelValue,
     (val) => {
       if (val && props.defaultValue) {
-        selectedIcon.value = props.defaultValue
+        selectedIcon.value = props.defaultValue;
       }
     }
-  )
+  );
 </script>
 
 <style scoped lang="scss">

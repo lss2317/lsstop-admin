@@ -12,32 +12,32 @@
 
 <script setup lang="ts">
   interface SearchForm {
-    keyword?: string
-    menuType?: string
-    status?: string
+    keyword?: string;
+    menuType?: string;
+    status?: string;
   }
 
   interface Props {
-    modelValue: SearchForm
+    modelValue: SearchForm;
   }
 
   interface Emits {
-    (e: 'update:modelValue', value: SearchForm): void
-    (e: 'search', params: SearchForm): void
-    (e: 'reset'): void
+    (e: 'update:modelValue', value: SearchForm): void;
+    (e: 'search', params: SearchForm): void;
+    (e: 'reset'): void;
   }
 
-  const props = defineProps<Props>()
-  const emit = defineEmits<Emits>()
+  const props = defineProps<Props>();
+  const emit = defineEmits<Emits>();
 
-  const searchBarRef = ref()
+  const searchBarRef = ref();
 
   const formData = computed({
     get: () => props.modelValue,
     set: (val) => emit('update:modelValue', val)
-  })
+  });
 
-  const rules = {}
+  const rules = {};
 
   const formItems = computed(() => [
     {
@@ -75,14 +75,14 @@
         ]
       }
     }
-  ])
+  ]);
 
   const handleReset = () => {
-    emit('reset')
-  }
+    emit('reset');
+  };
 
   const handleSearch = async (params: SearchForm) => {
-    await searchBarRef.value.validate()
-    emit('search', params)
-  }
+    await searchBarRef.value.validate();
+    emit('search', params);
+  };
 </script>
