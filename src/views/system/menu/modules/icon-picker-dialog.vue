@@ -3,14 +3,14 @@
     :model-value="modelValue"
     title="选择图标"
     width="760px"
-    top="8vh"
+    top="6vh"
     :append-to-body="true"
     class="icon-picker-dialog"
     @update:model-value="emit('update:modelValue', $event)"
     @closed="handleClosed"
   >
     <div class="icon-picker">
-      <div class="search-bar">
+      <div class="search-section">
         <ElInput
           v-model="searchText"
           placeholder="搜索图标名称，如 user、menu、setting"
@@ -23,7 +23,8 @@
         </div>
       </div>
 
-      <ElScrollbar height="calc(80vh - 200px)" class="icon-scrollbar">
+      <div class="grid-section">
+        <ElScrollbar height="100%" class="icon-scrollbar">
         <div class="icon-grid">
           <div
             v-for="icon in filteredIcons"
@@ -40,7 +41,8 @@
           <p class="empty-title">没有找到匹配的图标</p>
           <p class="empty-desc">可以尝试搜索更短的关键词，或直接在输入框中填写完整图标名。</p>
         </div>
-      </ElScrollbar>
+        </ElScrollbar>
+      </div>
 
       <div class="footer-info"> 共 {{ filteredIcons.length }} 个图标，支持直接搜索图标名称。 </div>
     </div>
@@ -106,11 +108,14 @@
 
 <style scoped lang="scss">
   .icon-picker {
-    .search-bar {
+    .search-section {
       display: flex;
       align-items: center;
       gap: 12px;
       margin-bottom: 16px;
+      padding: 16px;
+      border: 1px solid var(--el-border-color-lighter, #e4e7ed);
+      border-radius: 10px;
 
       .el-input {
         flex: 1;
@@ -133,6 +138,13 @@
       }
     }
 
+    .grid-section {
+      height: calc(84vh - 240px);
+      border: 1px solid var(--el-border-color-lighter, #e4e7ed);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
     .icon-scrollbar {
       :deep(.el-scrollbar__bar) {
         opacity: 0;
@@ -148,6 +160,7 @@
       display: grid;
       grid-template-columns: repeat(8, 1fr);
       gap: 10px;
+      padding: 16px;
     }
 
     .icon-item {
