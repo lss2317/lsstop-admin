@@ -2,9 +2,10 @@
   <ElDialog
     :model-value="modelValue"
     title="选择图标"
-    width="680px"
-    top="12vh"
+    width="760px"
+    top="8vh"
     :append-to-body="true"
+    class="icon-picker-dialog"
     @update:model-value="emit('update:modelValue', $event)"
     @closed="handleClosed"
   >
@@ -16,25 +17,29 @@
           clearable
           :prefix-icon="Search"
         />
-        <div class="tag-group">
-          <ElTag type="primary" effect="plain" size="small">Remix Icon</ElTag>
-          <ElTag effect="plain" size="small">共 {{ filteredIcons.length }} 个</ElTag>
+        <div class="label-group">
+          <span class="label-badge">Remix Icon</span>
+          <span class="label-badge">共 {{ filteredIcons.length }} 个</span>
         </div>
       </div>
 
-      <ElScrollbar max-height="52vh">
+      <ElScrollbar height="calc(80vh - 200px)" class="icon-scrollbar">
         <div class="icon-grid">
-          <ElTooltip v-for="icon in filteredIcons" :key="icon" :content="icon" placement="top">
-            <div
-              class="icon-item"
-              :class="{ active: selectedIcon === icon }"
-              @click="selectedIcon = icon"
-            >
-              <ArtSvgIcon :icon="icon" style="font-size: 22px" />
-            </div>
-          </ElTooltip>
+          <div
+            v-for="icon in filteredIcons"
+            :key="icon"
+            class="icon-item"
+            :class="{ active: selectedIcon === icon }"
+            @click="selectedIcon = icon"
+          >
+            <ArtSvgIcon :icon="icon" style="font-size: 20px" />
+          </div>
         </div>
-        <div v-if="filteredIcons.length === 0" class="empty-tip"> 未找到匹配的图标 </div>
+        <div v-if="filteredIcons.length === 0" class="empty-tip">
+          <ArtSvgIcon icon="ri:search-eye-line" style="font-size: 40px; color: var(--el-text-color-placeholder)" />
+          <p class="empty-title">没有找到匹配的图标</p>
+          <p class="empty-desc">可以尝试搜索更短的关键词，或直接在输入框中填写完整图标名。</p>
+        </div>
       </ElScrollbar>
 
       <div class="footer-info"> 共 {{ filteredIcons.length }} 个图标，支持直接搜索图标名称。 </div>
@@ -111,56 +116,98 @@
         flex: 1;
       }
 
-      .tag-group {
+      .label-group {
         display: flex;
-        gap: 6px;
+        align-items: center;
+        gap: 8px;
         flex-shrink: 0;
+      }
+
+      .label-badge {
+        font-size: 12px;
+        color: var(--el-text-color-secondary);
+        white-space: nowrap;
+        padding: 4px 12px;
+        border-radius: 20px;
+        background: var(--el-fill-color-light, #f5f7fa);
+      }
+    }
+
+    .icon-scrollbar {
+      :deep(.el-scrollbar__bar) {
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      &:hover :deep(.el-scrollbar__bar) {
+        opacity: 1;
       }
     }
 
     .icon-grid {
       display: grid;
-      grid-template-columns: repeat(8, 68px);
+      grid-template-columns: repeat(8, 1fr);
       gap: 10px;
-      justify-content: center;
     }
 
     .icon-item {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 68px;
-      height: 68px;
+      height: 56px;
       border-radius: 8px;
       cursor: pointer;
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
+      background: var(--el-fill-color-lighter, #f5f7fa);
+      border: 1px solid var(--el-border-color-lighter, #e4e7ed);
       color: #4b5563;
       transition: all 0.2s;
 
       &:hover {
-        background: #f3f4f6;
         color: var(--el-color-primary);
-        border-color: #d1d5db;
+        border-color: var(--el-color-primary);
       }
 
       &.active {
-        background: #f9fafb;
         color: var(--el-color-primary);
         border: 2px solid var(--el-color-primary);
       }
     }
 
     .empty-tip {
-      text-align: center;
-      padding: 60px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 300px;
       color: var(--el-text-color-placeholder);
+
+      .empty-title {
+        margin-top: 16px;
+        font-size: 15px;
+        font-weight: 500;
+        color: var(--el-text-color-secondary);
+      }
+
+      .empty-desc {
+        margin-top: 8px;
+        font-size: 13px;
+        color: var(--el-text-color-placeholder);
+      }
     }
 
     .footer-info {
       margin-top: 12px;
       font-size: 12px;
       color: #666;
+    }
+  }
+</style>
+
+<style lang="scss">
+  .el-overlay:has(.icon-picker-dialog) {
+    .el-overlay-dialog {
+      overflow: hidden;
     }
   }
 </style>
