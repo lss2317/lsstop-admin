@@ -49,3 +49,41 @@ export interface BackendMenuItem {
   /** 子菜单（后端返回树形结构） */
   children?: BackendMenuItem[];
 }
+
+// ==================== 菜单管理页 ====================
+
+/** 菜单管理列表项（分页列表用，扁平结构） */
+export interface MenuItem {
+  /** 菜单ID */
+  id: number;
+  /** 菜单名称 */
+  name: string;
+  /** 菜单类型：1-目录 2-菜单 3-按钮 */
+  menuType: number;
+  /** 路由地址 */
+  route: string;
+  /** 权限标识 */
+  permission: string;
+  /** 排序 */
+  sort: number;
+  /** 是否启用：1-启用 0-禁用 */
+  isEnabled: number;
+  /** 更新时间 */
+  updatedAt: string;
+  /** 子节点（树形展示用） */
+  children?: MenuItem[];
+}
+
+/** 菜单管理搜索参数 */
+export interface MenuSearchParams {
+  /** 菜单名称（模糊搜索） */
+  name?: string;
+  /** 菜单类型：1-目录 2-菜单 3-按钮 */
+  menuType?: number;
+  /** 是否启用 */
+  isEnabled?: number;
+  /** 当前页 */
+  current: number;
+  /** 每页条数 */
+  size: number;
+}
