@@ -498,10 +498,6 @@
             <ElSwitch v-model="form.isHide" />
           </div>
           <div class="flex min-h-8 items-center">
-            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]">显示徽章</span>
-            <ElSwitch v-model="form.showBadge" />
-          </div>
-          <div class="flex min-h-8 items-center">
             <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]"
               >新标签打开</span
             >
@@ -562,8 +558,6 @@
     isHide: boolean;
     isHideTab: boolean;
     link: string;
-    showBadge: boolean;
-    showTextBadge: string;
     fixedTab: boolean;
     activePath: string;
     roles: string[];
@@ -617,8 +611,6 @@
     isHide: false,
     isHideTab: false,
     link: '',
-    showBadge: false,
-    showTextBadge: '',
     fixedTab: false,
     activePath: '',
     roles: [],
@@ -695,6 +687,26 @@
   const resetForm = (): void => {
     formRef.value?.reset();
     form.menuType = 'directory';
+    form.id = 0;
+    form.parentId = 0;
+    form.name = '';
+    form.path = '';
+    form.label = '';
+    form.component = '';
+    form.icon = '';
+    form.sort = 1;
+    form.keepAlive = true;
+    form.isHide = false;
+    form.isHideTab = false;
+    form.isEnable = true;
+    form.link = '';
+    form.fixedTab = false;
+    form.activePath = '';
+    form.roles = [];
+    form.isFullPage = false;
+    form.authName = '';
+    form.authLabel = '';
+    form.authSort = 1;
   };
 
   const loadFormData = (): void => {
@@ -721,8 +733,6 @@
       form.isHideTab = row.meta?.isHideTab ?? false;
       form.isEnable = row.meta?.isEnable ?? true;
       form.link = row.meta?.link || '';
-      form.showBadge = row.meta?.showBadge ?? false;
-      form.showTextBadge = row.meta?.showTextBadge || '';
       form.fixedTab = row.meta?.fixedTab ?? false;
       form.activePath = row.meta?.activePath || '';
       form.roles = row.meta?.roles || [];
