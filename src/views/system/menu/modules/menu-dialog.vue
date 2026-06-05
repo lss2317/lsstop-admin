@@ -160,7 +160,7 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>路由地址</span>
-                    <ElTooltip content="相对路径，如 console、user" placement="top">
+                    <ElTooltip content="一级菜单：以 / 开头的绝对路径（如 /dashboard） 二级及以下：相对路径（如 console、user）" placement="top">
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -178,7 +178,7 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>组件路径</span>
-                    <ElTooltip content="填写组件路径（如 system/user）" placement="top">
+                    <ElTooltip content="一级父级菜单：填写 /index/index 具体页面：填写组件路径（如 /system/user） 目录菜单：留空" placement="top">
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -268,23 +268,6 @@
 
           <template v-else-if="form.menuType === 'button'">
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="上级菜单" prop="parentId">
-                <ElSelect
-                  v-model="form.parentId"
-                  class="w-full"
-                  clearable
-                  placeholder="无（顶级菜单）"
-                >
-                  <ElOption
-                    v-for="opt in parentMenuOptions"
-                    :key="opt.value"
-                    :label="opt.label"
-                    :value="opt.value"
-                  />
-                </ElSelect>
-              </ElFormItem>
-            </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="权限名称" prop="authName" required>
                 <ElInput v-model="form.authName" placeholder="如：新增、编辑、删除" />
               </ElFormItem>
@@ -295,7 +278,15 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="权限排序" prop="authSort">
+              <ElFormItem prop="authSort">
+                <template #label>
+                  <span class="flex items-center">
+                    <span>权限排序</span>
+                    <ElTooltip content="按升序排列，数字越小排序越靠前" placement="top">
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
                 <ElInputNumber
                   v-model="form.authSort"
                   :min="1"
@@ -334,7 +325,7 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>路由地址</span>
-                    <ElTooltip content="一级以 / 开头，二级相对路径" placement="top">
+                    <ElTooltip content="一级菜单：以 / 开头的绝对路径（如 /dashboard） 二级及以下：相对路径（如 console、user） 内嵌菜单必须以 /outside/iframe/ 开头" placement="top">
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
