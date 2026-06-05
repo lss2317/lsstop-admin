@@ -7,38 +7,487 @@
     @closed="handleClosed"
   >
     <ElScrollbar height="calc(100vh - 132px)" wrap-class="pr-2">
-      <ArtForm
+      <ElForm
         ref="formRef"
-        v-model="form"
-        :items="formItems"
+        :model="form"
         :rules="rules"
-        :span="width > 640 ? 12 : 24"
-        :gutter="20"
         label-width="100px"
-        :show-reset="false"
-        :show-submit="false"
+        class="menu-form"
       >
-        <template #menuType>
-          <ElRadioGroup v-model="form.menuType" :disabled="disableMenuType">
-            <ElRadioButton value="directory">目录</ElRadioButton>
-            <ElRadioButton value="menu">菜单</ElRadioButton>
-            <ElRadioButton value="button">按钮</ElRadioButton>
-            <ElRadioButton value="iframe">内嵌</ElRadioButton>
-            <ElRadioButton value="link">外链</ElRadioButton>
-          </ElRadioGroup>
-        </template>
-
-        <template #icon>
-          <div class="icon-field">
-            <div v-if="form.icon" class="icon-preview">
-              <ArtSvgIcon :icon="form.icon" />
-            </div>
-            <span v-if="form.icon" class="icon-name">{{ form.icon }}</span>
-            <span v-else class="icon-placeholder">如：ri:user-line</span>
-            <ElButton size="small" @click="showIconPicker = true">选择图标</ElButton>
+        <!-- 菜单类型 -->
+        <ElFormItem class="menu-type-item">
+          <template #label>类型</template>
+          <div class="flex w-full flex-col items-start gap-2">
+            <ElRadioGroup v-model="form.menuType" :disabled="disableMenuType" class="menu-type-group">
+              <ElRadioButton value="directory">目录</ElRadioButton>
+              <ElRadioButton value="menu">菜单</ElRadioButton>
+              <ElRadioButton value="button">按钮</ElRadioButton>
+              <ElRadioButton value="iframe">内嵌</ElRadioButton>
+              <ElRadioButton value="link">外链</ElRadioButton>
+            </ElRadioGroup>
+            <p class="w-full text-xs leading-5 text-[var(--el-text-color-secondary)]">
+              新建时可直接选择类型。按钮权限仍需挂在具体菜单下。
+            </p>
           </div>
-        </template>
-      </ArtForm>
+        </ElFormItem>
+
+        <!-- 表单字段：两列布局 -->
+        <ElRow :gutter="20">
+          <template v-if="form.menuType === 'directory'">
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="上级菜单" prop="parentId">
+                <ElSelect
+                  v-model="form.parentId"
+                  class="w-full"
+                  clearable
+                  placeholder="无（顶级菜单）"
+                >
+                  <ElOption
+                    v-for="opt in parentMenuOptions"
+                    :key="opt.value"
+                    :label="opt.label"
+                    :value="opt.value"
+                  />
+                </ElSelect>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem prop="name" required>
+                <template #label>
+                  <span>{{ '目录名称' }}</span>
+                </template>
+                <ElInput v-model="form.name" placeholder="目录名称" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem prop="path" required>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>路由地址</span>
+                    <ElTooltip
+                      content="一级菜单：以 / 开头的绝对路径（如 /dashboard）&#10;二级及以下：相对路径（如 system）"
+                      placement="top"
+                    >
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInput v-model="form.path" placeholder="如：/system" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="权限标识">
+                <ElInput v-model="form.label" placeholder="如：System" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="图标">
+                <div class="flex w-full items-center">
+                  <div class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]">
+                    <div class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700">
+                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-500" />
+                      <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
+                    </div>
+                    <ElInput
+                      v-model="form.icon"
+                      placeholder="如：ri:user-line"
+                      class="icon-input-inner min-w-0 flex-1 self-stretch"
+                      :readonly="true"
+                    />
+                    <button
+                      type="button"
+                      class="c-p flex h-full shrink-0 items-center border-l border-[var(--el-border-color-light)] bg-box px-3 text-[13px] text-theme tad-200 hover:bg-[var(--art-gray-200)] dark:hover:bg-[var(--art-gray-300)]"
+                      @click="showIconPicker = true"
+                    >
+                      选择图标
+                    </button>
+                  </div>
+                </div>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>菜单排序</span>
+                    <ElTooltip content="排序数字越小越靠前" placement="top">
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInputNumber
+                  v-model="form.sort"
+                  :min="1"
+                  controls-position="right"
+                  style="width: 100%"
+                />
+              </ElFormItem>
+            </ElCol>
+          </template>
+
+          <template v-else-if="form.menuType === 'menu'">
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="上级菜单" prop="parentId">
+                <ElSelect
+                  v-model="form.parentId"
+                  class="w-full"
+                  clearable
+                  placeholder="无（顶级菜单）"
+                >
+                  <ElOption
+                    v-for="opt in parentMenuOptions"
+                    :key="opt.value"
+                    :label="opt.label"
+                    :value="opt.value"
+                  />
+                </ElSelect>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="菜单名称" prop="name" required>
+                <ElInput v-model="form.name" placeholder="菜单名称" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem prop="path" required>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>路由地址</span>
+                    <ElTooltip content="相对路径，如 console、user" placement="top">
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInput v-model="form.path" placeholder="如：console" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="权限标识">
+                <ElInput v-model="form.label" placeholder="如：User" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>组件路径</span>
+                    <ElTooltip content="填写组件路径（如 system/user）" placement="top">
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInput v-model="form.component" placeholder="如：system/user" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="图标">
+                <div class="flex w-full items-center">
+                  <div class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]">
+                    <div class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700">
+                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-500" />
+                      <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
+                    </div>
+                    <ElInput
+                      v-model="form.icon"
+                      placeholder="如：ri:user-line"
+                      class="icon-input-inner min-w-0 flex-1 self-stretch"
+                      :readonly="true"
+                    />
+                    <button
+                      type="button"
+                      class="c-p flex h-full shrink-0 items-center border-l border-[var(--el-border-color-light)] bg-box px-3 text-[13px] text-theme tad-200 hover:bg-[var(--art-gray-200)] dark:hover:bg-[var(--art-gray-300)]"
+                      @click="showIconPicker = true"
+                    >
+                      选择图标
+                    </button>
+                  </div>
+                </div>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>菜单排序</span>
+                    <ElTooltip content="排序数字越小越靠前" placement="top">
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInputNumber
+                  v-model="form.sort"
+                  :min="1"
+                  controls-position="right"
+                  style="width: 100%"
+                />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>激活路径</span>
+                    <ElTooltip
+                      content="用于详情页等隐藏菜单，指定高亮显示的父级菜单路径"
+                      placement="top"
+                    >
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInput v-model="form.activePath" placeholder="如：/system/user" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="页面缓存">
+                <ElSwitch v-model="form.keepAlive" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="固定标签">
+                <ElSwitch v-model="form.fixedTab" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="全屏页面">
+                <ElSwitch v-model="form.isFullPage" />
+              </ElFormItem>
+            </ElCol>
+          </template>
+
+          <template v-else-if="form.menuType === 'button'">
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="上级菜单" prop="parentId">
+                <ElSelect
+                  v-model="form.parentId"
+                  class="w-full"
+                  clearable
+                  placeholder="无（顶级菜单）"
+                >
+                  <ElOption
+                    v-for="opt in parentMenuOptions"
+                    :key="opt.value"
+                    :label="opt.label"
+                    :value="opt.value"
+                  />
+                </ElSelect>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="权限名称" prop="authName" required>
+                <ElInput v-model="form.authName" placeholder="如：新增、编辑、删除" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="权限标识" prop="authLabel" required>
+                <ElInput v-model="form.authLabel" placeholder="如：add、edit、delete" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="权限排序" prop="authSort">
+                <ElInputNumber
+                  v-model="form.authSort"
+                  :min="1"
+                  controls-position="right"
+                  style="width: 100%"
+                />
+              </ElFormItem>
+            </ElCol>
+          </template>
+
+          <template v-else-if="form.menuType === 'iframe'">
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="上级菜单" prop="parentId">
+                <ElSelect
+                  v-model="form.parentId"
+                  class="w-full"
+                  clearable
+                  placeholder="无（顶级菜单）"
+                >
+                  <ElOption
+                    v-for="opt in parentMenuOptions"
+                    :key="opt.value"
+                    :label="opt.label"
+                    :value="opt.value"
+                  />
+                </ElSelect>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="内嵌名称" prop="name">
+                <ElInput v-model="form.name" placeholder="内嵌名称" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem prop="path" required>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>路由地址</span>
+                    <ElTooltip content="一级以 / 开头，二级相对路径" placement="top">
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInput v-model="form.path" placeholder="如：/iframe-page" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="权限标识">
+                <ElInput v-model="form.label" placeholder="如：Iframe" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="内嵌地址">
+                <ElInput v-model="form.link" placeholder="如：https://www.example.com" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="图标">
+                <div class="flex w-full items-center">
+                  <div class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]">
+                    <div class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700">
+                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-500" />
+                      <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
+                    </div>
+                    <ElInput
+                      v-model="form.icon"
+                      placeholder="如：ri:user-line"
+                      class="icon-input-inner min-w-0 flex-1 self-stretch"
+                      :readonly="true"
+                    />
+                    <button
+                      type="button"
+                      class="c-p flex h-full shrink-0 items-center border-l border-[var(--el-border-color-light)] bg-box px-3 text-[13px] text-theme tad-200 hover:bg-[var(--art-gray-200)] dark:hover:bg-[var(--art-gray-300)]"
+                      @click="showIconPicker = true"
+                    >
+                      选择图标
+                    </button>
+                  </div>
+                </div>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>菜单排序</span>
+                    <ElTooltip content="排序数字越小越靠前" placement="top">
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInputNumber
+                  v-model="form.sort"
+                  :min="1"
+                  controls-position="right"
+                  style="width: 100%"
+                />
+              </ElFormItem>
+            </ElCol>
+          </template>
+
+          <template v-else-if="form.menuType === 'link'">
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="上级菜单" prop="parentId">
+                <ElSelect
+                  v-model="form.parentId"
+                  class="w-full"
+                  clearable
+                  placeholder="无（顶级菜单）"
+                >
+                  <ElOption
+                    v-for="opt in parentMenuOptions"
+                    :key="opt.value"
+                    :label="opt.label"
+                    :value="opt.value"
+                  />
+                </ElSelect>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="外链名称" prop="name">
+                <ElInput v-model="form.name" placeholder="外链名称" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="外链地址">
+                <ElInput v-model="form.link" placeholder="如：https://www.example.com" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="权限标识">
+                <ElInput v-model="form.label" placeholder="如：Link" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="图标">
+                <div class="flex w-full items-center">
+                  <div class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]">
+                    <div class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700">
+                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-500" />
+                      <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
+                    </div>
+                    <ElInput
+                      v-model="form.icon"
+                      placeholder="如：ri:user-line"
+                      class="icon-input-inner min-w-0 flex-1 self-stretch"
+                      :readonly="true"
+                    />
+                    <button
+                      type="button"
+                      class="c-p flex h-full shrink-0 items-center border-l border-[var(--el-border-color-light)] bg-box px-3 text-[13px] text-theme tad-200 hover:bg-[var(--art-gray-200)] dark:hover:bg-[var(--art-gray-300)]"
+                      @click="showIconPicker = true"
+                    >
+                      选择图标
+                    </button>
+                  </div>
+                </div>
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem>
+                <template #label>
+                  <span class="flex items-center">
+                    <span>菜单排序</span>
+                    <ElTooltip content="排序数字越小越靠前" placement="top">
+                      <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
+                    </ElTooltip>
+                  </span>
+                </template>
+                <ElInputNumber
+                  v-model="form.sort"
+                  :min="1"
+                  controls-position="right"
+                  style="width: 100%"
+                />
+              </ElFormItem>
+            </ElCol>
+          </template>
+        </ElRow>
+      </ElForm>
+
+      <!-- 其他设置（按钮类型不显示） -->
+      <section v-if="form.menuType !== 'button'" class="px-5 pb-3 sm:px-7">
+        <ElDivider>其他设置</ElDivider>
+        <div class="grid grid-cols-1 gap-x-7 gap-y-3.5 sm:grid-cols-2">
+          <div class="flex min-h-8 items-center">
+            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]">是否启用</span>
+            <ElSwitch v-model="form.isEnable" />
+          </div>
+          <div class="flex min-h-8 items-center">
+            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]">隐藏菜单</span>
+            <ElSwitch v-model="form.isHide" />
+          </div>
+          <div class="flex min-h-8 items-center">
+            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]">显示徽章</span>
+            <ElSwitch v-model="form.showBadge" />
+          </div>
+          <div class="flex min-h-8 items-center">
+            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]">新标签打开</span>
+            <ElSwitch v-model="form.isHideTab" />
+          </div>
+        </div>
+      </section>
 
       <IconPickerDialog
         v-model="showIconPicker"
@@ -64,12 +513,7 @@
   import { QuestionFilled } from '@element-plus/icons-vue';
   import { formatMenuTitle } from '@/utils/router';
   import type { AppRouteRecord } from '@/types/router';
-  import type { FormItem } from '@/components/core/forms/art-form/index.vue';
-  import ArtForm from '@/components/core/forms/art-form/index.vue';
-  import { useWindowSize } from '@vueuse/core';
   import { mockGetMenuTree } from '@/apis/menu/mock';
-
-  const { width } = useWindowSize();
 
   type MenuType = 'directory' | 'menu' | 'button' | 'iframe' | 'link';
 
@@ -171,185 +615,8 @@
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
     path: [{ required: true, message: '请输入路由地址', trigger: 'blur' }],
-    label: [{ required: true, message: '输入权限标识', trigger: 'blur' }],
     authName: [{ required: true, message: '请输入权限名称', trigger: 'blur' }],
     authLabel: [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
-  });
-
-  /** Switch 公共配置 */
-  const switchSpan = computed(() => (width.value < 640 ? 12 : 6));
-
-  const switchItems = (): FormItem[] => [
-    { label: '是否启用', key: 'isEnable', type: 'switch', span: switchSpan.value },
-    { label: '显示徽章', key: 'showBadge', type: 'switch', span: switchSpan.value },
-    { label: '隐藏菜单', key: 'isHide', type: 'switch', span: switchSpan.value },
-    { label: '新标签打开', key: 'isHideTab', type: 'switch', span: switchSpan.value }
-  ];
-
-  const formItems = computed<FormItem[]>(() => {
-    const baseItems: FormItem[] = [{ label: '菜单类型', key: 'menuType', span: 24 }];
-
-    // 上级菜单（按钮类型不显示）
-    const parentItem: FormItem = {
-      label: '上级菜单',
-      key: 'parentId',
-      type: 'select',
-      props: {
-        class: 'w-full',
-        clearable: true,
-        placeholder: '无（顶级菜单）',
-        options: parentMenuOptions.value
-      }
-    };
-
-    switch (form.menuType) {
-      case 'directory':
-        return [
-          ...baseItems,
-          parentItem,
-          {
-            label: createLabelTooltip('目录名称', '目录的显示名称'),
-            key: 'name',
-            type: 'input',
-            props: { placeholder: '目录名称' }
-          },
-          {
-            label: createLabelTooltip(
-              '路由地址',
-              '一级菜单：以 / 开头的绝对路径（如 /dashboard）\n二级及以下：相对路径（如 system）'
-            ),
-            key: 'path',
-            type: 'input',
-            props: { placeholder: '如：/system' }
-          },
-          { label: '权限标识', key: 'label', type: 'input', props: { placeholder: '如：System' } },
-          { label: '图标', key: 'icon' },
-          {
-            label: '菜单排序',
-            key: 'sort',
-            type: 'number',
-            props: { min: 1, controlsPosition: 'right', style: { width: '100%' } }
-          },
-          ...switchItems()
-        ];
-
-      case 'menu':
-        return [
-          ...baseItems,
-          parentItem,
-          { label: '菜单名称', key: 'name', type: 'input', props: { placeholder: '菜单名称' } },
-          {
-            label: createLabelTooltip('路由地址', '相对路径，如 console、user'),
-            key: 'path',
-            type: 'input',
-            props: { placeholder: '如：console' }
-          },
-          { label: '权限标识', key: 'label', type: 'input', props: { placeholder: '如：User' } },
-          {
-            label: createLabelTooltip('组件路径', '填写组件路径（如 system/user）'),
-            key: 'component',
-            type: 'input',
-            props: { placeholder: '如：system/user' }
-          },
-          { label: '图标', key: 'icon' },
-          {
-            label: '菜单排序',
-            key: 'sort',
-            type: 'number',
-            props: { min: 1, controlsPosition: 'right', style: { width: '100%' } }
-          },
-          {
-            label: createLabelTooltip(
-              '激活路径',
-              '用于详情页等隐藏菜单，指定高亮显示的父级菜单路径'
-            ),
-            key: 'activePath',
-            type: 'input',
-            props: { placeholder: '如：/system/user' }
-          },
-          { label: '页面缓存', key: 'keepAlive', type: 'switch', span: switchSpan.value },
-          { label: '固定标签', key: 'fixedTab', type: 'switch', span: switchSpan.value },
-          { label: '全屏页面', key: 'isFullPage', type: 'switch', span: switchSpan.value },
-          ...switchItems()
-        ];
-
-      case 'button':
-        return [
-          ...baseItems,
-          parentItem,
-          {
-            label: '权限名称',
-            key: 'authName',
-            type: 'input',
-            props: { placeholder: '如：新增、编辑、删除' }
-          },
-          {
-            label: '权限标识',
-            key: 'authLabel',
-            type: 'input',
-            props: { placeholder: '如：add、edit、delete' }
-          },
-          {
-            label: '权限排序',
-            key: 'authSort',
-            type: 'number',
-            props: { min: 1, controlsPosition: 'right', style: { width: '100%' } }
-          }
-        ];
-
-      case 'iframe':
-        return [
-          ...baseItems,
-          parentItem,
-          { label: '内嵌名称', key: 'name', type: 'input', props: { placeholder: '内嵌名称' } },
-          {
-            label: createLabelTooltip('路由地址', '一级以 / 开头，二级相对路径'),
-            key: 'path',
-            type: 'input',
-            props: { placeholder: '如：/iframe-page' }
-          },
-          { label: '权限标识', key: 'label', type: 'input', props: { placeholder: '如：Iframe' } },
-          {
-            label: '内嵌地址',
-            key: 'link',
-            type: 'input',
-            props: { placeholder: '如：https://www.example.com' }
-          },
-          { label: '图标', key: 'icon' },
-          {
-            label: '菜单排序',
-            key: 'sort',
-            type: 'number',
-            props: { min: 1, controlsPosition: 'right', style: { width: '100%' } }
-          },
-          ...switchItems()
-        ];
-
-      case 'link':
-        return [
-          ...baseItems,
-          parentItem,
-          { label: '外链名称', key: 'name', type: 'input', props: { placeholder: '外链名称' } },
-          {
-            label: '外链地址',
-            key: 'link',
-            type: 'input',
-            props: { placeholder: '如：https://www.example.com' }
-          },
-          { label: '权限标识', key: 'label', type: 'input', props: { placeholder: '如：Link' } },
-          { label: '图标', key: 'icon' },
-          {
-            label: '菜单排序',
-            key: 'sort',
-            type: 'number',
-            props: { min: 1, controlsPosition: 'right', style: { width: '100%' } }
-          },
-          ...switchItems()
-        ];
-
-      default:
-        return baseItems;
-    }
   });
 
   const menuTypeLabelMap: Record<MenuType, string> = {
@@ -496,44 +763,25 @@
 </script>
 
 <style scoped>
+  .menu-form {
+    padding: 16px 16px 0;
+  }
+
+  .menu-type-item :deep(.el-form-item__content) {
+    display: block;
+  }
+
+  .icon-input-inner :deep(.el-input__wrapper) {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0;
+    background: transparent !important;
+    padding: 0 11px;
+  }
+
   .drawer-footer {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-  }
-
-  .icon-field {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-
-    .icon-preview {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 6px;
-      background: var(--el-fill-color-lighter);
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-
-    .icon-name {
-      font-size: 13px;
-      color: var(--el-text-color-regular);
-      flex: 1;
-    }
-
-    .icon-placeholder {
-      font-size: 13px;
-      color: var(--el-text-color-placeholder);
-      flex: 1;
-    }
-
-    .el-button {
-      flex-shrink: 0;
-    }
   }
 </style>
