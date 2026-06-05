@@ -3,7 +3,7 @@
     :title="dialogTitle"
     :model-value="visible"
     @update:model-value="handleCancel"
-    size="min(860px, calc(100vw - 48px))"
+    size="min(820px, calc(100vw - 48px))"
     @closed="handleClosed"
   >
     <ElScrollbar height="calc(100vh - 132px)" wrap-class="pr-2">
