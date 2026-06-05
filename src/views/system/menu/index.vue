@@ -41,7 +41,6 @@
         v-model:visible="dialogVisible"
         :type="dialogType"
         :editData="editData"
-        :lockType="lockMenuType"
         @submit="handleSubmit"
       />
     </ElCard>
@@ -71,7 +70,6 @@
   const dialogVisible = ref(false);
   const dialogType = ref<'menu' | 'button'>('menu');
   const editData = ref<AppRouteRecord | any>(null);
-  const lockMenuType = ref(false);
 
   // 搜索相关
   interface SearchForm {
@@ -319,7 +317,6 @@
   const handleAddMenu = (): void => {
     dialogType.value = 'menu';
     editData.value = null;
-    lockMenuType.value = true;
     dialogVisible.value = true;
   };
 
@@ -329,7 +326,6 @@
   const handleAddAuth = (): void => {
     dialogType.value = 'menu';
     editData.value = null;
-    lockMenuType.value = false;
     dialogVisible.value = true;
   };
 
@@ -339,7 +335,6 @@
   const handleEditMenu = (row: AppRouteRecord): void => {
     dialogType.value = 'menu';
     editData.value = row;
-    lockMenuType.value = true;
     dialogVisible.value = true;
   };
 
@@ -352,7 +347,6 @@
       title: row.meta?.title,
       authMark: row.meta?.authMark
     };
-    lockMenuType.value = false;
     dialogVisible.value = true;
   };
 

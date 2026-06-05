@@ -25,22 +25,25 @@
 
       <div class="grid-section">
         <ElScrollbar height="100%" class="icon-scrollbar">
-        <div class="icon-grid">
-          <div
-            v-for="icon in filteredIcons"
-            :key="icon"
-            class="icon-item"
-            :class="{ active: selectedIcon === icon }"
-            @click="selectedIcon = icon"
-          >
-            <ArtSvgIcon :icon="icon" style="font-size: 20px" />
+          <div class="icon-grid">
+            <div
+              v-for="icon in filteredIcons"
+              :key="icon"
+              class="icon-item"
+              :class="{ active: selectedIcon === icon }"
+              @click="selectedIcon = icon"
+            >
+              <ArtSvgIcon :icon="icon" style="font-size: 20px" />
+            </div>
           </div>
-        </div>
-        <div v-if="filteredIcons.length === 0" class="empty-tip">
-          <ArtSvgIcon icon="ri:search-eye-line" style="font-size: 40px; color: var(--el-text-color-placeholder)" />
-          <p class="empty-title">没有找到匹配的图标</p>
-          <p class="empty-desc">可以尝试搜索更短的关键词，或直接在输入框中填写完整图标名。</p>
-        </div>
+          <div v-if="filteredIcons.length === 0" class="empty-tip">
+            <ArtSvgIcon
+              icon="ri:search-eye-line"
+              style="font-size: 40px; color: var(--el-text-color-placeholder)"
+            />
+            <p class="empty-title">没有找到匹配的图标</p>
+            <p class="empty-desc">可以尝试搜索更短的关键词，或直接在输入框中填写完整图标名。</p>
+          </div>
         </ElScrollbar>
       </div>
 

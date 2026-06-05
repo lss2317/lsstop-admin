@@ -4,35 +4,38 @@
     :model-value="visible"
     @update:model-value="handleCancel"
     size="min(820px, calc(100vw - 48px))"
+    class="menu-drawer"
     @closed="handleClosed"
   >
-    <ElScrollbar height="calc(100vh - 132px)" wrap-class="pr-2">
-      <ElForm
-        ref="formRef"
-        :model="form"
-        :rules="rules"
-        label-width="100px"
-        class="menu-form"
-      >
-        <!-- 菜单类型 -->
-        <ElFormItem class="menu-type-item">
-          <template #label>类型</template>
-          <div class="flex w-full flex-col items-start gap-2">
-            <ElRadioGroup v-model="form.menuType" :disabled="disableMenuType" class="menu-type-group">
-              <ElRadioButton value="directory">目录</ElRadioButton>
-              <ElRadioButton value="menu">菜单</ElRadioButton>
-              <ElRadioButton value="button">按钮</ElRadioButton>
-              <ElRadioButton value="iframe">内嵌</ElRadioButton>
-              <ElRadioButton value="link">外链</ElRadioButton>
-            </ElRadioGroup>
-            <p class="w-full text-xs leading-5 text-[var(--el-text-color-secondary)]">
-              新建时可直接选择类型。按钮权限仍需挂在具体菜单下。
-            </p>
-          </div>
-        </ElFormItem>
-
+    <section>
+      <ElForm ref="formRef" :model="form" :rules="rules" label-width="100px">
         <!-- 表单字段：两列布局 -->
         <ElRow :gutter="20">
+          <!-- 菜单类型（全宽） -->
+          <ElCol :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
+            <ElFormItem class="menu-type-item">
+              <template #label>类型</template>
+              <div class="flex w-full flex-col items-start gap-2">
+                <ElRadioGroup
+                  v-model="form.menuType"
+                  :disabled="disableMenuType"
+                  class="menu-type-group"
+                >
+                  <ElRadioButton value="directory" :disabled="disableDirectoryOption"
+                    >目录</ElRadioButton
+                  >
+                  <ElRadioButton value="menu">菜单</ElRadioButton>
+                  <ElRadioButton value="button" :disabled="disableButtonOption">按钮</ElRadioButton>
+                  <ElRadioButton value="iframe">内嵌</ElRadioButton>
+                  <ElRadioButton value="link">外链</ElRadioButton>
+                </ElRadioGroup>
+                <p class="w-full text-xs leading-5 text-[var(--el-text-color-secondary)]">
+                  新建时可直接选择类型。按钮权限仍需挂在具体菜单下。
+                </p>
+              </div>
+            </ElFormItem>
+          </ElCol>
+
           <template v-if="form.menuType === 'directory'">
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="上级菜单" prop="parentId">
@@ -65,7 +68,7 @@
                   <span class="flex items-center">
                     <span>路由地址</span>
                     <ElTooltip
-                      content="一级菜单：以 / 开头的绝对路径（如 /dashboard）&#10;二级及以下：相对路径（如 system）"
+                      content="一级菜单：以 / 开头的绝对路径（如 /dashboard） 二级及以下：相对路径（如 console、user）"
                       placement="top"
                     >
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
@@ -83,9 +86,13 @@
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="图标">
                 <div class="flex w-full items-center">
-                  <div class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]">
-                    <div class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700">
-                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-500" />
+                  <div
+                    class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]"
+                  >
+                    <div
+                      class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700"
+                    >
+                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-700" />
                       <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
                     </div>
                     <ElInput
@@ -110,7 +117,7 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>菜单排序</span>
-                    <ElTooltip content="排序数字越小越靠前" placement="top">
+                    <ElTooltip content="按升序排列，数字越小越靠前" placement="top">
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -182,9 +189,13 @@
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="图标">
                 <div class="flex w-full items-center">
-                  <div class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]">
-                    <div class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700">
-                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-500" />
+                  <div
+                    class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]"
+                  >
+                    <div
+                      class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700"
+                    >
+                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-700" />
                       <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
                     </div>
                     <ElInput
@@ -209,7 +220,7 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>菜单排序</span>
-                    <ElTooltip content="排序数字越小越靠前" placement="top">
+                    <ElTooltip content="按升序排列，数字越小越靠前" placement="top">
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -344,9 +355,13 @@
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="图标">
                 <div class="flex w-full items-center">
-                  <div class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]">
-                    <div class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700">
-                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-500" />
+                  <div
+                    class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]"
+                  >
+                    <div
+                      class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700"
+                    >
+                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-700" />
                       <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
                     </div>
                     <ElInput
@@ -371,7 +386,7 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>菜单排序</span>
-                    <ElTooltip content="排序数字越小越靠前" placement="top">
+                    <ElTooltip content="按升序排列，数字越小越靠前" placement="top">
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -422,9 +437,13 @@
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="图标">
                 <div class="flex w-full items-center">
-                  <div class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]">
-                    <div class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700">
-                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-500" />
+                  <div
+                    class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]"
+                  >
+                    <div
+                      class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700"
+                    >
+                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-700" />
                       <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
                     </div>
                     <ElInput
@@ -449,7 +468,7 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>菜单排序</span>
-                    <ElTooltip content="排序数字越小越靠前" placement="top">
+                    <ElTooltip content="按升序排列，数字越小越靠前" placement="top">
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -467,7 +486,7 @@
       </ElForm>
 
       <!-- 其他设置（按钮类型不显示） -->
-      <section v-if="form.menuType !== 'button'" class="px-5 pb-3 sm:px-7">
+      <section v-if="form.menuType !== 'button'">
         <ElDivider>其他设置</ElDivider>
         <div class="grid grid-cols-1 gap-x-7 gap-y-3.5 sm:grid-cols-2">
           <div class="flex min-h-8 items-center">
@@ -483,7 +502,9 @@
             <ElSwitch v-model="form.showBadge" />
           </div>
           <div class="flex min-h-8 items-center">
-            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]">新标签打开</span>
+            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]"
+              >新标签打开</span
+            >
             <ElSwitch v-model="form.isHideTab" />
           </div>
         </div>
@@ -494,13 +515,13 @@
         :default-value="form.icon"
         @confirm="handleIconConfirm"
       />
-    </ElScrollbar>
+    </section>
 
     <template #footer>
-      <div class="drawer-footer">
+      <span class="drawer-footer">
         <ElButton @click="handleCancel">取 消</ElButton>
         <ElButton type="primary" @click="handleSubmit">确 定</ElButton>
-      </div>
+      </span>
     </template>
   </ElDrawer>
 </template>
@@ -556,7 +577,6 @@
     visible: boolean;
     editData?: AppRouteRecord | any;
     type?: 'menu' | 'button';
-    lockType?: boolean;
   }
 
   interface Emits {
@@ -566,8 +586,7 @@
 
   const props = withDefaults(defineProps<Props>(), {
     visible: false,
-    type: 'menu',
-    lockType: false
+    type: 'menu'
   });
 
   const emit = defineEmits<Emits>();
@@ -633,9 +652,19 @@
   });
 
   const disableMenuType = computed(() => {
-    if (isEdit.value) return true;
-    if (!isEdit.value && form.menuType !== 'button' && props.lockType) return true;
+    // 编辑目录时禁用（目录下有子菜单，不能改类型）
+    if (isEdit.value && form.menuType === 'directory') return true;
+    // 编辑按钮时禁用（按钮是权限条目，数据结构完全不同）
+    if (isEdit.value && form.menuType === 'button') return true;
     return false;
+  });
+
+  /** 编辑菜单/内嵌/外链时，禁用目录和按钮选项（只能在三者间切换） */
+  const disableDirectoryOption = computed(() => {
+    return isEdit.value && ['menu', 'iframe', 'link'].includes(form.menuType);
+  });
+  const disableButtonOption = computed(() => {
+    return isEdit.value && ['menu', 'iframe', 'link'].includes(form.menuType);
   });
 
   /** 加载上级菜单选项 */
@@ -735,19 +764,20 @@
 
   watch(
     () => props.visible,
-    async (newVal) => {
+    (newVal) => {
       if (newVal) {
-        await loadParentMenuOptions();
         if (props.editData) {
-          form.menuType = inferMenuType(props.editData);
-        } else {
-          form.menuType = props.type === 'button' ? 'button' : 'directory';
-        }
-        nextTick(() => {
-          if (props.editData) {
+          form.menuType = props.type === 'button' ? 'button' : inferMenuType(props.editData);
+          isEdit.value = true;
+          loadParentMenuOptions();
+          nextTick(() => {
             loadFormData();
-          }
-        });
+          });
+        } else {
+          isEdit.value = false;
+          form.menuType = props.type === 'button' ? 'button' : 'directory';
+          loadParentMenuOptions();
+        }
       }
     }
   );
@@ -755,18 +785,14 @@
   watch(
     () => props.type,
     (newType) => {
-      if (props.visible && !props.editData) {
-        form.menuType = newType === 'button' ? 'button' : 'directory';
+      if (props.visible) {
+        form.menuType = newType;
       }
     }
   );
 </script>
 
 <style scoped>
-  .menu-form {
-    padding: 16px 16px 0;
-  }
-
   .menu-type-item :deep(.el-form-item__content) {
     display: block;
   }
@@ -783,5 +809,50 @@
     display: flex;
     justify-content: flex-end;
     gap: 12px;
+  }
+</style>
+
+<style>
+  .menu-drawer {
+    background-color: var(--el-bg-color-overlay) !important;
+    border-color: var(--el-border-color-lighter) !important;
+  }
+
+  .menu-drawer .el-drawer__header {
+    padding: var(--el-drawer-padding-primary) !important;
+    margin-bottom: 0 !important;
+  }
+
+  .menu-drawer .el-drawer__body {
+    padding: var(--el-drawer-padding-primary) !important;
+    padding-top: 0 !important;
+    overflow-y: auto;
+  }
+
+  .menu-drawer .el-drawer__footer {
+    padding: 10px 20px 20px !important;
+    border-top: none;
+  }
+
+  .menu-drawer .el-form-item {
+    margin-bottom: 18px;
+  }
+
+  .menu-drawer .el-drawer__close-btn {
+    position: relative;
+    top: -4px;
+    right: -4px;
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .menu-drawer .el-drawer__close-btn:hover {
+    background-color: var(--art-hover-color) !important;
+    color: var(--art-gray-900) !important;
   }
 </style>
