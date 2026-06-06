@@ -55,7 +55,6 @@
 <script setup lang="ts">
   import { formatMenuTitle } from '@/utils/router';
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
-  import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import { useTableColumns } from '@/hooks/core/useTableColumns';
   import type { BackendMenuItem } from '@/apis/menu/types';
   import MenuDialog from './modules/menu-dialog.vue';
@@ -139,23 +138,8 @@
     {
       prop: 'title',
       label: '菜单名称',
-      width: 280,
-      formatter: (row: BackendMenuItem) =>
-        h('span', { class: 'inline-flex items-center gap-2' }, [
-          h(
-            'button',
-            {
-              type: 'button',
-              disabled: true,
-              'aria-label': '拖拽排序',
-              title: '拖拽排序',
-              class:
-                'inline-flex size-[24px] flex-none cursor-not-allowed items-center justify-center rounded-[6px] border border-[var(--el-border-color)] bg-[var(--el-fill-color-blank)] p-0 text-g-500'
-            },
-            [h(ArtSvgIcon, { icon: 'ri:draggable', class: 'text-base' })]
-          ),
-          h('span', formatMenuTitle(row.title))
-        ])
+      minWidth: 180,
+      formatter: (row: BackendMenuItem) => formatMenuTitle(row.title)
     },
     {
       prop: 'menuType',
