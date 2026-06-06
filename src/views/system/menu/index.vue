@@ -218,7 +218,7 @@
         return h('div', buttonStyle, [
           h(ArtButtonTable, {
             type: 'add',
-            onClick: () => handleAddAuth(),
+            onClick: () => handleAddAuth(row),
             title: '新增权限'
           }),
           h(ArtButtonTable, {
@@ -326,11 +326,11 @@
   };
 
   /**
-   * 添加权限按钮
+   * 添加权限按钮（在当前行下新增）
    */
-  const handleAddAuth = (): void => {
+  const handleAddAuth = (row: AppRouteRecord): void => {
     dialogType.value = 'menu';
-    editData.value = null;
+    editData.value = { _parentRow: row };
     dialogVisible.value = true;
   };
 

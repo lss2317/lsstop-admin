@@ -43,7 +43,7 @@
                   v-model="form.parentId"
                   class="w-full"
                   clearable
-                  placeholder="无（顶级菜单）"
+                  placeholder="不选择则创建为顶级菜单"
                 >
                   <ElOption
                     v-for="opt in parentMenuOptions"
@@ -557,7 +557,7 @@
 
   interface MenuFormData {
     id: number;
-    parentId: number;
+    parentId: number | undefined;
     name: string;
     path: string;
     label: string;
@@ -610,7 +610,7 @@
   const form = reactive<MenuFormData & { menuType: MenuType }>({
     menuType: 'directory',
     id: 0,
-    parentId: 0,
+    parentId: undefined,
     name: '',
     path: '',
     label: '',
@@ -699,7 +699,7 @@
     formRef.value?.resetFields();
     form.menuType = 'directory';
     form.id = 0;
-    form.parentId = 0;
+    form.parentId = undefined;
     form.name = '';
     form.path = '';
     form.label = '';
@@ -787,7 +787,7 @@
     () => props.visible,
     (newVal) => {
       if (newVal) {
-        if (props.editData) {
+        if (props.editData && !props.editData._parentRow) {
           form.menuType = props.type === 'button' ? 'button' : inferMenuType(props.editData);
           isEdit.value = true;
           loadParentMenuOptions();
@@ -799,6 +799,18 @@
           isEdit.value = false;
           form.menuType = props.type === 'button' ? 'button' : 'directory';
           loadParentMenuOptions();
+          // 从列表行点击新增时，预填上级菜单
+          if (props.editData?._parentRow) {
+            nextTick(() => {
+              const parentRow = props.editData._parentRow;
+              const matched = parentMenuOptions.value.find(
+                (opt) => opt.label === formatMenuTitle(parentRow.meta?.title || '')
+              );
+              if (matched) {
+                form.parentId = matched.value;
+              }
+            });
+          }
         }
       }
     }
