@@ -350,7 +350,8 @@
     dialogType.value = 'button';
     editData.value = {
       title: row.meta?.title,
-      authMark: row.meta?.authMark
+      authMark: row.meta?.authMark,
+      sort: row.meta?.sort
     };
     dialogVisible.value = true;
   };
