@@ -169,12 +169,7 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="权限标识">
-                <ElInput v-model="form.label" placeholder="如：User" />
-              </ElFormItem>
-            </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem>
+              <ElFormItem prop="component" required>
                 <template #label>
                   <span class="flex items-center">
                     <span>组件路径</span>
@@ -184,6 +179,11 @@
                   </span>
                 </template>
                 <ElInput v-model="form.component" placeholder="如：system/user" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="权限标识">
+                <ElInput v-model="form.label" placeholder="如：User" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
