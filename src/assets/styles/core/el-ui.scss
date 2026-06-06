@@ -243,6 +243,26 @@ html.dark .el-card {
   }
 }
 
+// 弹框/抽屉 footer 中默认按钮样式（取消按钮）
+.el-dialog__footer,
+.el-drawer__footer {
+  .el-button--default:not(.el-button--primary):not(.el-button--success):not(
+      .el-button--warning
+    ):not(.el-button--danger):not(.el-button--info) {
+    background-color: transparent !important;
+    border-color: var(--el-border-color) !important;
+    color: var(--el-text-color-regular) !important;
+    transition: all 0.2s;
+
+    &:hover,
+    &:focus {
+      background-color: var(--el-color-primary-light-9) !important;
+      border-color: var(--el-color-primary-light-3) !important;
+      color: var(--el-color-primary) !important;
+    }
+  }
+}
+
 // 修改el-tag样式
 .el-tag {
   font-weight: 500;

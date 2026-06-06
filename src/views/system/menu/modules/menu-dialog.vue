@@ -160,7 +160,10 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>路由地址</span>
-                    <ElTooltip content="一级菜单：以 / 开头的绝对路径（如 /dashboard） 二级及以下：相对路径（如 console、user）" placement="top">
+                    <ElTooltip
+                      content="一级菜单：以 / 开头的绝对路径（如 /dashboard） 二级及以下：相对路径（如 console、user）"
+                      placement="top"
+                    >
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -173,7 +176,10 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>组件路径</span>
-                    <ElTooltip content="一级父级菜单：填写 /index/index 具体页面：填写组件路径（如 /system/user） 目录菜单：留空" placement="top">
+                    <ElTooltip
+                      content="一级父级菜单：填写 /index/index 具体页面：填写组件路径（如 /system/user） 目录菜单：留空"
+                      placement="top"
+                    >
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -310,7 +316,10 @@
                 <template #label>
                   <span class="flex items-center">
                     <span>路由地址</span>
-                    <ElTooltip content="一级菜单：以 / 开头的绝对路径（如 /dashboard） 二级及以下：相对路径（如 console、user） 内嵌菜单必须以 /outside/iframe/ 开头" placement="top">
+                    <ElTooltip
+                      content="一级菜单：以 / 开头的绝对路径（如 /dashboard） 二级及以下：相对路径（如 console、user） 内嵌菜单必须以 /outside/iframe/ 开头"
+                      placement="top"
+                    >
                       <ElIcon class="ml-0.5 cursor-help"><QuestionFilled /></ElIcon>
                     </ElTooltip>
                   </span>
@@ -466,12 +475,16 @@
         <ElDivider>其他设置</ElDivider>
         <div class="grid grid-cols-1 gap-x-7 gap-y-3.5 sm:grid-cols-2 px-5">
           <div class="flex min-h-8 items-center">
-            <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">是否启用</span>
+            <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
+              >是否启用</span
+            >
             <ElSwitch v-model="form.isEnable" />
           </div>
           <template v-if="form.menuType !== 'button'">
             <div class="flex min-h-8 items-center">
-              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">隐藏菜单</span>
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
+                >隐藏菜单</span
+              >
               <ElSwitch v-model="form.isHide" />
             </div>
             <div class="flex min-h-8 items-center">
@@ -483,15 +496,21 @@
           </template>
           <template v-if="form.menuType === 'menu'">
             <div class="flex min-h-8 items-center">
-              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">页面缓存</span>
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
+                >页面缓存</span
+              >
               <ElSwitch v-model="form.keepAlive" />
             </div>
             <div class="flex min-h-8 items-center">
-              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">固定标签</span>
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
+                >固定标签</span
+              >
               <ElSwitch v-model="form.fixedTab" />
             </div>
             <div class="flex min-h-8 items-center">
-              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">全屏页面</span>
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
+                >全屏页面</span
+              >
               <ElSwitch v-model="form.isFullPage" />
             </div>
           </template>
@@ -507,12 +526,7 @@
 
     <template #footer>
       <span class="drawer-footer">
-        <button
-          class="h-[var(--el-component-custom-height)] cursor-pointer rounded-[var(--el-border-radius-base)] border border-[var(--el-border-color)] bg-transparent px-4 text-sm text-[var(--el-text-color-regular)] transition-colors duration-200 hover:border-[var(--el-color-primary-light-3)] hover:bg-[var(--el-color-primary-light-9)] hover:text-[var(--el-color-primary)]"
-          @click="handleCancel"
-        >
-          取 消
-        </button>
+        <ElButton @click="handleCancel">取 消</ElButton>
         <ElButton type="primary" @click="handleSubmit">确 定</ElButton>
       </span>
     </template>
