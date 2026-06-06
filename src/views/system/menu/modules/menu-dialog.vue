@@ -479,7 +479,7 @@
       <!-- 其他设置（按钮类型不显示） -->
       <section v-if="form.menuType !== 'button'">
         <ElDivider>其他设置</ElDivider>
-        <div class="grid grid-cols-1 gap-x-7 gap-y-3.5 sm:grid-cols-2">
+        <div class="grid grid-cols-1 gap-x-7 gap-y-3.5 sm:grid-cols-2 px-5">
           <div class="flex min-h-8 items-center">
             <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">是否启用</span>
             <ElSwitch v-model="form.isEnable" />
