@@ -696,7 +696,7 @@
   };
 
   const resetForm = (): void => {
-    formRef.value?.reset();
+    formRef.value?.resetFields();
     form.menuType = 'directory';
     form.id = 0;
     form.parentId = 0;
@@ -795,6 +795,7 @@
             loadFormData();
           });
         } else {
+          resetForm();
           isEdit.value = false;
           form.menuType = props.type === 'button' ? 'button' : 'directory';
           loadParentMenuOptions();
