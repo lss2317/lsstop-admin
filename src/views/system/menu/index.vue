@@ -187,7 +187,7 @@
     {
       prop: 'date',
       label: '编辑时间',
-      formatter: () => '2025-04-01 10:00:00'
+      formatter: (row: AppRouteRecord) => row.meta?.updateTime || ''
     },
     {
       prop: 'status',
@@ -210,7 +210,7 @@
             }),
             h(ArtButtonTable, {
               type: 'delete',
-              onClick: () => handleDeleteAuth()
+              onClick: () => handleDeleteAuth(row.id!)
             })
           ]);
         }
@@ -227,7 +227,7 @@
           }),
           h(ArtButtonTable, {
             type: 'delete',
-            onClick: () => handleDeleteMenu()
+            onClick: () => handleDeleteMenu(row.id!)
           })
         ]);
       }
@@ -376,16 +376,18 @@
 
   /**
    * 删除菜单
+   * TODO: 对接删除接口，传入菜单 id
    */
-  const handleDeleteMenu = async (): Promise<void> => {
+  const handleDeleteMenu = async (id: number): Promise<void> => {
     try {
       await ElMessageBox.confirm('确定要删除该菜单吗？删除后无法恢复', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       });
+      // TODO: await deleteMenu(id)
       ElMessage.success('删除成功');
-      getMenuList();
+      await getMenuList();
     } catch (error) {
       if (error !== 'cancel') {
         ElMessage.error('删除失败');
@@ -395,16 +397,18 @@
 
   /**
    * 删除权限按钮
+   * TODO: 对接删除接口，传入权限按钮 id
    */
-  const handleDeleteAuth = async (): Promise<void> => {
+  const handleDeleteAuth = async (id: number): Promise<void> => {
     try {
       await ElMessageBox.confirm('确定要删除该权限吗？删除后无法恢复', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       });
+      // TODO: await deleteMenu(id)
       ElMessage.success('删除成功');
-      getMenuList();
+      await getMenuList();
     } catch (error) {
       if (error !== 'cancel') {
         ElMessage.error('删除失败');
