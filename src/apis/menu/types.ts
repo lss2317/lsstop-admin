@@ -42,8 +42,14 @@ export interface BackendMenuItem {
   isIframe: boolean;
   /** 激活菜单路径（隐藏菜单用） */
   activePath: string | null;
-  /** 权限标识（如 article:add） */
+  /** 权限标识（如 add） */
   authMark: string | null;
+  /** 是否启用：0-禁用 1-启用 */
+  isEnabled: number;
+  /** 创建时间 */
+  createTime: string;
+  /** 更新时间 */
+  updateTime: string;
   /** 子菜单（后端返回树形结构） */
   children?: BackendMenuItem[];
 }

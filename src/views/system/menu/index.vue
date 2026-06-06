@@ -357,11 +357,11 @@
   };
 
   interface MenuFormData {
+    title: string;
     name: string;
     path: string;
     component?: string;
     icon?: string;
-    roles?: string[];
     sort?: number;
     [key: string]: any;
   }

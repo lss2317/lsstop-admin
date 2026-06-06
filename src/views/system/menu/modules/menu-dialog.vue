@@ -52,11 +52,11 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem prop="name" required>
+              <ElFormItem prop="title" required>
                 <template #label>
-                  <span>{{ '目录名称' }}</span>
+                  <span>{{ '菜单名称' }}</span>
                 </template>
-                <ElInput v-model="form.name" placeholder="目录名称" />
+                <ElInput v-model="form.title" placeholder="菜单名称" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -77,7 +77,7 @@
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="权限标识">
-                <ElInput v-model="form.label" placeholder="如：System" />
+                <ElInput v-model="form.name" placeholder="如：System" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -145,8 +145,8 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="菜单名称" prop="name" required>
-                <ElInput v-model="form.name" placeholder="菜单名称" />
+              <ElFormItem label="菜单名称" prop="title" required>
+                <ElInput v-model="form.title" placeholder="菜单名称" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -162,7 +162,7 @@
                     </ElTooltip>
                   </span>
                 </template>
-                <ElInput v-model="form.path" placeholder="如：console" />
+                <ElInput v-model="form.path" placeholder="如：/system/user 或 user" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -178,12 +178,12 @@
                     </ElTooltip>
                   </span>
                 </template>
-                <ElInput v-model="form.component" placeholder="如：system/user" />
+                <ElInput v-model="form.component" placeholder="如：/system/user" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="权限标识">
-                <ElInput v-model="form.label" placeholder="如：User" />
+                <ElInput v-model="form.name" placeholder="如：User" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -253,17 +253,17 @@
 
           <template v-else-if="form.menuType === 'button'">
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="权限名称" prop="authName" required>
-                <ElInput v-model="form.authName" placeholder="如：新增、编辑、删除" />
+              <ElFormItem label="权限名称" prop="title" required>
+                <ElInput v-model="form.title" placeholder="如：新增、编辑、删除" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="权限标识" prop="authLabel" required>
-                <ElInput v-model="form.authLabel" placeholder="如：add、edit、delete" />
+              <ElFormItem label="权限标识" prop="authMark" required>
+                <ElInput v-model="form.authMark" placeholder="如：add、edit、delete" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem prop="authSort">
+              <ElFormItem prop="sort">
                 <template #label>
                   <span class="flex items-center">
                     <span>权限排序</span>
@@ -273,7 +273,7 @@
                   </span>
                 </template>
                 <ElInputNumber
-                  v-model="form.authSort"
+                  v-model="form.sort"
                   :min="1"
                   controls-position="right"
                   style="width: 100%"
@@ -298,8 +298,8 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="内嵌名称" prop="name">
-                <ElInput v-model="form.name" placeholder="内嵌名称" />
+              <ElFormItem label="菜单名称" prop="title">
+                <ElInput v-model="form.title" placeholder="菜单名称" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -315,17 +315,17 @@
                     </ElTooltip>
                   </span>
                 </template>
-                <ElInput v-model="form.path" placeholder="如：/iframe-page" />
+                <ElInput v-model="form.path" placeholder="如：/outside/iframe/docs" />
+              </ElFormItem>
+            </ElCol>
+            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
+              <ElFormItem label="外部链接" prop="link" required>
+                <ElInput v-model="form.link" placeholder="如：https://www.example.com" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="权限标识">
-                <ElInput v-model="form.label" placeholder="如：Iframe" />
-              </ElFormItem>
-            </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="内嵌地址">
-                <ElInput v-model="form.link" placeholder="如：https://www.example.com" />
+                <ElInput v-model="form.name" placeholder="如：Iframe" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -393,18 +393,18 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="外链名称" prop="name">
-                <ElInput v-model="form.name" placeholder="外链名称" />
+              <ElFormItem label="菜单名称" prop="title">
+                <ElInput v-model="form.title" placeholder="菜单名称" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="外链地址">
+              <ElFormItem label="外部链接" prop="link" required>
                 <ElInput v-model="form.link" placeholder="如：https://www.example.com" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="权限标识">
-                <ElInput v-model="form.label" placeholder="如：Link" />
+                <ElInput v-model="form.name" placeholder="如：Link" />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -466,7 +466,7 @@
             <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
               >是否启用</span
             >
-            <ElSwitch v-model="form.isEnable" />
+            <ElSwitch v-model="form.isEnabled" />
           </div>
           <template v-if="form.menuType !== 'button'">
             <div class="flex min-h-8 items-center">
@@ -543,27 +543,29 @@
       ]);
   };
 
-  interface MenuFormData {
+  /** 表单状态（字段名对齐 DB BackendMenuItem） */
+  interface MenuFormState {
     id: number;
     parentId: number | undefined;
+    /** 菜单标题（DB title） */
+    title: string;
+    /** 路由唯一标识（DB name） */
     name: string;
     path: string;
-    label: string;
     component: string;
     icon: string;
-    isEnable: boolean;
     sort: number;
-    keepAlive: boolean;
     isHide: boolean;
     isHideTab: boolean;
-    link: string;
-    fixedTab: boolean;
-    activePath: string;
-    roles: string[];
+    keepAlive: boolean;
     isFullPage: boolean;
-    authName: string;
-    authLabel: string;
-    authSort: number;
+    fixedTab: boolean;
+    link: string;
+    activePath: string;
+    /** 权限标识（DB auth_mark） */
+    authMark: string;
+    /** 是否启用（DB is_enabled） */
+    isEnabled: boolean;
   }
 
   interface Props {
@@ -574,7 +576,7 @@
 
   interface Emits {
     (e: 'update:visible', value: boolean): void;
-    (e: 'submit', data: MenuFormData): void;
+    (e: 'submit', data: MenuFormState & { menuType: MenuType }): void;
   }
 
   const props = withDefaults(defineProps<Props>(), {
@@ -597,42 +599,39 @@
     value: number;
     children?: TreeOption[];
   }
-  
+
   /** 上级菜单选项 */
   const parentMenuOptions = ref<TreeOption[]>([]);
 
-  const form = reactive<MenuFormData & { menuType: MenuType }>({
+  const form = reactive<MenuFormState & { menuType: MenuType }>({
     menuType: 'directory',
     id: 0,
     parentId: undefined,
+    title: '',
     name: '',
     path: '',
-    label: '',
     component: '',
     icon: '',
-    isEnable: true,
     sort: 1,
-    keepAlive: true,
     isHide: false,
     isHideTab: false,
-    link: '',
-    fixedTab: false,
-    activePath: '',
-    roles: [],
+    keepAlive: true,
     isFullPage: false,
-    authName: '',
-    authLabel: '',
-    authSort: 1
+    fixedTab: false,
+    link: '',
+    activePath: '',
+    authMark: '',
+    isEnabled: true
   });
 
   const rules = reactive<FormRules>({
-    name: [
+    title: [
       { required: true, message: '请输入菜单名称', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
     path: [{ required: true, message: '请输入路由地址', trigger: 'blur' }],
-    authName: [{ required: true, message: '请输入权限名称', trigger: 'blur' }],
-    authLabel: [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
+    link: [{ required: true, message: '请输入外部链接', trigger: 'blur' }],
+    authMark: [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
   });
 
   const menuTypeLabelMap: Record<MenuType, string> = {
@@ -665,30 +664,27 @@
   });
 
   /** 加载上级菜单选项（树形结构） */
-  let idCounter = 0;
   const loadParentMenuOptions = async () => {
     try {
       const tree = await mockGetMenuTree();
-      idCounter = 0;
-      const buildTree = (items: AppRouteRecord[]): TreeOption[] => {
+      const buildTree = (items: AppRouteRecord[], parentId: number | undefined): TreeOption[] => {
         const result: TreeOption[] = [];
         items.forEach((item) => {
           if (!item.meta?.isAuthButton) {
-            idCounter++;
             const node: TreeOption = {
               label: formatMenuTitle(item.meta?.title || ''),
-              value: idCounter
+              value: item.id ?? 0
             };
             const nonButtonChildren = item.children?.filter((c) => !c.meta?.isAuthButton) || [];
             if (nonButtonChildren.length) {
-              node.children = buildTree(nonButtonChildren);
+              node.children = buildTree(nonButtonChildren, item.id);
             }
             result.push(node);
           }
         });
         return result;
       };
-      parentMenuOptions.value = buildTree(tree);
+      parentMenuOptions.value = buildTree(tree, undefined);
     } catch {
       parentMenuOptions.value = [];
     }
@@ -699,24 +695,37 @@
     form.menuType = 'directory';
     form.id = 0;
     form.parentId = undefined;
+    form.title = '';
     form.name = '';
     form.path = '';
-    form.label = '';
     form.component = '';
     form.icon = '';
     form.sort = 1;
-    form.keepAlive = true;
     form.isHide = false;
     form.isHideTab = false;
-    form.isEnable = true;
-    form.link = '';
-    form.fixedTab = false;
-    form.activePath = '';
-    form.roles = [];
+    form.keepAlive = true;
     form.isFullPage = false;
-    form.authName = '';
-    form.authLabel = '';
-    form.authSort = 1;
+    form.fixedTab = false;
+    form.link = '';
+    form.activePath = '';
+    form.authMark = '';
+    form.isEnabled = true;
+  };
+
+  /** 在树节点中查找指定 value 的节点的父级 value */
+  const findParentValue = (
+    nodes: TreeOption[],
+    targetValue: number,
+    parentValue?: number
+  ): number | undefined => {
+    for (const node of nodes) {
+      if (node.value === targetValue) return parentValue;
+      if (node.children?.length) {
+        const found = findParentValue(node.children, targetValue, node.value);
+        if (found !== undefined) return found;
+      }
+    }
+    return undefined;
   };
 
   const loadFormData = (): void => {
@@ -726,27 +735,31 @@
 
     if (form.menuType === 'button') {
       const row = props.editData;
-      form.authName = row.title || row.meta?.title || '';
-      form.authLabel = row.authMark || row.meta?.authMark || '';
-      form.authSort = row.sort || 1;
+      form.title = row.title || row.meta?.title || '';
+      form.authMark = row.authMark || row.meta?.authMark || '';
+      form.sort = row.sort || 1;
     } else {
       const row = props.editData;
       form.id = row.id || 0;
-      form.name = formatMenuTitle(row.meta?.title || '');
+      form.title = formatMenuTitle(row.meta?.title || '');
+      form.name = row.name || '';
       form.path = row.path || '';
-      form.label = row.name || '';
       form.component = row.component || '';
       form.icon = row.meta?.icon || '';
       form.sort = row.meta?.sort || 1;
       form.keepAlive = row.meta?.keepAlive ?? false;
       form.isHide = row.meta?.isHide ?? false;
       form.isHideTab = row.meta?.isHideTab ?? false;
-      form.isEnable = row.meta?.isEnable ?? true;
+      form.isEnabled = row.meta?.isEnable ?? true;
       form.link = row.meta?.link || '';
       form.fixedTab = row.meta?.fixedTab ?? false;
       form.activePath = row.meta?.activePath || '';
-      form.roles = row.meta?.roles || [];
       form.isFullPage = row.meta?.isFullPage ?? false;
+      // 通过 id 在已加载的树中查找父级
+      if (row.id) {
+        const parentId = findParentValue(parentMenuOptions.value, row.id);
+        form.parentId = parentId;
+      }
     }
   };
 
@@ -784,40 +797,22 @@
 
   watch(
     () => props.visible,
-    (newVal) => {
+    async (newVal) => {
       if (newVal) {
         if (props.editData && !props.editData._parentRow) {
           form.menuType = props.type === 'button' ? 'button' : inferMenuType(props.editData);
           isEdit.value = true;
-          loadParentMenuOptions();
-          nextTick(() => {
-            loadFormData();
-          });
+          await loadParentMenuOptions();
+          loadFormData();
         } else {
           resetForm();
           isEdit.value = false;
           form.menuType = props.type === 'button' ? 'button' : 'directory';
-          loadParentMenuOptions();
+          await loadParentMenuOptions();
           // 从列表行点击新增时，预填上级菜单
           if (props.editData?._parentRow) {
-            nextTick(() => {
-              const parentRow = props.editData._parentRow;
-              const targetLabel = formatMenuTitle(parentRow.meta?.title || '');
-              const findInTree = (nodes: TreeOption[]): number | undefined => {
-                for (const node of nodes) {
-                  if (node.label === targetLabel) return node.value;
-                  if (node.children) {
-                    const found = findInTree(node.children);
-                    if (found !== undefined) return found;
-                  }
-                }
-                return undefined;
-              };
-              const matchedValue = findInTree(parentMenuOptions.value);
-              if (matchedValue !== undefined) {
-                form.parentId = matchedValue;
-              }
-            });
+            const parentRow = props.editData._parentRow;
+            form.parentId = parentRow.id;
           }
         }
       }
