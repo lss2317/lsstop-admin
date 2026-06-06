@@ -55,6 +55,7 @@
 <script setup lang="ts">
   import { formatMenuTitle } from '@/utils/router';
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
+  import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import { useTableColumns } from '@/hooks/core/useTableColumns';
   import type { BackendMenuItem } from '@/apis/menu/types';
   import MenuDialog from './modules/menu-dialog.vue';
@@ -140,10 +141,7 @@
       label: '菜单名称',
       width: 280,
       formatter: (row: BackendMenuItem) =>
-        h(
-          'span',
-          { style: { display: 'inline-flex', alignItems: 'center', gap: '8px' } },
-          [
+        h('span', { class: 'inline-flex items-center gap-2' }, [
           h(
             'button',
             {
@@ -151,39 +149,10 @@
               disabled: true,
               'aria-label': '拖拽排序',
               title: '拖拽排序',
-              style: {
-                width: '26px',
-                height: '26px',
-                color: 'var(--el-text-color-placeholder)',
-                background: 'var(--el-fill-color-blank)',
-                border: '1px solid var(--el-border-color)',
-                borderRadius: '6px',
-                flex: 'none',
-                display: 'inline-flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '0',
-                cursor: 'not-allowed'
-              }
+              class:
+                'inline-flex size-[24px] flex-none cursor-not-allowed items-center justify-center rounded-[6px] border border-[var(--el-border-color)] bg-[var(--el-fill-color-blank)] p-0 text-g-500'
             },
-            [
-              h(
-                'svg',
-                {
-                  xmlns: 'http://www.w3.org/2000/svg',
-                  'aria-hidden': 'true',
-                  width: '1em',
-                  height: '1em',
-                  viewBox: '0 0 24 24'
-                },
-                [
-                  h('path', {
-                    fill: 'currentColor',
-                    d: 'M8.5 7a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m0 6.5a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m1.5 5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M15.5 7a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3m1.5 5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m-1.5 8a1.5 1.5 0 1 0 0-3a1.5 1.5 0 0 0 0 3'
-                  })
-                ]
-              )
-            ]
+            [h(ArtSvgIcon, { icon: 'ri:draggable', class: 'text-base' })]
           ),
           h('span', formatMenuTitle(row.title))
         ])

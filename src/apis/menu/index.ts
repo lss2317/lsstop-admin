@@ -4,7 +4,12 @@
  * @module apis/menu
  */
 import request from '@/utils/http';
-import type { BackendMenuItem, MenuListResponse, MenuSearchParams, MenuBatchDeleteParams } from './types';
+import type {
+  BackendMenuItem,
+  MenuListResponse,
+  MenuSearchParams,
+  MenuBatchDeleteParams
+} from './types';
 
 /**
  * 获取当前用户的菜单列表（树形结构）
