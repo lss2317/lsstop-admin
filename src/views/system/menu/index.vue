@@ -115,13 +115,6 @@
     }
   };
 
-  /**
-   * 判断是否为目录
-   */
-  const isDirectory = (row: BackendMenuItem): boolean => {
-    return row.menuType === 1;
-  };
-
   const getMenuTypeTag = (
     row: BackendMenuItem
   ): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {

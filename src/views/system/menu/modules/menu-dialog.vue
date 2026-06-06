@@ -477,7 +477,7 @@
             </div>
             <div class="flex min-h-8 items-center">
               <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
-                >新标签打开</span
+                >隐藏标签</span
               >
               <ElSwitch v-model="form.isHideTab" />
             </div>
@@ -527,21 +527,10 @@
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import IconPickerDialog from './icon-picker-dialog.vue';
   import { QuestionFilled } from '@element-plus/icons-vue';
-  import { formatMenuTitle } from '@/utils/router';
-  import type { AppRouteRecord } from '@/types/router';
-  import { mockGetMenuTree } from '@/apis/menu/mock';
+  import type { BackendMenuItem } from '@/apis/menu/types';
+  import { mockGetMenuAdminList } from '@/apis/menu/mock';
 
   type MenuType = 'directory' | 'menu' | 'button' | 'iframe' | 'link';
-
-  const createLabelTooltip = (label: string, tooltip: string) => {
-    return () =>
-      h('span', { class: 'flex items-center' }, [
-        h('span', label),
-        h(ElTooltip, { content: tooltip, placement: 'top' }, () =>
-          h(ElIcon, { class: 'ml-0.5 cursor-help' }, () => h(QuestionFilled))
-        )
-      ]);
-  };
 
   /** 表单状态（字段名对齐 DB BackendMenuItem） */
   interface MenuFormState {
@@ -570,7 +559,7 @@
 
   interface Props {
     visible: boolean;
-    editData?: AppRouteRecord | any;
+    editData?: BackendMenuItem | any;
     type?: 'menu' | 'button';
   }
 
@@ -666,25 +655,25 @@
   /** 加载上级菜单选项（树形结构） */
   const loadParentMenuOptions = async () => {
     try {
-      const tree = await mockGetMenuTree();
-      const buildTree = (items: AppRouteRecord[], parentId: number | undefined): TreeOption[] => {
+      const tree = await mockGetMenuAdminList();
+      const buildTree = (items: BackendMenuItem[]): TreeOption[] => {
         const result: TreeOption[] = [];
         items.forEach((item) => {
-          if (!item.meta?.isAuthButton) {
+          if (item.menuType !== 3) {
             const node: TreeOption = {
-              label: formatMenuTitle(item.meta?.title || ''),
-              value: item.id ?? 0
+              label: item.title || '',
+              value: item.id
             };
-            const nonButtonChildren = item.children?.filter((c) => !c.meta?.isAuthButton) || [];
+            const nonButtonChildren = item.children?.filter((c) => c.menuType !== 3) || [];
             if (nonButtonChildren.length) {
-              node.children = buildTree(nonButtonChildren, item.id);
+              node.children = buildTree(nonButtonChildren);
             }
             result.push(node);
           }
         });
         return result;
       };
-      parentMenuOptions.value = buildTree(tree, undefined);
+      parentMenuOptions.value = buildTree(tree);
     } catch {
       parentMenuOptions.value = [];
     }
@@ -710,22 +699,6 @@
     form.activePath = '';
     form.authMark = '';
     form.isEnabled = true;
-  };
-
-  /** 在树节点中查找指定 value 的节点的父级 value */
-  const findParentValue = (
-    nodes: TreeOption[],
-    targetValue: number,
-    parentValue?: number
-  ): number | undefined => {
-    for (const node of nodes) {
-      if (node.value === targetValue) return parentValue;
-      if (node.children?.length) {
-        const found = findParentValue(node.children, targetValue, node.value);
-        if (found !== undefined) return found;
-      }
-    }
-    return undefined;
   };
 
   const loadFormData = (): void => {

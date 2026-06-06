@@ -4,7 +4,7 @@
  * @module apis/menu
  */
 import request from '@/utils/http';
-import type { BackendMenuItem, MenuItem, MenuSearchParams } from './types';
+import type { BackendMenuItem, MenuListResponse, MenuSearchParams, MenuBatchDeleteParams } from './types';
 
 /**
  * 获取当前用户的菜单列表（树形结构）
@@ -19,11 +19,11 @@ export function fetchMenuList() {
 // ==================== 菜单管理 ====================
 
 /**
- * 获取菜单管理列表（分页）
- * @param params 搜索与分页参数
+ * 获取菜单管理列表（树形结构）
+ * @param params 搜索参数
  */
-export function fetchMenuAdminList(params: MenuSearchParams) {
-  return request.get<Api.Common.PaginatedResponse<MenuItem>>({
+export function fetchMenuAdminList(params?: MenuSearchParams) {
+  return request.get<MenuListResponse>({
     url: '/menu/list',
     params
   });
@@ -33,7 +33,7 @@ export function fetchMenuAdminList(params: MenuSearchParams) {
  * 新增菜单
  * @param data 菜单信息
  */
-export function fetchAddMenu(data: Partial<MenuItem>) {
+export function fetchAddMenu(data: Partial<BackendMenuItem>) {
   return request.post<void>({
     url: '/menu/add',
     data
@@ -44,7 +44,7 @@ export function fetchAddMenu(data: Partial<MenuItem>) {
  * 更新菜单
  * @param data 菜单信息（包含 id）
  */
-export function fetchUpdateMenu(data: Partial<MenuItem>) {
+export function fetchUpdateMenu(data: Partial<BackendMenuItem>) {
   return request.put<void>({
     url: '/menu/update',
     data
@@ -58,5 +58,16 @@ export function fetchUpdateMenu(data: Partial<MenuItem>) {
 export function fetchDeleteMenu(id: number) {
   return request.del<void>({
     url: `/menu/delete/${id}`
+  });
+}
+
+/**
+ * 批量删除菜单
+ * @param params 菜单ID列表
+ */
+export function fetchBatchDeleteMenu(params: MenuBatchDeleteParams) {
+  return request.post<void>({
+    url: '/menu/delete',
+    data: params
   });
 }
