@@ -138,7 +138,7 @@
     {
       prop: 'title',
       label: '菜单名称',
-      minWidth: 180,
+      minWidth: 160,
       formatter: (row: BackendMenuItem) => formatMenuTitle(row.title)
     },
     {
@@ -178,6 +178,7 @@
     {
       prop: 'updateTime',
       label: '编辑时间',
+      width: 110,
       formatter: (row: BackendMenuItem) => row.updateTime || ''
     },
     {
@@ -192,7 +193,7 @@
       prop: 'operation',
       label: '操作',
       width: 180,
-      align: 'right',
+      align: 'center',
       formatter: (row: BackendMenuItem) => {
         const buttonStyle = { style: 'text-align: right' };
 

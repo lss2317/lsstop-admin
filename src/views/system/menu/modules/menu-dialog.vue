@@ -298,7 +298,7 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="菜单名称" prop="title">
+              <ElFormItem label="菜单名称" prop="title" required>
                 <ElInput v-model="form.title" placeholder="菜单名称" />
               </ElFormItem>
             </ElCol>
@@ -393,7 +393,7 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="菜单名称" prop="title">
+              <ElFormItem label="菜单名称" prop="title" required>
                 <ElInput v-model="form.title" placeholder="菜单名称" />
               </ElFormItem>
             </ElCol>
@@ -619,6 +619,7 @@
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
     ],
     path: [{ required: true, message: '请输入路由地址', trigger: 'blur' }],
+    component: [{ required: true, message: '请输入组件路径', trigger: 'blur' }],
     link: [{ required: true, message: '请输入外部链接', trigger: 'blur' }],
     authMark: [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
   });
