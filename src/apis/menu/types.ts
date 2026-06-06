@@ -18,8 +18,6 @@ export interface BackendMenuItem {
   path: string;
   /** 组件路径（如 dashboard/console） */
   component: string | null;
-  /** 重定向路径 */
-  redirect: string | null;
   /** 菜单标题 */
   title: string;
   /** 菜单图标 */

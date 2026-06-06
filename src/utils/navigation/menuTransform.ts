@@ -175,10 +175,8 @@ export function transformMenuData(items: BackendMenuItem[], parentPath = ''): Ap
     }
 
     // 4. 目录自动推导 redirect
-    if (item.menuType === 1 && !item.redirect && route.children?.length) {
+    if (item.menuType === 1 && route.children?.length) {
       route.redirect = resolveDefaultRedirect(route.children);
-    } else {
-      route.redirect = item.redirect ?? undefined;
     }
 
     return route;
