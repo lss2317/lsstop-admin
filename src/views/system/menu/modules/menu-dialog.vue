@@ -797,22 +797,28 @@
 
   watch(
     () => props.visible,
-    async (newVal) => {
+    (newVal) => {
       if (newVal) {
+        resetForm();
+
         if (props.editData && !props.editData._parentRow) {
+          // 编辑模式
           form.menuType = props.type === 'button' ? 'button' : inferMenuType(props.editData);
           isEdit.value = true;
-          await loadParentMenuOptions();
-          loadFormData();
+          loadParentMenuOptions();
+          nextTick(() => {
+            loadFormData();
+          });
         } else {
-          resetForm();
+          // 新增模式
           isEdit.value = false;
           form.menuType = props.type === 'button' ? 'button' : 'directory';
-          await loadParentMenuOptions();
-          // 从列表行点击新增时，预填上级菜单
+          loadParentMenuOptions();
           if (props.editData?._parentRow) {
-            const parentRow = props.editData._parentRow;
-            form.parentId = parentRow.id;
+            nextTick(() => {
+              const parentRow = props.editData._parentRow;
+              form.parentId = parentRow.id;
+            });
           }
         }
       }
