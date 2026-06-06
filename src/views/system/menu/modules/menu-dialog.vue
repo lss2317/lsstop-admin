@@ -481,15 +481,15 @@
         <ElDivider>其他设置</ElDivider>
         <div class="grid grid-cols-1 gap-x-7 gap-y-3.5 sm:grid-cols-2">
           <div class="flex min-h-8 items-center">
-            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]">是否启用</span>
+            <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">是否启用</span>
             <ElSwitch v-model="form.isEnable" />
           </div>
           <div class="flex min-h-8 items-center">
-            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]">隐藏菜单</span>
+            <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">隐藏菜单</span>
             <ElSwitch v-model="form.isHide" />
           </div>
           <div class="flex min-h-8 items-center">
-            <span class="mr-3 min-w-24 text-sm text-[var(--el-text-color-regular)]"
+            <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
               >新标签打开</span
             >
             <ElSwitch v-model="form.isHideTab" />
@@ -837,6 +837,15 @@
 
   .menu-drawer .el-form-item {
     margin-bottom: 18px;
+  }
+
+  .menu-drawer .el-col {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .menu-drawer .el-row {
+    margin-top: 20px;
   }
 
   .menu-drawer .el-drawer__close-btn {
