@@ -18,10 +18,15 @@
         @refresh="handleRefresh"
       >
         <template #left>
-          <ElButton @click="handleAddMenu" v-ripple> 添加菜单 </ElButton>
-          <ElButton @click="toggleExpand" v-ripple>
-            {{ isExpanded ? '收起' : '展开' }}
+          <ElButton type="primary" plain class="!rounded-lg" @click="handleAddMenu" v-ripple>
+            新增菜单
           </ElButton>
+          <button
+            class="ml-3 h-[var(--el-component-custom-height)] cursor-pointer rounded-[var(--el-border-radius-base)] border border-[var(--el-border-color)] bg-transparent px-4 text-sm text-[var(--el-text-color-regular)] transition-colors duration-200 hover:border-[var(--el-color-primary-light-3)] hover:bg-[var(--el-color-primary-light-9)] hover:text-[var(--el-color-primary)]"
+            @click="toggleExpand"
+          >
+            {{ isExpanded ? '收起' : '展开' }}
+          </button>
         </template>
       </ArtTableHeader>
 

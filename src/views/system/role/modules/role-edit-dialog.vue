@@ -42,7 +42,12 @@
     </ElForm>
     <template #footer>
       <div class="dialog-footer">
-        <ElButton @click="handleClose">取消</ElButton>
+        <button
+                  class="h-[var(--el-component-custom-height)] cursor-pointer rounded-[var(--el-border-radius-base)] border border-[var(--el-border-color)] bg-transparent px-4 text-sm text-[var(--el-text-color-regular)] transition-colors duration-200 hover:border-[var(--el-color-primary-light-3)] hover:bg-[var(--el-color-primary-light-9)] hover:text-[var(--el-color-primary)]"
+                  @click="handleClose"
+                >
+                  取消
+                </button>
         <ElButton type="primary" @click="handleSubmit">提交</ElButton>
       </div>
     </template>

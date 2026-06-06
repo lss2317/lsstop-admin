@@ -507,7 +507,12 @@
 
     <template #footer>
       <span class="drawer-footer">
-        <ElButton @click="handleCancel">取 消</ElButton>
+        <button
+          class="h-[var(--el-component-custom-height)] cursor-pointer rounded-[var(--el-border-radius-base)] border border-[var(--el-border-color)] bg-transparent px-4 text-sm text-[var(--el-text-color-regular)] transition-colors duration-200 hover:border-[var(--el-color-primary-light-3)] hover:bg-[var(--el-color-primary-light-9)] hover:text-[var(--el-color-primary)]"
+          @click="handleCancel"
+        >
+          取 消
+        </button>
         <ElButton type="primary" @click="handleSubmit">确 定</ElButton>
       </span>
     </template>
