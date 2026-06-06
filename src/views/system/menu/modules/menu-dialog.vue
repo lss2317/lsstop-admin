@@ -249,21 +249,6 @@
                 <ElInput v-model="form.activePath" placeholder="如：/system/user" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="页面缓存">
-                <ElSwitch v-model="form.keepAlive" />
-              </ElFormItem>
-            </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="固定标签">
-                <ElSwitch v-model="form.fixedTab" />
-              </ElFormItem>
-            </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="全屏页面">
-                <ElSwitch v-model="form.isFullPage" />
-              </ElFormItem>
-            </ElCol>
           </template>
 
           <template v-else-if="form.menuType === 'button'">
@@ -476,24 +461,40 @@
         </ElRow>
       </ElForm>
 
-      <!-- 其他设置（按钮类型不显示） -->
-      <section v-if="form.menuType !== 'button'">
+      <!-- 其他设置 -->
+      <section>
         <ElDivider>其他设置</ElDivider>
         <div class="grid grid-cols-1 gap-x-7 gap-y-3.5 sm:grid-cols-2 px-5">
           <div class="flex min-h-8 items-center">
             <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">是否启用</span>
             <ElSwitch v-model="form.isEnable" />
           </div>
-          <div class="flex min-h-8 items-center">
-            <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">隐藏菜单</span>
-            <ElSwitch v-model="form.isHide" />
-          </div>
-          <div class="flex min-h-8 items-center">
-            <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
-              >新标签打开</span
-            >
-            <ElSwitch v-model="form.isHideTab" />
-          </div>
+          <template v-if="form.menuType !== 'button'">
+            <div class="flex min-h-8 items-center">
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">隐藏菜单</span>
+              <ElSwitch v-model="form.isHide" />
+            </div>
+            <div class="flex min-h-8 items-center">
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
+                >新标签打开</span
+              >
+              <ElSwitch v-model="form.isHideTab" />
+            </div>
+          </template>
+          <template v-if="form.menuType === 'menu'">
+            <div class="flex min-h-8 items-center">
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">页面缓存</span>
+              <ElSwitch v-model="form.keepAlive" />
+            </div>
+            <div class="flex min-h-8 items-center">
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">固定标签</span>
+              <ElSwitch v-model="form.fixedTab" />
+            </div>
+            <div class="flex min-h-8 items-center">
+              <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]">全屏页面</span>
+              <ElSwitch v-model="form.isFullPage" />
+            </div>
+          </template>
         </div>
       </section>
 
