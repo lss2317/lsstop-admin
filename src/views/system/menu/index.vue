@@ -32,7 +32,7 @@
 
       <ArtTable
         ref="tableRef"
-        rowKey="path"
+        rowKey="id"
         :loading="loading"
         :columns="columns"
         :data="filteredTableData"
@@ -56,9 +56,9 @@
   import { formatMenuTitle } from '@/utils/router';
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
   import { useTableColumns } from '@/hooks/core/useTableColumns';
-  import type { AppRouteRecord } from '@/types/router';
+  import type { BackendMenuItem } from '@/apis/menu/types';
   import MenuDialog from './modules/menu-dialog.vue';
-  import { mockGetMenuTree } from '@/apis/menu/mock';
+  import { mockGetMenuAdminList } from '@/apis/menu/mock';
   import { ElTag, ElMessageBox } from 'element-plus';
 
   import MenuSearch from './modules/menu-search.vue';
@@ -74,7 +74,7 @@
   // 抽屉相关
   const dialogVisible = ref(false);
   const dialogType = ref<'menu' | 'button'>('menu');
-  const editData = ref<AppRouteRecord | any>(null);
+  const editData = ref<BackendMenuItem | any>(null);
 
   // 搜索相关
   interface SearchForm {
@@ -106,7 +106,7 @@
     loading.value = true;
 
     try {
-      const list = await mockGetMenuTree();
+      const list = await mockGetMenuAdminList();
       tableData.value = list;
     } catch (error) {
       throw error instanceof Error ? error : new Error('获取菜单失败');
@@ -116,63 +116,61 @@
   };
 
   /**
-   * 判断是否为目录（children中有非按钮节点才算目录）
+   * 判断是否为目录
    */
-  const isDirectory = (row: AppRouteRecord): boolean => {
-    return !!row.children?.some((child) => !child.meta?.isAuthButton);
+  const isDirectory = (row: BackendMenuItem): boolean => {
+    return row.menuType === 1;
   };
 
   const getMenuTypeTag = (
-    row: AppRouteRecord
+    row: BackendMenuItem
   ): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
-    if (row.meta?.isAuthButton) return 'danger';
-    if (isDirectory(row)) return 'info';
-    if (row.meta?.link && row.meta?.isIframe) return 'success';
-    if (row.path) return 'primary';
-    if (row.meta?.link) return 'warning';
-    return 'info';
+    if (row.menuType === 3) return 'danger';
+    if (row.menuType === 1) return 'info';
+    if (row.link && row.isIframe) return 'success';
+    if (row.link) return 'warning';
+    return 'primary';
   };
 
-  const getMenuTypeText = (row: AppRouteRecord): string => {
-    if (row.meta?.isAuthButton) return '按钮';
-    if (isDirectory(row)) return '目录';
-    if (row.meta?.link && row.meta?.isIframe) return '内嵌';
-    if (row.path) return '菜单';
-    if (row.meta?.link) return '外链';
-    return '未知';
+  const getMenuTypeText = (row: BackendMenuItem): string => {
+    if (row.menuType === 3) return '按钮';
+    if (row.menuType === 1) return '目录';
+    if (row.link && row.isIframe) return '内嵌';
+    if (row.link) return '外链';
+    return '菜单';
   };
 
   // 表格列配置
   const { columnChecks, columns } = useTableColumns(() => [
     {
-      prop: 'meta.title',
+      prop: 'title',
       label: '菜单名称',
       minWidth: 160,
-      formatter: (row: AppRouteRecord) => formatMenuTitle(row.meta?.title)
+      formatter: (row: BackendMenuItem) => formatMenuTitle(row.title)
     },
     {
-      prop: 'type',
+      prop: 'menuType',
       label: '菜单类型',
-      formatter: (row: AppRouteRecord) => {
+      formatter: (row: BackendMenuItem) => {
         return h(ElTag, { type: getMenuTypeTag(row) }, () => getMenuTypeText(row));
       }
     },
     {
       prop: 'path',
       label: '路由',
-      formatter: (row: AppRouteRecord) => {
-        if (row.meta?.isAuthButton) return '';
-        return row.meta?.link || row.path || '';
+      formatter: (row: BackendMenuItem) => {
+        if (row.menuType === 3) return '';
+        return row.link || row.path || '';
       }
     },
     {
-      prop: 'meta.authList',
+      prop: 'authMark',
       label: '权限标识',
-      formatter: (row: AppRouteRecord) => {
-        if (row.meta?.isAuthButton) {
-          return row.meta?.authMark || '';
+      formatter: (row: BackendMenuItem) => {
+        if (row.menuType === 3) {
+          return row.authMark || '';
         }
-        const authCount = row.children?.filter((c) => c.meta?.isAuthButton).length || 0;
+        const authCount = row.children?.filter((c) => c.menuType === 3).length || 0;
         if (authCount === 0) return '';
         return `${authCount} 个权限标识`;
       }
@@ -182,27 +180,30 @@
       label: '排序',
       width: 80,
       align: 'center',
-      formatter: (row: AppRouteRecord) => row.meta?.sort ?? ''
+      formatter: (row: BackendMenuItem) => row.sort ?? ''
     },
     {
-      prop: 'date',
+      prop: 'updateTime',
       label: '编辑时间',
-      formatter: (row: AppRouteRecord) => row.meta?.updateTime || ''
+      formatter: (row: BackendMenuItem) => row.updateTime || ''
     },
     {
-      prop: 'status',
+      prop: 'isEnabled',
       label: '状态',
-      formatter: () => h(ElTag, { type: 'success' }, () => '启用')
+      formatter: (row: BackendMenuItem) =>
+        h(ElTag, { type: row.isEnabled === 1 ? 'success' : 'info' }, () =>
+          row.isEnabled === 1 ? '启用' : '禁用'
+        )
     },
     {
       prop: 'operation',
       label: '操作',
       width: 180,
       align: 'right',
-      formatter: (row: AppRouteRecord) => {
+      formatter: (row: BackendMenuItem) => {
         const buttonStyle = { style: 'text-align: right' };
 
-        if (row.meta?.isAuthButton) {
+        if (row.menuType === 3) {
           return h('div', buttonStyle, [
             h(ArtButtonTable, {
               type: 'edit',
@@ -210,7 +211,7 @@
             }),
             h(ArtButtonTable, {
               type: 'delete',
-              onClick: () => handleDeleteAuth(row.id!)
+              onClick: () => handleDeleteAuth(row.id)
             })
           ]);
         }
@@ -227,7 +228,7 @@
           }),
           h(ArtButtonTable, {
             type: 'delete',
-            onClick: () => handleDeleteMenu(row.id!)
+            onClick: () => handleDeleteMenu(row.id)
           })
         ]);
       }
@@ -235,7 +236,7 @@
   ]);
 
   // 数据相关
-  const tableData = ref<AppRouteRecord[]>([]);
+  const tableData = ref<BackendMenuItem[]>([]);
 
   /**
    * 重置搜索条件
@@ -261,17 +262,17 @@
   /**
    * 搜索菜单
    */
-  const searchMenu = (items: AppRouteRecord[]): AppRouteRecord[] => {
-    const results: AppRouteRecord[] = [];
+  const searchMenu = (items: BackendMenuItem[]): BackendMenuItem[] => {
+    const results: BackendMenuItem[] = [];
     const keyword = appliedFilters.keyword?.toLowerCase().trim() || '';
     const menuType = appliedFilters.menuType;
     const status = appliedFilters.status;
 
     for (const item of items) {
       // 关键词匹配：名称、路由、权限标识
-      const menuTitle = formatMenuTitle(item.meta?.title || '').toLowerCase();
+      const menuTitle = formatMenuTitle(item.title || '').toLowerCase();
       const menuPath = (item.path || '').toLowerCase();
-      const menuAuthMark = (item.meta?.authMark || '').toLowerCase();
+      const menuAuthMark = (item.authMark || '').toLowerCase();
       const keywordMatch =
         !keyword ||
         menuTitle.includes(keyword) ||
@@ -281,18 +282,17 @@
       // 类型匹配
       let typeMatch = !menuType;
       if (menuType) {
-        if (menuType === 'button') typeMatch = !!item.meta?.isAuthButton;
-        else if (menuType === 'directory') typeMatch = isDirectory(item);
-        else if (menuType === 'iframe') typeMatch = !!item.meta?.link && !!item.meta?.isIframe;
-        else if (menuType === 'link') typeMatch = !!item.meta?.link && !item.meta?.isIframe;
-        else if (menuType === 'menu')
-          typeMatch = !!item.path && !isDirectory(item) && !item.meta?.isAuthButton;
+        if (menuType === 'button') typeMatch = item.menuType === 3;
+        else if (menuType === 'directory') typeMatch = item.menuType === 1;
+        else if (menuType === 'iframe') typeMatch = !!item.link && item.isIframe;
+        else if (menuType === 'link') typeMatch = !!item.link && !item.isIframe;
+        else if (menuType === 'menu') typeMatch = item.menuType === 2 && !item.link;
       }
 
       // 状态匹配
       let statusMatch = !status;
-      if (status === 'enabled') statusMatch = item.meta?.isEnable !== false;
-      if (status === 'disabled') statusMatch = item.meta?.isEnable === false;
+      if (status === 'enabled') statusMatch = item.isEnabled === 1;
+      if (status === 'disabled') statusMatch = item.isEnabled === 0;
 
       if (item.children?.length) {
         const matchedChildren = searchMenu(item.children);
@@ -328,7 +328,7 @@
   /**
    * 添加权限按钮（在当前行下新增）
    */
-  const handleAddAuth = (row: AppRouteRecord): void => {
+  const handleAddAuth = (row: BackendMenuItem): void => {
     dialogType.value = 'menu';
     editData.value = { _parentRow: row };
     dialogVisible.value = true;
@@ -337,7 +337,7 @@
   /**
    * 编辑菜单
    */
-  const handleEditMenu = (row: AppRouteRecord): void => {
+  const handleEditMenu = (row: BackendMenuItem): void => {
     dialogType.value = 'menu';
     editData.value = row;
     dialogVisible.value = true;
@@ -346,13 +346,9 @@
   /**
    * 编辑权限按钮
    */
-  const handleEditAuth = (row: AppRouteRecord): void => {
+  const handleEditAuth = (row: BackendMenuItem): void => {
     dialogType.value = 'button';
-    editData.value = {
-      title: row.meta?.title,
-      authMark: row.meta?.authMark,
-      sort: row.meta?.sort
-    };
+    editData.value = row;
     dialogVisible.value = true;
   };
 
@@ -423,7 +419,7 @@
     isExpanded.value = !isExpanded.value;
     nextTick(() => {
       if (tableRef.value?.elTableRef && filteredTableData.value) {
-        const processRows = (rows: AppRouteRecord[]) => {
+        const processRows = (rows: BackendMenuItem[]) => {
           rows.forEach((row) => {
             if (row.children?.length) {
               tableRef.value.elTableRef.toggleRowExpansion(row, isExpanded.value);

@@ -735,30 +735,29 @@
 
     if (form.menuType === 'button') {
       const row = props.editData;
-      form.title = row.title || row.meta?.title || '';
-      form.authMark = row.authMark || row.meta?.authMark || '';
+      form.title = row.title || '';
+      form.authMark = row.authMark || '';
       form.sort = row.sort || 1;
     } else {
       const row = props.editData;
       form.id = row.id || 0;
-      form.title = formatMenuTitle(row.meta?.title || '');
+      form.title = row.title || '';
       form.name = row.name || '';
       form.path = row.path || '';
       form.component = row.component || '';
-      form.icon = row.meta?.icon || '';
-      form.sort = row.meta?.sort || 1;
-      form.keepAlive = row.meta?.keepAlive ?? false;
-      form.isHide = row.meta?.isHide ?? false;
-      form.isHideTab = row.meta?.isHideTab ?? false;
-      form.isEnabled = row.meta?.isEnable ?? true;
-      form.link = row.meta?.link || '';
-      form.fixedTab = row.meta?.fixedTab ?? false;
-      form.activePath = row.meta?.activePath || '';
-      form.isFullPage = row.meta?.isFullPage ?? false;
-      // 通过 id 在已加载的树中查找父级
-      if (row.id) {
-        const parentId = findParentValue(parentMenuOptions.value, row.id);
-        form.parentId = parentId;
+      form.icon = row.icon || '';
+      form.sort = row.sort || 1;
+      form.keepAlive = row.keepAlive ?? false;
+      form.isHide = row.isHide ?? false;
+      form.isHideTab = row.isHideTab ?? false;
+      form.isEnabled = row.isEnabled === 1;
+      form.link = row.link || '';
+      form.fixedTab = row.fixedTab ?? false;
+      form.activePath = row.activePath || '';
+      form.isFullPage = row.isFullPage ?? false;
+      // 通过 parentId 直接赋值
+      if (row.parentId && row.parentId !== 0) {
+        form.parentId = row.parentId;
       }
     }
   };
@@ -787,12 +786,11 @@
 
   /** 推断菜单类型 */
   const inferMenuType = (row: any): MenuType => {
-    if (row?.meta?.isAuthButton) return 'button';
-    if (row?.meta?.link && row?.meta?.isIframe) return 'iframe';
-    if (row?.meta?.link) return 'link';
-    if (row?.children?.length) return 'directory';
-    if (row?.path) return 'menu';
-    return 'directory';
+    if (row.menuType === 3) return 'button';
+    if (row.link && row.isIframe) return 'iframe';
+    if (row.link) return 'link';
+    if (row.menuType === 1) return 'directory';
+    return 'menu';
   };
 
   watch(
