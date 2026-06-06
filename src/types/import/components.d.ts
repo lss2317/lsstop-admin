@@ -100,6 +100,7 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
+    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     HorizontalSubmenu: typeof import('./../../components/core/layouts/art-menus/art-horizontal-menu/widget/HorizontalSubmenu.vue')['default']
     LoginLeftView: typeof import('./../../components/core/views/login/LoginLeftView.vue')['default']
     MenuLayoutSettings: typeof import('./../../components/core/layouts/art-settings-panel/widget/MenuLayoutSettings.vue')['default']

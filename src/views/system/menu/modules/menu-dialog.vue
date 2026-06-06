@@ -39,19 +39,16 @@
           <template v-if="form.menuType === 'directory'">
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="上级菜单" prop="parentId">
-                <ElSelect
+                <ElTreeSelect
                   v-model="form.parentId"
+                  :data="parentMenuOptions"
+                  :props="{ label: 'label', value: 'value', children: 'children' }"
                   class="w-full"
                   clearable
+                  check-strictly
+                  :render-after-expand="false"
                   placeholder="不选择则创建为顶级菜单"
-                >
-                  <ElOption
-                    v-for="opt in parentMenuOptions"
-                    :key="opt.value"
-                    :label="opt.label"
-                    :value="opt.value"
-                  />
-                </ElSelect>
+                />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -135,19 +132,16 @@
           <template v-else-if="form.menuType === 'menu'">
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="上级菜单" prop="parentId">
-                <ElSelect
+                <ElTreeSelect
                   v-model="form.parentId"
+                  :data="parentMenuOptions"
+                  :props="{ label: 'label', value: 'value', children: 'children' }"
                   class="w-full"
                   clearable
+                  check-strictly
+                  :render-after-expand="false"
                   placeholder="无（顶级菜单）"
-                >
-                  <ElOption
-                    v-for="opt in parentMenuOptions"
-                    :key="opt.value"
-                    :label="opt.label"
-                    :value="opt.value"
-                  />
-                </ElSelect>
+                />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -291,19 +285,16 @@
           <template v-else-if="form.menuType === 'iframe'">
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="上级菜单" prop="parentId">
-                <ElSelect
+                <ElTreeSelect
                   v-model="form.parentId"
+                  :data="parentMenuOptions"
+                  :props="{ label: 'label', value: 'value', children: 'children' }"
                   class="w-full"
                   clearable
+                  check-strictly
+                  :render-after-expand="false"
                   placeholder="无（顶级菜单）"
-                >
-                  <ElOption
-                    v-for="opt in parentMenuOptions"
-                    :key="opt.value"
-                    :label="opt.label"
-                    :value="opt.value"
-                  />
-                </ElSelect>
+                />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -389,19 +380,16 @@
           <template v-else-if="form.menuType === 'link'">
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem label="上级菜单" prop="parentId">
-                <ElSelect
+                <ElTreeSelect
                   v-model="form.parentId"
+                  :data="parentMenuOptions"
+                  :props="{ label: 'label', value: 'value', children: 'children' }"
                   class="w-full"
                   clearable
+                  check-strictly
+                  :render-after-expand="false"
                   placeholder="无（顶级菜单）"
-                >
-                  <ElOption
-                    v-for="opt in parentMenuOptions"
-                    :key="opt.value"
-                    :label="opt.label"
-                    :value="opt.value"
-                  />
-                </ElSelect>
+                />
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
@@ -604,8 +592,14 @@
     form.icon = icon;
   };
 
+  interface TreeOption {
+    label: string;
+    value: number;
+    children?: TreeOption[];
+  }
+  
   /** 上级菜单选项 */
-  const parentMenuOptions = ref<Array<{ label: string; value: number }>>([]);
+  const parentMenuOptions = ref<TreeOption[]>([]);
 
   const form = reactive<MenuFormData & { menuType: MenuType }>({
     menuType: 'directory',
@@ -670,26 +664,31 @@
     return isEdit.value && ['menu', 'iframe', 'link'].includes(form.menuType);
   });
 
-  /** 加载上级菜单选项 */
+  /** 加载上级菜单选项（树形结构） */
+  let idCounter = 0;
   const loadParentMenuOptions = async () => {
     try {
       const tree = await mockGetMenuTree();
-      const flatten = (
-        items: AppRouteRecord[],
-        result: Array<{ label: string; value: number }> = []
-      ) => {
+      idCounter = 0;
+      const buildTree = (items: AppRouteRecord[]): TreeOption[] => {
+        const result: TreeOption[] = [];
         items.forEach((item) => {
           if (!item.meta?.isAuthButton) {
-            result.push({
+            idCounter++;
+            const node: TreeOption = {
               label: formatMenuTitle(item.meta?.title || ''),
-              value: result.length + 1
-            });
-            if (item.children?.length) flatten(item.children, result);
+              value: idCounter
+            };
+            const nonButtonChildren = item.children?.filter((c) => !c.meta?.isAuthButton) || [];
+            if (nonButtonChildren.length) {
+              node.children = buildTree(nonButtonChildren);
+            }
+            result.push(node);
           }
         });
         return result;
       };
-      parentMenuOptions.value = flatten(tree);
+      parentMenuOptions.value = buildTree(tree);
     } catch {
       parentMenuOptions.value = [];
     }
@@ -803,11 +802,20 @@
           if (props.editData?._parentRow) {
             nextTick(() => {
               const parentRow = props.editData._parentRow;
-              const matched = parentMenuOptions.value.find(
-                (opt) => opt.label === formatMenuTitle(parentRow.meta?.title || '')
-              );
-              if (matched) {
-                form.parentId = matched.value;
+              const targetLabel = formatMenuTitle(parentRow.meta?.title || '');
+              const findInTree = (nodes: TreeOption[]): number | undefined => {
+                for (const node of nodes) {
+                  if (node.label === targetLabel) return node.value;
+                  if (node.children) {
+                    const found = findInTree(node.children);
+                    if (found !== undefined) return found;
+                  }
+                }
+                return undefined;
+              };
+              const matchedValue = findInTree(parentMenuOptions.value);
+              if (matchedValue !== undefined) {
+                form.parentId = matchedValue;
               }
             });
           }
