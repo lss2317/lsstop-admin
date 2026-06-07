@@ -89,12 +89,6 @@
     isEnabled: undefined
   });
 
-  const appliedFilters = reactive<SearchForm>({
-    keyword: undefined,
-    menuType: undefined,
-    isEnabled: undefined
-  });
-
   onMounted(() => {
     getMenuList();
   });
@@ -107,9 +101,9 @@
 
     try {
       const params: Record<string, any> = {};
-      if (appliedFilters.keyword) params.keyword = appliedFilters.keyword;
-      if (appliedFilters.menuType) params.menuType = appliedFilters.menuType;
-      if (appliedFilters.isEnabled !== undefined) params.isEnabled = appliedFilters.isEnabled;
+      if (searchForm.keyword) params.keyword = searchForm.keyword;
+      if (searchForm.menuType) params.menuType = searchForm.menuType;
+      if (searchForm.isEnabled !== undefined) params.isEnabled = searchForm.isEnabled;
       tableData.value = await fetchMenuAdminList(params);
     } catch (error) {
       throw error instanceof Error ? error : new Error('获取菜单失败');
@@ -240,16 +234,10 @@
    */
   const handleReset = (): void => {
     Object.assign(searchForm, { keyword: undefined, menuType: undefined, isEnabled: undefined });
-    Object.assign(appliedFilters, {
-      keyword: undefined,
-      menuType: undefined,
-      isEnabled: undefined
-    });
     getMenuList();
   };
 
-  const handleSearch = (params: SearchForm): void => {
-    Object.assign(appliedFilters, { ...params });
+  const handleSearch = (): void => {
     getMenuList();
   };
 
