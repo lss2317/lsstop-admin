@@ -119,7 +119,7 @@ function buildMeta(item: BackendMenuItem): AppRouteRecord['meta'] {
     isFirstLevel: item.isFirstLevel,
     fixedTab: item.fixedTab,
     link: item.link ?? undefined,
-    isIframe: item.isIframe,
+    isIframe: item.menuType === 4,
     activePath: item.activePath ?? undefined,
     authMark: item.authMark ?? undefined
   };
@@ -141,7 +141,7 @@ function buildMeta(item: BackendMenuItem): AppRouteRecord['meta'] {
 export function transformMenuData(items: BackendMenuItem[], parentPath = ''): AppRouteRecord[] {
   return items.map((item) => {
     // 1. 路径规范化（iframe 菜单使用 /outside/iframe/{normalizedPath} 格式）
-    const isIframeMenu = item.isIframe && !!item.link;
+    const isIframeMenu = item.menuType === 4;
     const basePath = buildFullPath(item.path, parentPath);
     const fullPath = isIframeMenu ? `/outside/iframe/${basePath.replace(/^\//, '')}` : basePath;
 

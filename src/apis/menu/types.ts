@@ -10,7 +10,7 @@ export interface BackendMenuItem {
   id: number;
   /** 父级ID（0=顶级） */
   parentId: number;
-  /** 类型：1-目录 2-菜单 3-按钮 */
+  /** 类型：1-目录 2-菜单 3-按钮 4-内嵌 5-外链 */
   menuType: number;
   /** 路由 name（唯一标识） */
   name: string;

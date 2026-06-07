@@ -35,7 +35,7 @@
         rowKey="id"
         :loading="loading"
         :columns="columns"
-        :data="filteredTableData"
+        :data="tableData"
         :stripe="false"
         :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
         :default-expand-all="false"
@@ -58,8 +58,8 @@
   import { useTableColumns } from '@/hooks/core/useTableColumns';
   import type { BackendMenuItem } from '@/apis/menu/types';
   import MenuDialog from './modules/menu-dialog.vue';
-  import { mockGetMenuAdminList } from '@/apis/menu/mock';
-  import { ElTag, ElMessageBox } from 'element-plus';
+  import { fetchMenuAdminList } from '@/apis/menu';
+  import { ElMessageBox, ElTag } from 'element-plus';
 
   import MenuSearch from './modules/menu-search.vue';
 
@@ -100,14 +100,18 @@
   });
 
   /**
-   * 获取菜单列表数据（mock）
+   * 获取菜单列表数据
    */
   const getMenuList = async (): Promise<void> => {
     loading.value = true;
 
     try {
-      const list = await mockGetMenuAdminList();
-      tableData.value = list;
+      const params: Record<string, any> = {};
+      if (appliedFilters.keyword) params.keyword = appliedFilters.keyword;
+      if (appliedFilters.menuType) params.menuType = appliedFilters.menuType;
+      if (appliedFilters.status === 'enabled') params.isEnabled = 1;
+      if (appliedFilters.status === 'disabled') params.isEnabled = 0;
+      tableData.value = await fetchMenuAdminList(params);
     } catch (error) {
       throw error instanceof Error ? error : new Error('获取菜单失败');
     } finally {
@@ -120,16 +124,16 @@
   ): 'primary' | 'success' | 'warning' | 'info' | 'danger' => {
     if (row.menuType === 3) return 'danger';
     if (row.menuType === 1) return 'info';
-    if (row.link && row.isIframe) return 'success';
-    if (row.link) return 'warning';
+    if (row.menuType === 4) return 'success';
+    if (row.menuType === 5) return 'warning';
     return 'primary';
   };
 
   const getMenuTypeText = (row: BackendMenuItem): string => {
+    if (row.menuType === 5) return '外链';
+    if (row.menuType === 4) return '内嵌';
     if (row.menuType === 3) return '按钮';
     if (row.menuType === 1) return '目录';
-    if (row.link && row.isIframe) return '内嵌';
-    if (row.link) return '外链';
     return '菜单';
   };
 
@@ -254,63 +258,6 @@
   };
 
   /**
-   * 搜索菜单
-   */
-  const searchMenu = (items: BackendMenuItem[]): BackendMenuItem[] => {
-    const results: BackendMenuItem[] = [];
-    const keyword = appliedFilters.keyword?.toLowerCase().trim() || '';
-    const menuType = appliedFilters.menuType;
-    const status = appliedFilters.status;
-
-    for (const item of items) {
-      // 关键词匹配：名称、路由、权限标识
-      const menuTitle = formatMenuTitle(item.title || '').toLowerCase();
-      const menuPath = (item.path || '').toLowerCase();
-      const menuAuthMark = (item.authMark || '').toLowerCase();
-      const keywordMatch =
-        !keyword ||
-        menuTitle.includes(keyword) ||
-        menuPath.includes(keyword) ||
-        menuAuthMark.includes(keyword);
-
-      // 类型匹配
-      let typeMatch = !menuType;
-      if (menuType) {
-        if (menuType === 'button') typeMatch = item.menuType === 3;
-        else if (menuType === 'directory') typeMatch = item.menuType === 1;
-        else if (menuType === 'iframe') typeMatch = !!item.link && item.isIframe;
-        else if (menuType === 'link') typeMatch = !!item.link && !item.isIframe;
-        else if (menuType === 'menu') typeMatch = item.menuType === 2 && !item.link;
-      }
-
-      // 状态匹配
-      let statusMatch = !status;
-      if (status === 'enabled') statusMatch = item.isEnabled === 1;
-      if (status === 'disabled') statusMatch = item.isEnabled === 0;
-
-      if (item.children?.length) {
-        const matchedChildren = searchMenu(item.children);
-        if (matchedChildren.length > 0) {
-          const clonedItem = { ...item, children: matchedChildren };
-          results.push(clonedItem);
-          continue;
-        }
-      }
-
-      if (keywordMatch && typeMatch && statusMatch) {
-        results.push(item);
-      }
-    }
-
-    return results;
-  };
-
-  // 过滤后的表格数据
-  const filteredTableData = computed(() => {
-    return searchMenu(tableData.value);
-  });
-
-  /**
    * 添加菜单
    */
   const handleAddMenu = (): void => {
@@ -412,7 +359,7 @@
   const toggleExpand = (): void => {
     isExpanded.value = !isExpanded.value;
     nextTick(() => {
-      if (tableRef.value?.elTableRef && filteredTableData.value) {
+      if (tableRef.value?.elTableRef && tableData.value) {
         const processRows = (rows: BackendMenuItem[]) => {
           rows.forEach((row) => {
             if (row.children?.length) {
@@ -421,7 +368,7 @@
             }
           });
         };
-        processRows(filteredTableData.value);
+        processRows(tableData.value);
       }
     });
   };

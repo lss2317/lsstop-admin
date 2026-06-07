@@ -528,7 +528,7 @@
   import IconPickerDialog from './icon-picker-dialog.vue';
   import { QuestionFilled } from '@element-plus/icons-vue';
   import type { BackendMenuItem } from '@/apis/menu/types';
-  import { mockGetMenuAdminList } from '@/apis/menu/mock';
+  import { fetchMenuAdminList } from '@/apis/menu';
 
   type MenuType = 'directory' | 'menu' | 'button' | 'iframe' | 'link';
 
@@ -656,7 +656,7 @@
   /** 加载上级菜单选项（树形结构） */
   const loadParentMenuOptions = async () => {
     try {
-      const tree = await mockGetMenuAdminList();
+      const tree = await fetchMenuAdminList();
       const buildTree = (items: BackendMenuItem[]): TreeOption[] => {
         const result: TreeOption[] = [];
         items.forEach((item) => {
@@ -760,9 +760,9 @@
 
   /** 推断菜单类型 */
   const inferMenuType = (row: any): MenuType => {
+    if (row.menuType === 5) return 'link';
+    if (row.menuType === 4) return 'iframe';
     if (row.menuType === 3) return 'button';
-    if (row.link && row.isIframe) return 'iframe';
-    if (row.link) return 'link';
     if (row.menuType === 1) return 'directory';
     return 'menu';
   };
