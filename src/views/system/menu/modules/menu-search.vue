@@ -14,7 +14,7 @@
   interface SearchForm {
     keyword?: string;
     menuType?: string;
-    status?: string;
+    isEnabled?: number;
   }
 
   interface Props {
@@ -64,14 +64,14 @@
     },
     {
       label: '状态',
-      key: 'status',
+      key: 'isEnabled',
       type: 'select',
       props: {
         clearable: true,
         placeholder: '请选择状态',
         options: [
-          { label: '启用', value: 'enabled' },
-          { label: '禁用', value: 'disabled' }
+          { label: '启用', value: 1 },
+          { label: '禁用', value: 0 }
         ]
       }
     }
