@@ -58,7 +58,7 @@
   import { useTableColumns } from '@/hooks/core/useTableColumns';
   import type { BackendMenuItem } from '@/apis/menu/types';
   import MenuDialog from './modules/menu-dialog.vue';
-  import { fetchMenuAdminList } from '@/apis/menu';
+  import { fetchMenuAdminList, fetchAddMenu, fetchUpdateMenu } from '@/apis/menu';
   import { ElMessageBox, ElTag } from 'element-plus';
 
   import MenuSearch from './modules/menu-search.vue';
@@ -295,11 +295,17 @@
   }
 
   /**
-   * 提交表单数据（mock）
+   * 提交表单数据
    */
-  const handleSubmit = (formData: MenuFormData): void => {
-    console.log('提交数据:', formData);
-    getMenuList();
+  const handleSubmit = async (formData: MenuFormData): Promise<void> => {
+    if (editData.value?.id) {
+      await fetchUpdateMenu({ ...formData, id: editData.value.id });
+    } else {
+      await fetchAddMenu(formData);
+    }
+    ElMessage.success(`${editData.value?.id ? '编辑' : '新增'}成功`);
+    dialogVisible.value = false;
+    await getMenuList();
   };
 
   /**
