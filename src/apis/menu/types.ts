@@ -61,10 +61,10 @@ export type MenuListResponse = BackendMenuItem[];
 
 /** 菜单管理搜索参数 */
 export interface MenuSearchParams {
-  /** 菜单名称（模糊搜索） */
-  title?: string;
-  /** 菜单类型：1-目录 2-菜单 3-按钮 */
-  menuType?: number;
+  /** 关键词（模糊搜索：名称、路由、权限标识） */
+  keyword?: string;
+  /** 菜单类型：directory-目录 menu-菜单 button-按钮 iframe-内嵌 link-外链 */
+  menuType?: string;
   /** 是否启用 */
   isEnabled?: number;
 }
