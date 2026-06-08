@@ -58,7 +58,7 @@
   import { useTableColumns } from '@/hooks/core/useTableColumns';
   import type { BackendMenuItem } from '@/apis/menu/types';
   import MenuDialog from './modules/menu-dialog.vue';
-  import { fetchMenuAdminList, fetchAddMenu, fetchUpdateMenu } from '@/apis/menu';
+  import { fetchMenuAdminList, fetchAddMenu, fetchUpdateMenu, fetchDeleteMenu } from '@/apis/menu';
   import { ElMessageBox, ElTag } from 'element-plus';
 
   import MenuSearch from './modules/menu-search.vue';
@@ -310,7 +310,6 @@
 
   /**
    * 删除菜单
-   * TODO: 对接删除接口，传入菜单 id
    */
   const handleDeleteMenu = async (id: number): Promise<void> => {
     try {
@@ -319,19 +318,16 @@
         cancelButtonText: '取消',
         type: 'warning'
       });
-      // TODO: await deleteMenu(id)
+      await fetchDeleteMenu(id);
       ElMessage.success('删除成功');
       await getMenuList();
-    } catch (error) {
-      if (error !== 'cancel') {
-        ElMessage.error('删除失败');
-      }
+    } catch {
+      // 取消或接口报错（接口报错由全局拦截器展示）
     }
   };
 
   /**
    * 删除权限按钮
-   * TODO: 对接删除接口，传入权限按钮 id
    */
   const handleDeleteAuth = async (id: number): Promise<void> => {
     try {
@@ -340,13 +336,11 @@
         cancelButtonText: '取消',
         type: 'warning'
       });
-      // TODO: await deleteMenu(id)
+      await fetchDeleteMenu(id);
       ElMessage.success('删除成功');
       await getMenuList();
-    } catch (error) {
-      if (error !== 'cancel') {
-        ElMessage.error('删除失败');
-      }
+    } catch {
+      // 取消或接口报错（接口报错由全局拦截器展示）
     }
   };
 

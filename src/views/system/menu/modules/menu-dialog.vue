@@ -613,15 +613,24 @@
     isEnabled: true
   });
 
-  const rules = reactive<FormRules>({
-    title: [
-      { required: true, message: '请输入菜单名称', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-    ],
-    path: [{ required: true, message: '请输入路由地址', trigger: 'blur' }],
-    component: [{ required: true, message: '请输入组件路径', trigger: 'blur' }],
-    link: [{ required: true, message: '请输入外部链接', trigger: 'blur' }],
-    authMark: [{ required: true, message: '请输入权限标识', trigger: 'blur' }]
+  const rules = computed<FormRules>(() => {
+    const base: FormRules = {
+      title: [
+        { required: true, message: '请输入菜单名称', trigger: 'blur' },
+        { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+      ],
+      path: [{ required: true, message: '请输入路由地址', trigger: 'blur' }]
+    };
+    if (form.menuType === 'menu') {
+      base.component = [{ required: true, message: '请输入组件路径', trigger: 'blur' }];
+    }
+    if (form.menuType === 'iframe' || form.menuType === 'link') {
+      base.link = [{ required: true, message: '请输入外部链接', trigger: 'blur' }];
+    }
+    if (form.menuType === 'button') {
+      base.authMark = [{ required: true, message: '请输入权限标识', trigger: 'blur' }];
+    }
+    return base;
   });
 
   const menuTypeLabelMap: Record<MenuType, string> = {
