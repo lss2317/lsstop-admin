@@ -10,6 +10,7 @@ import { useUserStore } from '@/store/modules/user';
 import { useMenuStore } from '@/store/modules/menu';
 import { setWorktab } from '@/utils/navigation';
 import { setPageTitle } from '@/utils/router';
+import { loadingService } from '@/utils/ui';
 import { publicPaths } from '../routes/staticRoutes';
 import { fetchMenuList } from '@/apis/menu';
 import { transformMenuData, transformToRouteRecords } from '@/utils/navigation/menuTransform';
@@ -68,6 +69,9 @@ export function setupBeforeEachGuard(router: Router): void {
       // 登录后初始化（只执行一次）：获取用户信息 + 从接口构建菜单 + 动态注册路由
       if (userStore.isLogin && !menuInited) {
         menuInited = true;
+        pendingLoading = true;
+        loadingService.showLoading();
+
         try {
           // 1. 获取用户信息
           await userStore.fetchUserInfoAction();
@@ -97,6 +101,8 @@ export function setupBeforeEachGuard(router: Router): void {
           // 请求失败由 HTTP 层统一处理（错误提示、token 过期自动登出）
           // 这里只需重置初始化标志，避免卡死在守卫中
           menuInited = false;
+          pendingLoading = false;
+          loadingService.hideLoading();
           return;
         }
       }

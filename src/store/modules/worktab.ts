@@ -13,11 +13,12 @@
  * - 动态路由参数处理
  */
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { router } from '@/router';
 import { LocationQueryRaw, Router } from 'vue-router';
 import { WorkTab } from '@/types';
 import { useCommon } from '@/hooks/core/useCommon';
+import { StorageConfig } from '@/utils/storage/storage-config';
 
 interface WorktabState {
   current: Partial<WorkTab>;
@@ -29,10 +30,36 @@ interface WorktabState {
  * 工作台标签页管理 Store
  */
 export const useWorktabStore = defineStore('worktabStore', () => {
-  // 状态定义
-  const current = ref<Partial<WorkTab>>({});
-  const opened = ref<WorkTab[]>([]);
-  const keepAliveExclude = ref<string[]>([]);
+  // 从 sessionStorage 恢复状态
+  const savedState = sessionStorage.getItem(StorageConfig.WORKTAB_KEY);
+  const parsedState: WorktabState | null = savedState
+    ? (() => {
+        try {
+          return JSON.parse(savedState) as WorktabState;
+        } catch {
+          return null;
+        }
+      })()
+    : null;
+
+  // 状态定义（优先从持久化恢复）
+  const current = ref<Partial<WorkTab>>(parsedState?.current ?? {});
+  const opened = ref<WorkTab[]>(parsedState?.opened ?? []);
+  const keepAliveExclude = ref<string[]>(parsedState?.keepAliveExclude ?? []);
+
+  // 监听状态变化，持久化到 sessionStorage
+  watch(
+    [current, opened, keepAliveExclude],
+    () => {
+      const snapshot: WorktabState = {
+        current: { ...current.value },
+        opened: [...opened.value],
+        keepAliveExclude: [...keepAliveExclude.value]
+      };
+      sessionStorage.setItem(StorageConfig.WORKTAB_KEY, JSON.stringify(snapshot));
+    },
+    { deep: true }
+  );
 
   // 计算属性
   const hasOpenedTabs = computed(() => opened.value.length > 0);
@@ -452,6 +479,7 @@ export const useWorktabStore = defineStore('worktabStore', () => {
     current.value = {};
     opened.value = [];
     keepAliveExclude.value = [];
+    sessionStorage.removeItem(StorageConfig.WORKTAB_KEY);
   };
 
   /**

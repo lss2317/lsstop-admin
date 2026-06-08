@@ -11,6 +11,9 @@ export class StorageConfig {
   /** 刷新令牌键名 */
   static readonly REFRESH_TOKEN_KEY = 'lsstop-refresh-token';
 
+  /** 工作标签页状态持久化键名 */
+  static readonly WORKTAB_KEY = 'lsstop-worktab';
+
   /** 响应式布局切换时暂存桌面端菜单类型 */
   static readonly RESPONSIVE_MENU_TYPE_KEY = 'lsstop-responsive-menu-type';
 
