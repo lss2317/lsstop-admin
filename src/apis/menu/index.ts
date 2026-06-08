@@ -4,12 +4,7 @@
  * @module apis/menu
  */
 import request from '@/utils/http';
-import type {
-  BackendMenuItem,
-  MenuListResponse,
-  MenuSearchParams,
-  MenuBatchDeleteParams
-} from './types';
+import type { BackendMenuItem, MenuListResponse, MenuSearchParams } from './types';
 
 /**
  * 获取当前用户的菜单列表（树形结构）
@@ -61,16 +56,5 @@ export function fetchUpdateMenu(data: Partial<BackendMenuItem>) {
 export function fetchDeleteMenu(id: number) {
   return request.del<void>({
     url: `/menu/delete/${id}`
-  });
-}
-
-/**
- * 批量删除菜单
- * @param params 菜单ID列表
- */
-export function fetchBatchDeleteMenu(params: MenuBatchDeleteParams) {
-  return request.post<void>({
-    url: '/menu/delete',
-    data: params
   });
 }

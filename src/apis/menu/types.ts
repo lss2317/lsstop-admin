@@ -68,9 +68,3 @@ export interface MenuSearchParams {
   /** 是否启用 */
   isEnabled?: number;
 }
-
-/** 批量删除请求参数 */
-export interface MenuBatchDeleteParams {
-  /** 菜单ID列表 */
-  ids: number[];
-}
