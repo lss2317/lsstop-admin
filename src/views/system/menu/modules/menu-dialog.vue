@@ -76,39 +76,11 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="权限标识">
+              <ElFormItem label="路由标识">
                 <ElInput v-model="form.name" placeholder="如：System" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="图标">
-                <div class="flex w-full items-center">
-                  <div
-                    class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]"
-                  >
-                    <div
-                      class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700"
-                    >
-                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-700" />
-                      <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
-                    </div>
-                    <ElInput
-                      v-model="form.icon"
-                      placeholder="如：ri:user-line"
-                      class="icon-input-inner min-w-0 flex-1 self-stretch"
-                      :readonly="true"
-                    />
-                    <button
-                      type="button"
-                      class="c-p flex h-full shrink-0 items-center border-l border-[var(--el-border-color-light)] bg-box px-3 text-[13px] text-theme tad-200 hover:bg-[var(--art-gray-200)] dark:hover:bg-[var(--art-gray-300)]"
-                      @click="showIconPicker = true"
-                    >
-                      选择图标
-                    </button>
-                  </div>
-                </div>
-              </ElFormItem>
-            </ElCol>
+            <MenuIconInput :model-value="form.icon" @select="showIconPicker = true" />
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem>
                 <template #label>
@@ -182,39 +154,11 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="权限标识">
+              <ElFormItem label="路由标识">
                 <ElInput v-model="form.name" placeholder="如：User" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="图标">
-                <div class="flex w-full items-center">
-                  <div
-                    class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]"
-                  >
-                    <div
-                      class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700"
-                    >
-                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-700" />
-                      <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
-                    </div>
-                    <ElInput
-                      v-model="form.icon"
-                      placeholder="如：ri:user-line"
-                      class="icon-input-inner min-w-0 flex-1 self-stretch"
-                      :readonly="true"
-                    />
-                    <button
-                      type="button"
-                      class="c-p flex h-full shrink-0 items-center border-l border-[var(--el-border-color-light)] bg-box px-3 text-[13px] text-theme tad-200 hover:bg-[var(--art-gray-200)] dark:hover:bg-[var(--art-gray-300)]"
-                      @click="showIconPicker = true"
-                    >
-                      选择图标
-                    </button>
-                  </div>
-                </div>
-              </ElFormItem>
-            </ElCol>
+            <MenuIconInput :model-value="form.icon" @select="showIconPicker = true" />
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem>
                 <template #label>
@@ -324,39 +268,11 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="权限标识">
+              <ElFormItem label="路由标识">
                 <ElInput v-model="form.name" placeholder="如：Iframe" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="图标">
-                <div class="flex w-full items-center">
-                  <div
-                    class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]"
-                  >
-                    <div
-                      class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700"
-                    >
-                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-700" />
-                      <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
-                    </div>
-                    <ElInput
-                      v-model="form.icon"
-                      placeholder="如：ri:user-line"
-                      class="icon-input-inner min-w-0 flex-1 self-stretch"
-                      :readonly="true"
-                    />
-                    <button
-                      type="button"
-                      class="c-p flex h-full shrink-0 items-center border-l border-[var(--el-border-color-light)] bg-box px-3 text-[13px] text-theme tad-200 hover:bg-[var(--art-gray-200)] dark:hover:bg-[var(--art-gray-300)]"
-                      @click="showIconPicker = true"
-                    >
-                      选择图标
-                    </button>
-                  </div>
-                </div>
-              </ElFormItem>
-            </ElCol>
+            <MenuIconInput :model-value="form.icon" @select="showIconPicker = true" />
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem>
                 <template #label>
@@ -403,39 +319,11 @@
               </ElFormItem>
             </ElCol>
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="权限标识">
+              <ElFormItem label="路由标识">
                 <ElInput v-model="form.name" placeholder="如：Link" />
               </ElFormItem>
             </ElCol>
-            <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
-              <ElFormItem label="图标">
-                <div class="flex w-full items-center">
-                  <div
-                    class="flex h-[var(--el-component-custom-height)] min-w-0 flex-1 items-stretch overflow-hidden rounded-custom-sm border border-[var(--el-border-color-light)] bg-transparent transition-colors duration-200 hover:border-[var(--el-border-color)] focus-within:border-[var(--el-border-color)]"
-                  >
-                    <div
-                      class="flex h-full w-10 shrink-0 items-center justify-center border-r border-[var(--el-border-color-light)] bg-box text-g-700"
-                    >
-                      <ArtSvgIcon v-if="form.icon" :icon="form.icon" class="text-lg text-g-700" />
-                      <ArtSvgIcon v-else icon="ri:apps-line" class="text-lg text-g-500" />
-                    </div>
-                    <ElInput
-                      v-model="form.icon"
-                      placeholder="如：ri:user-line"
-                      class="icon-input-inner min-w-0 flex-1 self-stretch"
-                      :readonly="true"
-                    />
-                    <button
-                      type="button"
-                      class="c-p flex h-full shrink-0 items-center border-l border-[var(--el-border-color-light)] bg-box px-3 text-[13px] text-theme tad-200 hover:bg-[var(--art-gray-200)] dark:hover:bg-[var(--art-gray-300)]"
-                      @click="showIconPicker = true"
-                    >
-                      选择图标
-                    </button>
-                  </div>
-                </div>
-              </ElFormItem>
-            </ElCol>
+            <MenuIconInput :model-value="form.icon" @select="showIconPicker = true" />
             <ElCol :xs="12" :sm="12" :md="12" :lg="12" :xl="12">
               <ElFormItem>
                 <template #label>
@@ -524,8 +412,8 @@
 <script setup lang="ts">
   import type { FormRules } from 'element-plus';
   import { ElIcon, ElTooltip } from 'element-plus';
-  import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import IconPickerDialog from './icon-picker-dialog.vue';
+  import MenuIconInput from './menu-icon-input.vue';
   import { QuestionFilled } from '@element-plus/icons-vue';
   import type { BackendMenuItem } from '@/apis/menu/types';
   import { fetchMenuAdminList } from '@/apis/menu';
@@ -721,6 +609,7 @@
       form.title = row.title || '';
       form.authMark = row.authMark || '';
       form.sort = row.sort || 1;
+      form.parentId = row.parentId ?? undefined;
     } else {
       const row = props.editData;
       form.id = row.id || 0;
