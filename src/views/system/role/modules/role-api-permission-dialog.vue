@@ -13,9 +13,10 @@
         :data="apiPermissionList"
         show-checkbox
         node-key="id"
+        check-strictly
         :default-expand-all="isExpandAll"
         :props="treeProps"
-        @check="handleTreeCheck"
+        @check="handleCascadeCheck"
       >
         <template #default="{ data }">
           <div class="api-node">
@@ -193,6 +194,55 @@
     const allKeys = getAllLeafKeys(apiPermissionList.value);
 
     isSelectAll.value = checkedKeys.length === allKeys.length && allKeys.length > 0;
+  };
+
+  /** 防止 handleCascadeCheck 中 setCheckedKeys 触发递归 */
+  let isCascading = false;
+
+  /**
+   * 收集节点的所有子孙 ID
+   */
+  const collectAllDescendantIds = (treeNode: any): number[] => {
+    const ids: number[] = [];
+    const stack = [treeNode];
+    while (stack.length) {
+      const node = stack.pop()!;
+      ids.push(node.data.id);
+      if (node.childNodes?.length) {
+        stack.push(...node.childNodes);
+      }
+    }
+    return ids;
+  };
+
+  /**
+   * 级联勾选：勾选父节点时自动勾选/取消所有子孙
+   * 子节点单独操作不影响父节点
+   */
+  const handleCascadeCheck = (data: ApiPermissionNode, { checkedKeys }: { checkedKeys: number[] }) => {
+    if (isCascading) return;
+    const tree = treeRef.value;
+    if (!tree) return;
+
+    const treeNode = tree.getNode(data.id);
+    if (!treeNode?.childNodes?.length) {
+      handleTreeCheck();
+      return;
+    }
+
+    const isChecked = checkedKeys.includes(data.id);
+    const descendantIds = collectAllDescendantIds(treeNode).filter((id) => id !== data.id);
+
+    isCascading = true;
+    if (isChecked) {
+      tree.setCheckedKeys([...new Set([...checkedKeys, ...descendantIds])]);
+    } else {
+      const descendantSet = new Set(descendantIds);
+      tree.setCheckedKeys(checkedKeys.filter((k: number) => !descendantSet.has(k)));
+    }
+    isCascading = false;
+
+    handleTreeCheck();
   };
 
   /**
