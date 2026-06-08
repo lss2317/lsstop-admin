@@ -13,10 +13,9 @@
         :data="apiPermissionList"
         show-checkbox
         node-key="id"
-        check-strictly
         :default-expand-all="isExpandAll"
         :props="treeProps"
-        @check="handleCascadeCheck"
+        @check="handleTreeCheck"
       >
         <template #default="{ data }">
           <div class="api-node">
@@ -32,7 +31,7 @@
     <template #footer>
       <ElButton @click="toggleExpandAll">{{ isExpandAll ? '全部收起' : '全部展开' }}</ElButton>
       <ElButton @click="toggleSelectAll" style="margin-left: 8px">{{
-        isSelectAll ? '取消全选' : '全部选择'
+        selectAllLabel
       }}</ElButton>
       <ElButton type="primary" @click="savePermission" style="margin-left: 8px">保存</ElButton>
     </template>
@@ -66,7 +65,14 @@
 
   const treeRef = ref();
   const isExpandAll = ref(true);
-  const isSelectAll = ref(false);
+  const selectState = ref<'none' | 'partial' | 'all'>('none');
+  /** 全选按钮文案 */
+  const selectAllLabel = computed(() => {
+    if (selectState.value === 'all') return '取消全选';
+    if (selectState.value === 'partial') return '全选';
+    return '全部选择';
+  });
+
   const loading = ref(false);
 
   /**
@@ -105,7 +111,8 @@
           ]);
           apiPermissionList.value = tree;
           await nextTick();
-          treeRef.value?.setCheckedKeys(permission);
+          const leafKeys = getAllLeafKeys(tree);
+          treeRef.value?.setCheckedKeys(permission.filter((id) => leafKeys.includes(id)));
         } finally {
           loading.value = false;
         }
@@ -134,7 +141,7 @@
   };
 
   /**
-   * 获取所有叶子节点的 key
+   * 递归获取所有叶子节点的 key
    */
   const getAllLeafKeys = (nodes: ApiPermissionNode[]): number[] => {
     const keys: number[] = [];
@@ -173,14 +180,11 @@
     const tree = treeRef.value;
     if (!tree) return;
 
-    if (!isSelectAll.value) {
-      const allKeys = getAllLeafKeys(apiPermissionList.value);
-      tree.setCheckedKeys(allKeys);
-    } else {
+    if (selectState.value === 'all') {
       tree.setCheckedKeys([]);
+    } else {
+      tree.setCheckedKeys(getAllLeafKeys(apiPermissionList.value));
     }
-
-    isSelectAll.value = !isSelectAll.value;
   };
 
   /**
@@ -193,56 +197,13 @@
     const checkedKeys = tree.getCheckedKeys();
     const allKeys = getAllLeafKeys(apiPermissionList.value);
 
-    isSelectAll.value = checkedKeys.length === allKeys.length && allKeys.length > 0;
-  };
-
-  /** 防止 handleCascadeCheck 中 setCheckedKeys 触发递归 */
-  let isCascading = false;
-
-  /**
-   * 收集节点的所有子孙 ID
-   */
-  const collectAllDescendantIds = (treeNode: any): number[] => {
-    const ids: number[] = [];
-    const stack = [treeNode];
-    while (stack.length) {
-      const node = stack.pop()!;
-      ids.push(node.data.id);
-      if (node.childNodes?.length) {
-        stack.push(...node.childNodes);
-      }
-    }
-    return ids;
-  };
-
-  /**
-   * 级联勾选：勾选父节点时自动勾选/取消所有子孙
-   * 子节点单独操作不影响父节点
-   */
-  const handleCascadeCheck = (data: ApiPermissionNode, { checkedKeys }: { checkedKeys: number[] }) => {
-    if (isCascading) return;
-    const tree = treeRef.value;
-    if (!tree) return;
-
-    const treeNode = tree.getNode(data.id);
-    if (!treeNode?.childNodes?.length) {
-      handleTreeCheck();
-      return;
-    }
-
-    const isChecked = checkedKeys.includes(data.id);
-    const descendantIds = collectAllDescendantIds(treeNode).filter((id) => id !== data.id);
-
-    isCascading = true;
-    if (isChecked) {
-      tree.setCheckedKeys([...new Set([...checkedKeys, ...descendantIds])]);
+    if (checkedKeys.length === 0) {
+      selectState.value = 'none';
+    } else if (allKeys.length > 0 && checkedKeys.length === allKeys.length) {
+      selectState.value = 'all';
     } else {
-      const descendantSet = new Set(descendantIds);
-      tree.setCheckedKeys(checkedKeys.filter((k: number) => !descendantSet.has(k)));
+      selectState.value = 'partial';
     }
-    isCascading = false;
-
-    handleTreeCheck();
   };
 
   /**
@@ -252,7 +213,7 @@
     visible.value = false;
     apiPermissionList.value = [];
     treeRef.value?.setCheckedKeys([]);
-    isSelectAll.value = false;
+    selectState.value = 'none';
   };
 
   /**
@@ -261,7 +222,9 @@
   const savePermission = async () => {
     if (!props.roleData) return;
 
-    const apiIds: number[] = treeRef.value?.getCheckedKeys() ?? [];
+    const checkedKeys: number[] = treeRef.value?.getCheckedKeys() ?? [];
+    const leafKeys = getAllLeafKeys(apiPermissionList.value);
+    const apiIds = checkedKeys.filter((id) => leafKeys.includes(id));
 
     await fetchSaveApiPermission({
       roleId: props.roleData.id,
