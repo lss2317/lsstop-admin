@@ -492,7 +492,7 @@
     sort: 1,
     isHide: false,
     isHideTab: false,
-    keepAlive: true,
+    keepAlive: false,
     isFullPage: false,
     fixedTab: false,
     link: '',
@@ -590,7 +590,7 @@
     form.sort = 1;
     form.isHide = false;
     form.isHideTab = false;
-    form.keepAlive = true;
+    form.keepAlive = false;
     form.isFullPage = false;
     form.fixedTab = false;
     form.link = '';
