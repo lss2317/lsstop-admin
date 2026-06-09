@@ -41,3 +41,12 @@
     select: [];
   }>();
 </script>
+
+<style scoped>
+  .icon-input-inner :deep(.el-input__wrapper) {
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 11px;
+  }
+</style>
