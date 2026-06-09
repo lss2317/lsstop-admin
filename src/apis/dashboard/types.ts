@@ -4,8 +4,10 @@
 export interface StatCardItem {
   /** 卡片标识（"totalVisits" | "totalUsers" | "totalComments" | "totalMessages"） */
   key: 'totalVisits' | 'totalUsers' | 'totalComments' | 'totalMessages';
-  /** 数值 */
+  /** 累计数值 */
   num: number;
+  /** 今日新增 */
+  todayCount: number;
 }
 
 /** 日统计点 */
