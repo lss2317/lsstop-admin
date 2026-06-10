@@ -627,7 +627,9 @@
 
     try {
       await formRef.value.validate();
-      emit('submit', { ...form });
+      // parentId 归一化：undefined → 0（顶级），确保清空上级菜单的意图能正确传递
+      const submitData = { ...form, parentId: form.parentId ?? 0 };
+      emit('submit', submitData);
     } catch {
       ElMessage.error('表单校验失败，请检查输入');
     }
