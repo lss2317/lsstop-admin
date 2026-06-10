@@ -21,11 +21,10 @@
                   :disabled="disableMenuType"
                   class="menu-type-group"
                 >
-                  <ElRadioButton value="directory" :disabled="disableDirectoryOption"
-                    >目录</ElRadioButton
+                  <ElRadioButton value="directory">目录</ElRadioButton
                   >
                   <ElRadioButton value="menu">菜单</ElRadioButton>
-                  <ElRadioButton value="button" :disabled="disableButtonOption">按钮</ElRadioButton>
+                  <ElRadioButton value="button">按钮</ElRadioButton>
                   <ElRadioButton value="iframe">内嵌</ElRadioButton>
                   <ElRadioButton value="link">外链</ElRadioButton>
                 </ElRadioGroup>
@@ -535,19 +534,8 @@
   });
 
   const disableMenuType = computed(() => {
-    // 编辑目录时禁用（目录下有子菜单，不能改类型）
-    if (isEdit.value && form.menuType === 'directory') return true;
-    // 编辑按钮时禁用（按钮是权限条目，数据结构完全不同）
-    if (isEdit.value && form.menuType === 'button') return true;
-    return false;
-  });
-
-  /** 编辑菜单/内嵌/外链时，禁用目录和按钮选项（只能在三者间切换） */
-  const disableDirectoryOption = computed(() => {
-    return isEdit.value && ['menu', 'iframe', 'link'].includes(form.menuType);
-  });
-  const disableButtonOption = computed(() => {
-    return isEdit.value && ['menu', 'iframe', 'link'].includes(form.menuType);
+    // 编辑时所有类型禁用（后端要求菜单类型不可修改）
+    return isEdit.value;
   });
 
   /** 加载上级菜单选项（树形结构） */
