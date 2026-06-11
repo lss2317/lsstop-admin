@@ -10,8 +10,8 @@
  * 5. 按钮权限提取到 meta.authList
  */
 import { h } from 'vue';
-import { RouterView } from 'vue-router';
 import type { RouteRecordRaw } from 'vue-router';
+import { RouterView } from 'vue-router';
 import type { BackendMenuItem } from '@/apis/menu/types';
 import type { AppRouteRecord } from '@/types/router';
 import { IframeRouteManager } from '@/router/core';
@@ -142,8 +142,7 @@ export function transformMenuData(items: BackendMenuItem[], parentPath = ''): Ap
   return items.map((item) => {
     // 1. 路径规范化（iframe 菜单使用 /outside/iframe/{normalizedPath} 格式）
     const isIframeMenu = item.menuType === 4;
-    const basePath = buildFullPath(item.path, parentPath);
-    const fullPath = isIframeMenu ? `/outside/iframe/${basePath.replace(/^\//, '')}` : basePath;
+    const fullPath = buildFullPath(item.path, parentPath);
 
     // 2. 基础转换
     const route: AppRouteRecord = {
