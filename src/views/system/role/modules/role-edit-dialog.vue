@@ -172,8 +172,8 @@
       }
       emit('success');
       handleClose();
-    } catch (error) {
-      console.log('表单验证失败:', error);
+    } catch {
+      // 表单校验失败或接口报错（接口报错由全局拦截器展示）
     }
   };
 </script>

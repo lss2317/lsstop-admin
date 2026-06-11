@@ -21,8 +21,7 @@
                   :disabled="disableMenuType"
                   class="menu-type-group"
                 >
-                  <ElRadioButton value="directory">目录</ElRadioButton
-                  >
+                  <ElRadioButton value="directory">目录</ElRadioButton>
                   <ElRadioButton value="menu">菜单</ElRadioButton>
                   <ElRadioButton value="button">按钮</ElRadioButton>
                   <ElRadioButton value="iframe">内嵌</ElRadioButton>

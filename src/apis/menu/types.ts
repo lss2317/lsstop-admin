@@ -54,8 +54,6 @@ export interface BackendMenuItem {
   children?: BackendMenuItem[];
 }
 
-// ==================== 菜单管理页 ====================
-
 /** 菜单管理列表响应（树形结构，无分页） */
 export type MenuListResponse = BackendMenuItem[];
 

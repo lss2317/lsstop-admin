@@ -105,8 +105,8 @@
       if (searchForm.menuType) params.menuType = searchForm.menuType;
       if (searchForm.isEnabled !== undefined) params.isEnabled = searchForm.isEnabled;
       tableData.value = await fetchMenuAdminList(params);
-    } catch (error) {
-      throw error instanceof Error ? error : new Error('获取菜单失败');
+    } catch {
+      // 接口报错由全局拦截器展示
     } finally {
       loading.value = false;
     }
