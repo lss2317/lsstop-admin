@@ -445,7 +445,7 @@
 
   interface Props {
     visible: boolean;
-    editData?: BackendMenuItem | any;
+    editData?: BackendMenuItem | { _parentRow: BackendMenuItem } | null;
     type?: 'menu' | 'button';
   }
 
@@ -587,7 +587,7 @@
   };
 
   const loadFormData = (): void => {
-    if (!props.editData) return;
+    if (!props.editData || !('id' in props.editData)) return;
 
     isEdit.value = true;
 
@@ -658,7 +658,7 @@
       if (newVal) {
         resetForm();
 
-        if (props.editData && !props.editData._parentRow) {
+        if (props.editData && !('_parentRow' in props.editData)) {
           // 编辑模式
           form.menuType = props.type === 'button' ? 'button' : inferMenuType(props.editData);
           isEdit.value = true;
@@ -671,9 +671,9 @@
           isEdit.value = false;
           form.menuType = props.type === 'button' ? 'button' : 'directory';
           loadParentMenuOptions();
-          if (props.editData?._parentRow) {
+          if (props.editData && '_parentRow' in props.editData) {
+            const parentRow = props.editData._parentRow;
             nextTick(() => {
-              const parentRow = props.editData._parentRow;
               form.parentId = parentRow.id;
             });
           }

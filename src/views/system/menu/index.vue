@@ -74,7 +74,7 @@
   // 抽屉相关
   const dialogVisible = ref(false);
   const dialogType = ref<'menu' | 'button'>('menu');
-  const editData = ref<BackendMenuItem | any>(null);
+  const editData = ref<BackendMenuItem | { _parentRow: BackendMenuItem } | null>(null);
 
   // 搜索相关
   interface SearchForm {
@@ -298,12 +298,13 @@
    * 提交表单数据
    */
   const handleSubmit = async (formData: MenuFormData): Promise<void> => {
-    if (editData.value?.id) {
-      await fetchUpdateMenu({ ...formData, id: editData.value.id });
+    const existingId = editData.value && 'id' in editData.value ? editData.value.id : undefined;
+    if (existingId) {
+      await fetchUpdateMenu({ ...formData, id: existingId });
     } else {
       await fetchAddMenu(formData);
     }
-    ElMessage.success(`${editData.value?.id ? '编辑' : '新增'}成功`);
+    ElMessage.success(`${existingId ? '编辑' : '新增'}成功`);
     dialogVisible.value = false;
     await getMenuList();
   };
