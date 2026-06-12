@@ -62,6 +62,7 @@
   import { ElMessageBox, ElTag } from 'element-plus';
 
   import MenuSearch from './modules/menu-search.vue';
+  import { formatDateTime } from '@/utils';
 
   defineOptions({ name: 'Menu' });
 
@@ -174,9 +175,9 @@
     },
     {
       prop: 'updateTime',
-      label: '编辑时间',
+      label: '更新时间',
       width: 110,
-      formatter: (row: BackendMenuItem) => row.updateTime || ''
+      formatter: (row: BackendMenuItem) => formatDateTime(row.updateTime)
     },
     {
       prop: 'isEnabled',
