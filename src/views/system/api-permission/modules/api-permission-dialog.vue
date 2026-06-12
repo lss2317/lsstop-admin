@@ -32,7 +32,7 @@
               <ElFormItem label="上级权限" prop="parentId">
                 <ElTreeSelect
                   v-model="form.parentId"
-                  :data="treeData"
+                  :data="parentOptions"
                   :props="{ label: 'description', value: 'id', children: 'children' }"
                   class="w-full"
                   clearable
@@ -82,7 +82,7 @@
               <ElFormItem label="上级权限" prop="parentId">
                 <ElTreeSelect
                   v-model="form.parentId"
-                  :data="treeData"
+                  :data="parentOptions"
                   :props="{ label: 'description', value: 'id', children: 'children' }"
                   class="w-full"
                   clearable
@@ -222,6 +222,19 @@
   });
 
   const form = reactive(defaultForm());
+
+  /** 过滤树形数据，只保留目录节点（没有 requestMethod） */
+  const parentOptions = computed(() => {
+    const filterDirectories = (items: ApiPermissionItem[]): ApiPermissionItem[] => {
+      return items
+        .filter((item) => !item.requestMethod)
+        .map((item) => ({
+          ...item,
+          children: item.children ? filterDirectories(item.children) : []
+        }));
+    };
+    return filterDirectories(props.treeData);
+  });
 
   const rules = computed<FormRules>(() => {
     const base: FormRules = {
