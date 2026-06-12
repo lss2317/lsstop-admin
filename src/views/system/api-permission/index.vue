@@ -129,7 +129,11 @@
       width: 100,
       formatter: (row: ApiPermissionItem) => {
         if (!row.requestMethod) return h(ElTag, { type: 'info', size: 'small' }, () => '目录');
-        return h(ElTag, { type: getMethodTag(row.requestMethod), size: 'small' }, () => row.requestMethod);
+        return h(
+          ElTag,
+          { type: getMethodTag(row.requestMethod), size: 'small' },
+          () => row.requestMethod
+        );
       }
     },
     {
@@ -166,12 +170,18 @@
       align: 'center',
       formatter: (row: ApiPermissionItem) => {
         const buttonStyle = { style: 'text-align: right' };
-        return h('div', buttonStyle, [
-          h(ArtButtonTable, {
-            type: 'add',
-            onClick: () => handleAddChild(row),
-            title: '新增子权限'
-          }),
+        const buttons: VNode[] = [];
+        // 目录节点可以添加子权限，接口节点不能
+        if (!row.requestMethod) {
+          buttons.push(
+            h(ArtButtonTable, {
+              type: 'add',
+              onClick: () => handleAddChild(row),
+              title: '新增子权限'
+            })
+          );
+        }
+        buttons.push(
           h(ArtButtonTable, {
             type: 'edit',
             onClick: () => handleEdit(row)
@@ -180,7 +190,8 @@
             type: 'delete',
             onClick: () => handleDelete(row.id)
           })
-        ]);
+        );
+        return h('div', buttonStyle, buttons);
       }
     }
   ]);
@@ -188,7 +199,11 @@
   const tableData = ref<ApiPermissionItem[]>([]);
 
   const handleReset = (): void => {
-    Object.assign(searchForm, { keyword: undefined, requestMethod: undefined, isEnabled: undefined });
+    Object.assign(searchForm, {
+      keyword: undefined,
+      requestMethod: undefined,
+      isEnabled: undefined
+    });
     getList();
   };
 
