@@ -50,7 +50,7 @@
                 <ElInput
                   v-model="form.description"
                   placeholder="如：文章管理"
-                  :maxlength="255"
+                  :maxlength="50"
                   clearable
                 />
               </ElFormItem>
@@ -67,7 +67,7 @@
                 </template>
                 <ElInputNumber
                   v-model="form.sort"
-                  :min="0"
+                  :min="1"
                   :max="9999"
                   controls-position="right"
                   style="width: 100%"
@@ -100,7 +100,7 @@
                 <ElInput
                   v-model="form.description"
                   placeholder="如：文章列表"
-                  :maxlength="255"
+                  :maxlength="50"
                   clearable
                 />
               </ElFormItem>
@@ -120,7 +120,7 @@
                 <ElInput
                   v-model="form.requestUrl"
                   placeholder="如：/admin/article/list"
-                  :maxlength="255"
+                  :maxlength="200"
                   clearable
                 />
               </ElFormItem>
@@ -137,7 +137,7 @@
                 </template>
                 <ElInputNumber
                   v-model="form.sort"
-                  :min="0"
+                  :min="1"
                   :max="9999"
                   controls-position="right"
                   style="width: 100%"
@@ -309,6 +309,11 @@
       await formRef.value.validate();
       submitting.value = true;
       const { apiType, ...payload } = form as Record<string, any>;
+      // 目录类型不传接口相关字段
+      if (apiType === 'directory') {
+        delete payload.requestMethod;
+        delete payload.requestUrl;
+      }
       // parentId 归一化：undefined → 0（顶级）
       emit('submit', { ...payload, parentId: form.parentId ?? 0 });
     } catch {

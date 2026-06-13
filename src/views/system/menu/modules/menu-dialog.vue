@@ -92,6 +92,7 @@
                 <ElInputNumber
                   v-model="form.sort"
                   :min="1"
+                  :max="9999"
                   controls-position="right"
                   style="width: 100%"
                 />
@@ -170,6 +171,7 @@
                 <ElInputNumber
                   v-model="form.sort"
                   :min="1"
+                  :max="9999"
                   controls-position="right"
                   style="width: 100%"
                 />
@@ -217,6 +219,7 @@
                 <ElInputNumber
                   v-model="form.sort"
                   :min="1"
+                  :max="9999"
                   controls-position="right"
                   style="width: 100%"
                 />
@@ -284,6 +287,7 @@
                 <ElInputNumber
                   v-model="form.sort"
                   :min="1"
+                  :max="9999"
                   controls-position="right"
                   style="width: 100%"
                 />
@@ -335,6 +339,7 @@
                 <ElInputNumber
                   v-model="form.sort"
                   :min="1"
+                  :max="9999"
                   controls-position="right"
                   style="width: 100%"
                 />
@@ -627,7 +632,36 @@
     try {
       await formRef.value.validate();
       // parentId 归一化：undefined → 0（顶级），确保清空上级菜单的意图能正确传递
-      const submitData = { ...form, parentId: form.parentId ?? 0 };
+      const submitData = { ...form, parentId: form.parentId ?? 0 } as any;
+      // 按类型清除不属于当前类型的字段，避免脏数据泄漏到后端
+      if (form.menuType === 'directory') {
+        delete submitData.component;
+        delete submitData.link;
+        delete submitData.authMark;
+        delete submitData.keepAlive;
+        delete submitData.fixedTab;
+        delete submitData.isFullPage;
+        delete submitData.activePath;
+      } else if (form.menuType === 'button') {
+        delete submitData.name;
+        delete submitData.path;
+        delete submitData.component;
+        delete submitData.icon;
+        delete submitData.link;
+        delete submitData.isHide;
+        delete submitData.isHideTab;
+        delete submitData.keepAlive;
+        delete submitData.fixedTab;
+        delete submitData.isFullPage;
+        delete submitData.activePath;
+      } else if (form.menuType === 'iframe' || form.menuType === 'link') {
+        delete submitData.component;
+        delete submitData.authMark;
+        delete submitData.keepAlive;
+        delete submitData.fixedTab;
+        delete submitData.isFullPage;
+        delete submitData.activePath;
+      }
       emit('submit', submitData);
     } catch {
       ElMessage.error('表单校验失败，请检查输入');
