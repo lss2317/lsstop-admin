@@ -28,7 +28,7 @@
                   <ElRadioButton value="link">外链</ElRadioButton>
                 </ElRadioGroup>
                 <p class="w-full text-xs leading-5 text-[var(--el-text-color-secondary)]">
-                  新建时可直接选择类型。按钮权限仍需挂在具体菜单下。
+                  新建时可直接选择类型。按钮权限仅能挂在具体菜单下。
                 </p>
               </div>
             </ElFormItem>
