@@ -72,6 +72,8 @@ export interface UserSearchParams {
   userUid?: string;
   /** 昵称（模糊搜索） */
   nickname?: string;
+  /** 邮箱（模糊搜索） */
+  email?: string;
   /** 状态 */
   status?: UserStatus;
   /** 当前页 */
@@ -94,10 +96,14 @@ export interface UserListResponse {
 
 /** 新增/编辑用户表单参数 */
 export interface UserFormParams {
-  /** 用户UID */
-  userUid: string;
+  /** 用户UID（编辑时后端从路径获取，新增时后端自动生成） */
+  userUid?: string;
   /** 昵称 */
   nickname: string;
+  /** 邮箱 */
+  email: string;
+  /** 密码（仅新增时使用） */
+  password?: string;
   /** 头像 */
   avatar: string;
   /** 个人网站 */

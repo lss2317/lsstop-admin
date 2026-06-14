@@ -327,7 +327,9 @@ const MOCK_USER_DETAILS: Record<string, UserDetail> = {
 /**
  * 模拟获取用户列表
  */
-export function mockFetchUserList(params: UserSearchParams = { current: 1, size: 20 }): Promise<UserListResponse> {
+export function mockFetchUserList(
+  params: UserSearchParams = { current: 1, size: 20 }
+): Promise<UserListResponse> {
   return new Promise((resolve) => {
     setTimeout(() => {
       let filtered = [...MOCK_USER_LIST];
@@ -337,6 +339,9 @@ export function mockFetchUserList(params: UserSearchParams = { current: 1, size:
       }
       if (params.nickname) {
         filtered = filtered.filter((u) => u.nickname.includes(params.nickname!));
+      }
+      if (params.email) {
+        filtered = filtered.filter((u) => (u.email || '').includes(params.email!));
       }
       if (params.status !== undefined) {
         filtered = filtered.filter((u) => u.status === params.status);
@@ -524,9 +529,7 @@ const MOCK_API_PERMISSION_TREE: ApiPermissionNode[] = [
  * 模拟获取全量菜单权限树
  */
 export function mockFetchMenuPermissionTree(): Promise<MenuPermissionNode[]> {
-  return Promise.resolve(
-    JSON.parse(JSON.stringify(MOCK_MENU_PERMISSION_TREE))
-  );
+  return Promise.resolve(JSON.parse(JSON.stringify(MOCK_MENU_PERMISSION_TREE)));
 }
 
 /**
@@ -536,7 +539,11 @@ export function mockFetchUserMenuPermission(userUid: string): Promise<number[]> 
   return new Promise((resolve) => {
     setTimeout(() => {
       // 模拟：不同用户有不同权限
-      if (userUid === 'a1b2c3d4e5f6g7h8') resolve([101, 102, 2011, 2012, 2013, 2014, 2021, 2022, 3011, 3012, 3013, 3014, 3021, 3022, 3023, 3024, 3031, 3032, 3033, 3034, 4011, 4021]);
+      if (userUid === 'a1b2c3d4e5f6g7h8')
+        resolve([
+          101, 102, 2011, 2012, 2013, 2014, 2021, 2022, 3011, 3012, 3013, 3014, 3021, 3022, 3023,
+          3024, 3031, 3032, 3033, 3034, 4011, 4021
+        ]);
       else if (userUid === 'i9j0k1l2m3n4o5p6') resolve([101, 2011, 2012, 2013, 2021, 3011]);
       else if (userUid === 'q7r8s9t0u1v2w3x4') resolve([101, 2011, 2021, 3011, 4011, 4021]);
       else resolve([]);
@@ -557,9 +564,7 @@ export function mockFetchSaveUserMenuPermission(): Promise<void> {
  * 模拟获取全量接口权限树
  */
 export function mockFetchApiPermissionTree(): Promise<ApiPermissionNode[]> {
-  return Promise.resolve(
-    JSON.parse(JSON.stringify(MOCK_API_PERMISSION_TREE))
-  );
+  return Promise.resolve(JSON.parse(JSON.stringify(MOCK_API_PERMISSION_TREE)));
 }
 
 /**
@@ -568,7 +573,10 @@ export function mockFetchApiPermissionTree(): Promise<ApiPermissionNode[]> {
 export function mockFetchUserApiPermission(userUid: string): Promise<number[]> {
   return new Promise((resolve) => {
     setTimeout(() => {
-      if (userUid === 'a1b2c3d4e5f6g7h8') resolve([101, 102, 103, 104, 105, 201, 202, 203, 204, 301, 302, 303, 304, 401, 402, 403, 404]);
+      if (userUid === 'a1b2c3d4e5f6g7h8')
+        resolve([
+          101, 102, 103, 104, 105, 201, 202, 203, 204, 301, 302, 303, 304, 401, 402, 403, 404
+        ]);
       else if (userUid === 'i9j0k1l2m3n4o5p6') resolve([101, 102, 201, 202, 303, 304]);
       else if (userUid === 'q7r8s9t0u1v2w3x4') resolve([101, 201, 301, 401, 402]);
       else resolve([]);

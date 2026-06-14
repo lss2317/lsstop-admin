@@ -30,7 +30,6 @@
         :data="data"
         :columns="columns"
         :pagination="pagination"
-        @selection-change="handleSelectionChange"
         @pagination:size-change="handleSizeChange"
         @pagination:current-change="handleCurrentChange"
       >
@@ -86,12 +85,12 @@
 
   /** 控制 */
   const showSearchBar = ref(false);
-  const selectedRows = ref<UserListItem[]>([]);
 
   /** 搜索表单 */
   const searchForm = reactive<UserSearchParams>({
     userUid: undefined,
     nickname: undefined,
+    email: undefined,
     status: undefined,
     current: 1,
     size: 20
@@ -159,11 +158,7 @@
         const overflow = row.roles.slice(MAX_SHOW);
 
         const roleTag = (role: string) =>
-          h(
-            ElTag,
-            { type: 'info', class: 'role-tag', title: role },
-            () => role
-          );
+          h(ElTag, { type: 'info', class: 'role-tag', title: role }, () => role);
 
         const tags = visible.map(roleTag);
 
@@ -183,12 +178,7 @@
                   { type: 'info', style: { cursor: 'pointer' } },
                   () => `+${overflow.length}`
                 ),
-              default: () =>
-                h(
-                  'div',
-                  { class: 'flex flex-wrap gap-1' },
-                  row.roles.map(roleTag)
-                )
+              default: () => h('div', { class: 'flex flex-wrap gap-1' }, row.roles.map(roleTag))
             }
           );
           return h('div', { class: 'flex gap-1' }, [...tags, overflowTag]);
@@ -203,7 +193,11 @@
       width: 80,
       formatter: (row) => {
         const statusConfig = getUserStatusConfig(row.status);
-        return h(ElTag, { type: statusConfig.type as 'success' | 'warning' }, () => statusConfig.text);
+        return h(
+          ElTag,
+          { type: statusConfig.type as 'success' | 'warning' },
+          () => statusConfig.text
+        );
       }
     },
     {
@@ -349,13 +343,6 @@
       .catch(() => {
         ElMessage.info('已取消删除');
       });
-  };
-
-  /**
-   * 处理表格行选择变化
-   */
-  const handleSelectionChange = (selection: UserListItem[]): void => {
-    selectedRows.value = selection;
   };
 </script>
 

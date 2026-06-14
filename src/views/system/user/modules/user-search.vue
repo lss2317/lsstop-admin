@@ -68,6 +68,13 @@
       clearable: true
     },
     {
+      label: '邮箱',
+      key: 'email',
+      type: 'input',
+      placeholder: '请输入邮箱',
+      clearable: true
+    },
+    {
       label: '状态',
       key: 'status',
       type: 'select',

@@ -10,15 +10,19 @@
       <!-- 基本信息：两列布局 -->
       <ElRow :gutter="20">
         <ElCol :span="12">
-          <ElFormItem label="用户UID" prop="userUid" required>
-            <ElInput
-              v-model="form.userUid"
-              placeholder="请输入用户UID"
-              :disabled="dialogType === 'edit'"
-              clearable
-              maxlength="32"
-              @blur="form.userUid = form.userUid.trim()"
-            />
+          <ElFormItem label="头像" prop="avatar">
+            <ElUpload
+              class="avatar-upload"
+              :auto-upload="false"
+              :show-file-list="false"
+              accept="image/*"
+              @change="handleAvatarChange"
+            >
+              <ElImage v-if="form.avatar" :src="form.avatar" class="avatar-preview" fit="cover" />
+              <div v-else class="avatar-placeholder">
+                <i class="ri:image-line" style="font-size: 28px; color: #c0c4cc" />
+              </div>
+            </ElUpload>
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
@@ -33,13 +37,41 @@
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
-          <ElFormItem label="头像" prop="avatar">
-            <ElInput v-model="form.avatar" placeholder="请输入头像URL" clearable maxlength="255" />
+          <ElFormItem label="邮箱" prop="email" required>
+            <ElInput
+              v-model="form.email"
+              placeholder="请输入邮箱"
+              clearable
+              maxlength="100"
+              @blur="form.email = form.email.trim()"
+            />
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
           <ElFormItem label="个人网站" prop="website">
-            <ElInput v-model="form.website" placeholder="请输入个人网站" clearable maxlength="255" />
+            <ElInput
+              v-model="form.website"
+              placeholder="请输入个人网站"
+              clearable
+              maxlength="255"
+            />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="是否启用" prop="status">
+            <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
+          </ElFormItem>
+        </ElCol>
+        <ElCol v-if="dialogType === 'add'" :span="12">
+          <ElFormItem label="密码" prop="password" required>
+            <ElInput
+              v-model="form.password"
+              type="password"
+              placeholder="请输入密码"
+              show-password
+              clearable
+              maxlength="32"
+            />
           </ElFormItem>
         </ElCol>
         <ElCol :span="24">
@@ -52,11 +84,6 @@
               maxlength="100"
               show-word-limit
             />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem label="是否启用" prop="status">
-            <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
           </ElFormItem>
         </ElCol>
       </ElRow>
@@ -84,7 +111,7 @@
 </template>
 
 <script setup lang="ts">
-  import type { FormInstance, FormRules } from 'element-plus';
+  import type { FormInstance, FormRules, UploadFile } from 'element-plus';
   import type { UserFormParams } from '@/apis/user/types';
   import type { UserListItem, RoleOption } from '@/apis/user';
   import { MOCK_ROLE_LIST } from '@/apis/user';
@@ -123,13 +150,17 @@
    * 表单验证规则
    */
   const rules = reactive<FormRules>({
-    userUid: [
-      { required: true, message: '请输入用户UID', trigger: 'blur' },
-      { min: 2, max: 32, message: '长度在 2 到 32 个字符', trigger: 'blur' }
-    ],
     nickname: [
       { required: true, message: '请输入昵称', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+    ],
+    email: [
+      { required: true, message: '请输入邮箱', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    ],
+    password: [
+      { required: true, message: '请输入密码', trigger: 'blur' },
+      { min: 6, max: 32, message: '长度在 6 到 32 个字符', trigger: 'blur' }
     ]
   });
 
@@ -137,8 +168,9 @@
    * 表单数据
    */
   const form = reactive<UserFormParams>({
-    userUid: '',
     nickname: '',
+    email: '',
+    password: '',
     avatar: '',
     website: '',
     intro: '',
@@ -148,8 +180,9 @@
 
   /** 默认表单值 */
   const defaultForm = (): UserFormParams => ({
-    userUid: '',
     nickname: '',
+    email: '',
+    password: '',
     avatar: '',
     website: '',
     intro: '',
@@ -189,6 +222,7 @@
         Object.assign(form, {
           userUid: detail.userUid,
           nickname: detail.nickname,
+          email: detail.authMethods.find((a) => a.loginType === 1)?.identifier || '',
           avatar: detail.avatar,
           website: detail.website || '',
           intro: detail.intro || '',
@@ -201,16 +235,33 @@
         Object.assign(form, {
           userUid: props.userData!.userUid,
           nickname: props.userData!.nickname,
+          email: props.userData!.email || '',
           avatar: props.userData!.avatar,
           website: '',
           intro: '',
           status: props.userData!.status,
-          roleIds: props.userData!.roles.map((name) => roleMap.get(name)).filter(Boolean) as number[]
+          roleIds: props
+            .userData!.roles.map((name) => roleMap.get(name))
+            .filter(Boolean) as number[]
         });
       }
     } else {
       Object.assign(form, defaultForm());
+      form.userUid = undefined;
+      form.password = '';
     }
+  };
+
+  /**
+   * 头像上传变化
+   */
+  const handleAvatarChange = (uploadFile: UploadFile) => {
+    if (!uploadFile.raw) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      form.avatar = (e.target?.result as string) || '';
+    };
+    reader.readAsDataURL(uploadFile.raw);
   };
 
   /**
@@ -244,6 +295,32 @@
 </script>
 
 <style scoped lang="scss">
+  .avatar-upload {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar-upload :deep(.el-upload) {
+    cursor: pointer;
+  }
+
+  .avatar-preview,
+  .avatar-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: 4px;
+  }
+
+  .avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed #dcdfe6;
+    border-radius: 4px;
+    background: #fafafa;
+  }
+
   .dialog-footer {
     display: flex;
     justify-content: flex-end;
