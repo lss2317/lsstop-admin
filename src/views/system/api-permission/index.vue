@@ -140,6 +140,7 @@
       prop: 'requestUrl',
       label: '接口路径',
       width: 220,
+      align: 'center',
       formatter: (row: ApiPermissionItem) => row.requestUrl || '-'
     },
     {

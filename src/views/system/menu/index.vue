@@ -136,7 +136,7 @@
     {
       prop: 'title',
       label: '菜单名称',
-      minWidth: 160,
+      minWidth: 150,
       formatter: (row: BackendMenuItem) => formatMenuTitle(row.title)
     },
     {
@@ -149,6 +149,8 @@
     {
       prop: 'path',
       label: '路由',
+      width: 150,
+      align: 'center',
       formatter: (row: BackendMenuItem) => {
         if (row.menuType === 3) return '';
         return row.link || row.path || '';
