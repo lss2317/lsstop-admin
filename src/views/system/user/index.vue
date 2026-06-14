@@ -57,6 +57,9 @@
       :user-data="currentUserData"
       @success="refreshData"
     />
+
+    <!-- 重置密码弹窗 -->
+    <UserResetPasswordDialog v-model="resetPasswordDialog" :user-data="currentUserData" />
   </div>
 </template>
 
@@ -73,6 +76,7 @@
   import UserDialog from './modules/user-dialog.vue';
   import UserMenuPermissionDialog from './modules/user-menu-permission-dialog.vue';
   import UserApiPermissionDialog from './modules/user-api-permission-dialog.vue';
+  import UserResetPasswordDialog from './modules/user-reset-password-dialog.vue';
 
   defineOptions({ name: 'User' });
 
@@ -81,6 +85,7 @@
   const dialogVisible = ref(false);
   const menuPermissionDialog = ref(false);
   const apiPermissionDialog = ref(false);
+  const resetPasswordDialog = ref(false);
   const currentUserData = ref<UserListItem | undefined>(undefined);
 
   /** 控制 */
@@ -231,6 +236,11 @@
                 icon: 'ri:code-line'
               },
               {
+                key: 'resetPassword',
+                label: '重置密码',
+                icon: 'ri:lock-password-line'
+              },
+              {
                 key: 'delete',
                 label: '删除用户',
                 icon: 'ri:delete-bin-4-line',
@@ -280,6 +290,9 @@
       case 'apiPermission':
         showApiPermissionDialog(row);
         break;
+      case 'resetPassword':
+        showResetPasswordDialog(row);
+        break;
       case 'delete':
         deleteUser(row);
         break;
@@ -319,6 +332,14 @@
   const showApiPermissionDialog = (row: UserListItem): void => {
     currentUserData.value = row;
     apiPermissionDialog.value = true;
+  };
+
+  /**
+   * 显示重置密码弹窗
+   */
+  const showResetPasswordDialog = (row: UserListItem): void => {
+    currentUserData.value = row;
+    resetPasswordDialog.value = true;
   };
 
   /**

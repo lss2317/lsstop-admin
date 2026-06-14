@@ -610,3 +610,12 @@ export function mockFetchUpdateUser(_data: UserFormParams): Promise<void> {
     setTimeout(resolve, 300);
   });
 }
+
+/**
+ * 模拟重置用户密码
+ */
+export function mockFetchResetPassword(_userUid: string, _password: string): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 300);
+  });
+}

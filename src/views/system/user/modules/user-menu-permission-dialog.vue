@@ -25,7 +25,7 @@
     <template #footer>
       <ElButton @click="toggleExpandAll">{{ isExpandAll ? '全部收起' : '全部展开' }}</ElButton>
       <ElButton @click="toggleSelectAll" style="margin-left: 8px">{{ selectAllLabel }}</ElButton>
-      <ElButton type="primary" @click="savePermission" style="margin-left: 8px">保存</ElButton>
+      <ElButton type="primary" :loading="saving" @click="savePermission" style="margin-left: 8px">保存</ElButton>
     </template>
   </ElDialog>
 </template>
@@ -66,6 +66,7 @@
   });
 
   const loading = ref(false);
+  const saving = ref(false);
 
   /** 菜单权限树数据 */
   const menuTree = ref<MenuPermissionNode[]>([]);
@@ -120,16 +121,22 @@
    * 保存菜单权限
    */
   const savePermission = async () => {
-    if (!props.userData) return;
+    if (!props.userData || saving.value) return;
 
-    const checkedKeys: number[] = treeRef.value?.getCheckedKeys() ?? [];
-    const leafKeys = getAllLeafKeys(menuTree.value);
-    const menuIds = checkedKeys.filter((id) => leafKeys.includes(id));
+    try {
+      saving.value = true;
 
-    await mockFetchSaveUserMenuPermission();
-    ElMessage.success('菜单权限保存成功');
-    emit('success');
-    handleClose();
+      const checkedKeys: number[] = treeRef.value?.getCheckedKeys() ?? [];
+      const leafKeys = getAllLeafKeys(menuTree.value);
+      const menuIds = checkedKeys.filter((id) => leafKeys.includes(id));
+
+      await mockFetchSaveUserMenuPermission();
+      ElMessage.success('菜单权限保存成功');
+      emit('success');
+      handleClose();
+    } finally {
+      saving.value = false;
+    }
   };
 
   /**
