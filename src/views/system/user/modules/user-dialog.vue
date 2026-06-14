@@ -65,7 +65,15 @@
               placeholder="请输入密码"
               show-password
               clearable
-              maxlength="32"
+              maxlength="20"
+              @input="(val: string) => (form.password = val.replace(/\s/g, ''))"
+              @paste="
+                (e: ClipboardEvent) => {
+                  e.preventDefault();
+                  const text = e.clipboardData?.getData('text') || '';
+                  form.password += text.replace(/\s/g, '');
+                }
+              "
             />
           </ElFormItem>
         </ElCol>
@@ -77,7 +85,15 @@
               placeholder="请再次输入密码"
               show-password
               clearable
-              maxlength="32"
+              maxlength="20"
+              @input="(val: string) => (form.confirmPassword = val.replace(/\s/g, ''))"
+              @paste="
+                (e: ClipboardEvent) => {
+                  e.preventDefault();
+                  const text = e.clipboardData?.getData('text') || '';
+                  form.confirmPassword += text.replace(/\s/g, '');
+                }
+              "
             />
           </ElFormItem>
         </ElCol>
@@ -245,7 +261,7 @@
     ],
     password: [
       { required: true, message: '请输入密码', trigger: 'blur' },
-      { min: 6, max: 32, message: '长度在 6 到 32 个字符', trigger: 'blur' }
+      { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
     ],
     confirmPassword: [
       { required: true, message: '请再次输入密码', trigger: 'blur' },
