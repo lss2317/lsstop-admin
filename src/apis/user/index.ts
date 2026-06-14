@@ -592,3 +592,21 @@ export function mockFetchSaveUserApiPermission(): Promise<void> {
     setTimeout(resolve, 300);
   });
 }
+
+/**
+ * 模拟新增用户
+ */
+export function mockFetchAddUser(_data: UserFormParams): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 300);
+  });
+}
+
+/**
+ * 模拟更新用户
+ */
+export function mockFetchUpdateUser(_data: UserFormParams): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 300);
+  });
+}

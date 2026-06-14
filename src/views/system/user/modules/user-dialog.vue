@@ -104,7 +104,7 @@
     <template #footer>
       <div class="dialog-footer">
         <ElButton @click="handleClose">取消</ElButton>
-        <ElButton type="primary" @click="handleSubmit">提交</ElButton>
+        <ElButton type="primary" :loading="submitting" @click="handleSubmit">提交</ElButton>
       </div>
     </template>
   </ElDialog>
@@ -136,6 +136,7 @@
   const emit = defineEmits<Emits>();
 
   const formRef = ref<FormInstance>();
+  const submitting = ref(false);
 
   /** 弹窗显示状态双向绑定 */
   const visible = computed({
@@ -276,20 +277,28 @@
    * 提交表单
    */
   const handleSubmit = async () => {
-    if (!formRef.value) return;
+    if (!formRef.value || submitting.value) return;
 
     try {
       await formRef.value.validate();
 
+      submitting.value = true;
+
       if (props.dialogType === 'add') {
+        const { mockFetchAddUser } = await import('@/apis/user');
+        await mockFetchAddUser({ ...form, password: form.password });
         ElMessage.success('新增成功');
       } else {
+        const { mockFetchUpdateUser } = await import('@/apis/user');
+        await mockFetchUpdateUser({ ...form, userUid: form.userUid! });
         ElMessage.success('修改成功');
       }
       emit('success');
       handleClose();
     } catch {
       // 表单校验失败或接口报错（接口报错由全局拦截器展示）
+    } finally {
+      submitting.value = false;
     }
   };
 </script>
