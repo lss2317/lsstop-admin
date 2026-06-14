@@ -20,7 +20,7 @@
             >
               <ElImage v-if="form.avatar" :src="form.avatar" class="avatar-preview" fit="cover" />
               <div v-else class="avatar-placeholder">
-                <i class="ri:image-line" style="font-size: 28px; color: #c0c4cc" />
+                <ArtSvgIcon icon="ri:image-line" class="text-[28px] text-gray-300" />
               </div>
             </ElUpload>
           </ElFormItem>
@@ -47,6 +47,30 @@
             />
           </ElFormItem>
         </ElCol>
+        <ElCol v-if="dialogType === 'add'" :span="12">
+          <ElFormItem label="密码" prop="password" required>
+            <ElInput
+              v-model="form.password"
+              type="password"
+              placeholder="请输入密码"
+              show-password
+              clearable
+              maxlength="32"
+            />
+          </ElFormItem>
+        </ElCol>
+        <ElCol v-if="dialogType === 'add'" :span="12">
+          <ElFormItem label="确认密码" prop="confirmPassword" required>
+            <ElInput
+              v-model="form.confirmPassword"
+              type="password"
+              placeholder="请再次输入密码"
+              show-password
+              clearable
+              maxlength="32"
+            />
+          </ElFormItem>
+        </ElCol>
         <ElCol :span="12">
           <ElFormItem label="个人网站" prop="website">
             <ElInput
@@ -60,18 +84,6 @@
         <ElCol :span="12">
           <ElFormItem label="是否启用" prop="status">
             <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
-          </ElFormItem>
-        </ElCol>
-        <ElCol v-if="dialogType === 'add'" :span="12">
-          <ElFormItem label="密码" prop="password" required>
-            <ElInput
-              v-model="form.password"
-              type="password"
-              placeholder="请输入密码"
-              show-password
-              clearable
-              maxlength="32"
-            />
           </ElFormItem>
         </ElCol>
         <ElCol :span="24">
@@ -206,6 +218,19 @@
   /** 微博绑定 */
   const weiboBinding = computed(() => authBindings.value.find((a) => a.loginType === 3));
 
+  /** 确认密码校验 */
+  const validateConfirmPassword = (
+    _rule: unknown,
+    value: string,
+    callback: (err?: Error) => void
+  ) => {
+    if (props.dialogType === 'add' && value !== form.password) {
+      callback(new Error('两次输入的密码不一致'));
+    } else {
+      callback();
+    }
+  };
+
   /**
    * 表单验证规则
    */
@@ -221,6 +246,10 @@
     password: [
       { required: true, message: '请输入密码', trigger: 'blur' },
       { min: 6, max: 32, message: '长度在 6 到 32 个字符', trigger: 'blur' }
+    ],
+    confirmPassword: [
+      { required: true, message: '请再次输入密码', trigger: 'blur' },
+      { validator: validateConfirmPassword, trigger: 'blur' }
     ]
   });
 
@@ -231,6 +260,7 @@
     nickname: '',
     email: '',
     password: '',
+    confirmPassword: '',
     avatar: '',
     website: '',
     intro: '',
@@ -243,6 +273,7 @@
     nickname: '',
     email: '',
     password: '',
+    confirmPassword: '',
     avatar: '',
     website: '',
     intro: '',
@@ -312,6 +343,7 @@
       Object.assign(form, defaultForm());
       form.userUid = undefined;
       form.password = '';
+      form.confirmPassword = '';
       authBindings.value = [];
     }
   };

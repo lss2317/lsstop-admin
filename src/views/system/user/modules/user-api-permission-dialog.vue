@@ -31,7 +31,9 @@
     <template #footer>
       <ElButton @click="toggleExpandAll">{{ isExpandAll ? '全部收起' : '全部展开' }}</ElButton>
       <ElButton @click="toggleSelectAll" style="margin-left: 8px">{{ selectAllLabel }}</ElButton>
-      <ElButton type="primary" :loading="saving" @click="savePermission" style="margin-left: 8px">保存</ElButton>
+      <ElButton type="primary" :loading="saving" @click="savePermission" style="margin-left: 8px"
+        >保存</ElButton
+      >
     </template>
   </ElDialog>
 </template>

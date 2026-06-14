@@ -104,6 +104,8 @@ export interface UserFormParams {
   email: string;
   /** 密码（仅新增时使用） */
   password?: string;
+  /** 确认密码（仅新增时使用） */
+  confirmPassword?: string;
   /** 头像 */
   avatar: string;
   /** 个人网站 */

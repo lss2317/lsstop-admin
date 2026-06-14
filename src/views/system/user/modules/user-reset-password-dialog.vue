@@ -1,11 +1,5 @@
 <template>
-  <ElDialog
-    v-model="visible"
-    title="重置密码"
-    width="420px"
-    align-center
-    @close="handleClose"
-  >
+  <ElDialog v-model="visible" title="重置密码" width="420px" align-center @close="handleClose">
     <ElForm ref="formRef" :model="form" :rules="rules" label-width="80px">
       <ElFormItem label="新密码" prop="password">
         <ElInput
@@ -69,7 +63,11 @@
   });
 
   /** 确认密码校验 */
-  const validateConfirmPassword = (_rule: unknown, value: string, callback: (err?: Error) => void) => {
+  const validateConfirmPassword = (
+    _rule: unknown,
+    value: string,
+    callback: (err?: Error) => void
+  ) => {
     if (value !== form.password) {
       callback(new Error('两次输入的密码不一致'));
     } else {
