@@ -157,7 +157,7 @@
       minWidth: 80,
       align: 'center',
       formatter: (row: LoginLogItem) =>
-        h(ElTag, { type: loginTypeTagType(row.loginType) }, loginTypeLabel(row.loginType))
+        h(ElTag, { type: loginTypeTagType(row.loginType) }, () => loginTypeLabel(row.loginType))
     },
     {
       prop: 'state',
@@ -165,9 +165,7 @@
       minWidth: 80,
       align: 'center',
       formatter: (row: LoginLogItem) =>
-        h(
-          ElTag,
-          { type: row.state === 0 ? 'success' : 'danger' },
+        h(ElTag, { type: row.state === 0 ? 'success' : 'danger' }, () =>
           row.state === 0 ? '成功' : '失败'
         )
     },
@@ -179,7 +177,7 @@
       minWidth: 80,
       align: 'center',
       formatter: (row: LoginLogItem) =>
-        h(ElTag, { type: actionTypeTagType(row.actionType) }, actionTypeLabel(row.actionType))
+        h(ElTag, { type: actionTypeTagType(row.actionType) }, () => actionTypeLabel(row.actionType))
     },
     {
       prop: 'type',
@@ -187,9 +185,7 @@
       minWidth: 80,
       align: 'center',
       formatter: (row: LoginLogItem) =>
-        h(
-          ElTag,
-          { type: row.type === 2 ? 'danger' : row.type === 1 ? 'primary' : 'info' },
+        h(ElTag, { type: row.type === 2 ? 'danger' : row.type === 1 ? 'primary' : 'info' }, () =>
           sourceTypeLabel(row.type)
         )
     },

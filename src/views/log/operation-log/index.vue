@@ -146,7 +146,7 @@
       minWidth: 80,
       align: 'center',
       formatter: (row: OperationLogItem) =>
-        h(ElTag, { type: operationTagType(row.operationType) }, row.operationType)
+        h(ElTag, { type: operationTagType(row.operationType) }, () => row.operationType)
     },
     { prop: 'userId', label: '用户ID', minWidth: 160, showOverflowTooltip: true, align: 'center' },
     {
@@ -164,9 +164,7 @@
       minWidth: 80,
       align: 'center',
       formatter: (row: OperationLogItem) =>
-        h(
-          ElTag,
-          { type: row.state === 0 ? 'success' : 'danger' },
+        h(ElTag, { type: row.state === 0 ? 'success' : 'danger' }, () =>
           row.state === 0 ? '成功' : '失败'
         )
     },
