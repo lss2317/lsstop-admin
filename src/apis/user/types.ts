@@ -117,3 +117,49 @@ export interface RoleOption {
   /** 角色名称 */
   roleName: string;
 }
+
+// ============================================================
+// 用户权限调整相关类型
+// ============================================================
+
+/** 菜单权限树节点（与角色模块复用同一结构） */
+export interface MenuPermissionNode {
+  /** 菜单ID */
+  id: number;
+  /** 唯一标识 */
+  name: string;
+  /** 菜单标题 */
+  title: string;
+  /** 子节点 */
+  children?: MenuPermissionNode[];
+}
+
+/** 接口权限树节点（与角色模块复用同一结构） */
+export interface ApiPermissionNode {
+  /** 接口ID */
+  id: number;
+  /** 接口名称 */
+  name: string;
+  /** 接口路径 */
+  path?: string;
+  /** HTTP 方法 */
+  method?: string;
+  /** 子节点 */
+  children?: ApiPermissionNode[];
+}
+
+/** 保存用户菜单权限参数 */
+export interface SaveUserMenuPermissionParams {
+  /** 用户UID */
+  userUid: string;
+  /** 选中的菜单 ID 列表 */
+  menuIds: number[];
+}
+
+/** 保存用户接口权限参数 */
+export interface SaveUserApiPermissionParams {
+  /** 用户UID */
+  userUid: string;
+  /** 选中的接口 ID 列表 */
+  apiIds: number[];
+}

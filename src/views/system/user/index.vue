@@ -44,6 +44,20 @@
         @success="refreshData"
       />
     </ElCard>
+
+    <!-- 菜单权限弹窗 -->
+    <UserMenuPermissionDialog
+      v-model="menuPermissionDialog"
+      :user-data="currentUserData"
+      @success="refreshData"
+    />
+
+    <!-- 接口权限弹窗 -->
+    <UserApiPermissionDialog
+      v-model="apiPermissionDialog"
+      :user-data="currentUserData"
+      @success="refreshData"
+    />
   </div>
 </template>
 
@@ -51,18 +65,23 @@
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
   import type { UserListItem, UserSearchParams } from '@/apis/user';
+  import type { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue';
   import { mockFetchUserList } from '@/apis/user';
   import { ElTag, ElMessageBox, ElImage, ElPopover } from 'element-plus';
   import { formatDateTime } from '@/utils/format';
-  import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
+  import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue';
   import UserSearch from './modules/user-search.vue';
   import UserDialog from './modules/user-dialog.vue';
+  import UserMenuPermissionDialog from './modules/user-menu-permission-dialog.vue';
+  import UserApiPermissionDialog from './modules/user-api-permission-dialog.vue';
 
   defineOptions({ name: 'User' });
 
   /** 弹窗相关 */
   const dialogType = ref<'add' | 'edit'>('add');
   const dialogVisible = ref(false);
+  const menuPermissionDialog = ref(false);
+  const apiPermissionDialog = ref(false);
   const currentUserData = ref<UserListItem | undefined>(undefined);
 
   /** 控制 */
@@ -196,17 +215,35 @@
     {
       prop: 'operation',
       label: '操作',
-      width: 120,
+      width: 80,
       fixed: 'right',
       formatter: (row: UserListItem) =>
         h('div', [
-          h(ArtButtonTable, {
-            type: 'edit',
-            onClick: () => showDialog('edit', row)
-          }),
-          h(ArtButtonTable, {
-            type: 'delete',
-            onClick: () => deleteUser(row)
+          h(ArtButtonMore, {
+            list: [
+              {
+                key: 'edit',
+                label: '编辑用户',
+                icon: 'ri:edit-2-line'
+              },
+              {
+                key: 'menuPermission',
+                label: '菜单权限',
+                icon: 'ri:user-3-line'
+              },
+              {
+                key: 'apiPermission',
+                label: '接口权限',
+                icon: 'ri:code-line'
+              },
+              {
+                key: 'delete',
+                label: '删除用户',
+                icon: 'ri:delete-bin-4-line',
+                color: '#f56c6c'
+              }
+            ],
+            onClick: (item: ButtonMoreItem) => buttonMoreClick(item, row)
           })
         ])
     }
@@ -236,6 +273,26 @@
   });
 
   /**
+   * 操作列下拉菜单点击处理
+   */
+  const buttonMoreClick = (item: ButtonMoreItem, row: UserListItem) => {
+    switch (item.key) {
+      case 'edit':
+        showDialog('edit', row);
+        break;
+      case 'menuPermission':
+        showMenuPermissionDialog(row);
+        break;
+      case 'apiPermission':
+        showApiPermissionDialog(row);
+        break;
+      case 'delete':
+        deleteUser(row);
+        break;
+    }
+  };
+
+  /**
    * 搜索处理
    */
   const handleSearch = (params: UserSearchParams) => {
@@ -252,6 +309,22 @@
     nextTick(() => {
       dialogVisible.value = true;
     });
+  };
+
+  /**
+   * 显示菜单权限弹窗
+   */
+  const showMenuPermissionDialog = (row: UserListItem): void => {
+    currentUserData.value = row;
+    menuPermissionDialog.value = true;
+  };
+
+  /**
+   * 显示接口权限弹窗
+   */
+  const showApiPermissionDialog = (row: UserListItem): void => {
+    currentUserData.value = row;
+    apiPermissionDialog.value = true;
   };
 
   /**

@@ -55,7 +55,7 @@
           </ElFormItem>
         </ElCol>
         <ElCol :span="12">
-          <ElFormItem label="状态" prop="status">
+          <ElFormItem label="是否启用" prop="status">
             <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
           </ElFormItem>
         </ElCol>
