@@ -88,6 +88,55 @@
         </ElCol>
       </ElRow>
 
+      <!-- 第三方绑定（仅编辑时显示） -->
+      <template v-if="dialogType === 'edit'">
+        <ElDivider content-position="left">第三方绑定</ElDivider>
+        <div class="auth-binding-row">
+          <div class="auth-binding-item">
+            <div class="auth-platform">
+              <ArtSvgIcon icon="ri:qq-line" class="text-[22px] text-[#1296db]" />
+              <span>QQ</span>
+            </div>
+            <div class="auth-status">
+              <span v-if="qqBinding" class="auth-bound">已绑定</span>
+              <span v-else class="auth-unbound">未绑定</span>
+              <ElPopconfirm
+                v-if="qqBinding"
+                title="确定解绑该QQ账号？"
+                confirm-button-text="解绑"
+                cancel-button-text="取消"
+                @confirm="unbindAuth(2)"
+              >
+                <template #reference>
+                  <ElButton type="danger" link size="small">解绑</ElButton>
+                </template>
+              </ElPopconfirm>
+            </div>
+          </div>
+          <div class="auth-binding-item">
+            <div class="auth-platform">
+              <ArtSvgIcon icon="ri:weibo-line" class="text-[22px] text-[#e6162d]" />
+              <span>微博</span>
+            </div>
+            <div class="auth-status">
+              <span v-if="weiboBinding" class="auth-bound">已绑定</span>
+              <span v-else class="auth-unbound">未绑定</span>
+              <ElPopconfirm
+                v-if="weiboBinding"
+                title="确定解绑该微博账号？"
+                confirm-button-text="解绑"
+                cancel-button-text="取消"
+                @confirm="unbindAuth(3)"
+              >
+                <template #reference>
+                  <ElButton type="danger" link size="small">解绑</ElButton>
+                </template>
+              </ElPopconfirm>
+            </div>
+          </div>
+        </div>
+      </template>
+
       <!-- 角色分配 -->
       <ElDivider content-position="left">角色分配</ElDivider>
       <ElFormItem label="角色" prop="roleIds">
@@ -112,9 +161,10 @@
 
 <script setup lang="ts">
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
-  import type { UserFormParams } from '@/apis/user/types';
+  import type { UserFormParams, AuthMethodItem } from '@/apis/user/types';
   import type { UserListItem, RoleOption } from '@/apis/user';
   import { MOCK_ROLE_LIST } from '@/apis/user';
+  import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
 
   interface Props {
     modelValue: boolean;
@@ -146,6 +196,15 @@
 
   /** 角色下拉选项 */
   const roleOptions = ref<RoleOption[]>(MOCK_ROLE_LIST);
+
+  /** 第三方绑定列表（仅编辑时使用） */
+  const authBindings = ref<AuthMethodItem[]>([]);
+
+  /** QQ绑定 */
+  const qqBinding = computed(() => authBindings.value.find((a) => a.loginType === 2));
+
+  /** 微博绑定 */
+  const weiboBinding = computed(() => authBindings.value.find((a) => a.loginType === 3));
 
   /**
    * 表单验证规则
@@ -230,6 +289,8 @@
           status: detail.status,
           roleIds: [...detail.roleIds]
         });
+        // 加载第三方绑定（QQ / 微博）
+        authBindings.value = detail.authMethods.filter((a) => a.loginType !== 1);
       } catch {
         // 详情获取失败时，用列表数据兜底
         const roleMap = new Map(roleOptions.value.map((r) => [r.roleName, r.id]));
@@ -245,11 +306,13 @@
             .userData!.roles.map((name) => roleMap.get(name))
             .filter(Boolean) as number[]
         });
+        authBindings.value = [];
       }
     } else {
       Object.assign(form, defaultForm());
       form.userUid = undefined;
       form.password = '';
+      authBindings.value = [];
     }
   };
 
@@ -263,6 +326,14 @@
       form.avatar = (e.target?.result as string) || '';
     };
     reader.readAsDataURL(uploadFile.raw);
+  };
+
+  /**
+   * 解绑第三方账号
+   */
+  const unbindAuth = (loginType: number) => {
+    authBindings.value = authBindings.value.filter((a) => a.loginType !== loginType);
+    ElMessage.success('解绑成功');
   };
 
   /**
@@ -328,6 +399,46 @@
     border: 1px dashed #dcdfe6;
     border-radius: 4px;
     background: #fafafa;
+  }
+
+  .auth-binding-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+  }
+
+  .auth-binding-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 40%;
+    padding: 8px 14px;
+    background: #fafafa;
+    border-radius: 8px;
+  }
+
+  .auth-platform {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: #303133;
+  }
+
+  .auth-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .auth-bound {
+    color: #67c23a;
+    font-size: 13px;
+  }
+
+  .auth-unbound {
+    color: #c0c4cc;
+    font-size: 13px;
   }
 
   .dialog-footer {
