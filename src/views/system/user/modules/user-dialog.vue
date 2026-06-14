@@ -47,6 +47,16 @@
             />
           </ElFormItem>
         </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="个人网站" prop="website">
+            <ElInput
+              v-model="form.website"
+              placeholder="请输入个人网站"
+              clearable
+              maxlength="255"
+            />
+          </ElFormItem>
+        </ElCol>
         <ElCol v-if="dialogType === 'add'" :span="12">
           <ElFormItem label="密码" prop="password" required>
             <ElInput
@@ -71,21 +81,6 @@
             />
           </ElFormItem>
         </ElCol>
-        <ElCol :span="12">
-          <ElFormItem label="个人网站" prop="website">
-            <ElInput
-              v-model="form.website"
-              placeholder="请输入个人网站"
-              clearable
-              maxlength="255"
-            />
-          </ElFormItem>
-        </ElCol>
-        <ElCol :span="12">
-          <ElFormItem label="是否启用" prop="status">
-            <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
-          </ElFormItem>
-        </ElCol>
         <ElCol :span="24">
           <ElFormItem label="个人简介" prop="intro">
             <ElInput
@@ -96,6 +91,11 @@
               maxlength="100"
               show-word-limit
             />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="是否启用" prop="status">
+            <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
           </ElFormItem>
         </ElCol>
       </ElRow>
