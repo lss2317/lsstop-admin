@@ -5,6 +5,7 @@
  */
 import request from '@/utils/http';
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
 import { useUserStore } from '@/store/modules/user';
 import type {
   OperationLogSearchParams,
@@ -36,16 +37,32 @@ export function fetchDeleteOperationLog(params: BatchDeleteParams) {
 
 /**
  * 导出操作日志（后端生成 Excel，返回 Blob）
+ * 失败时弹出后端返回的错误提示，返回 null
  * @param params 搜索参数（不含分页）
  */
 export async function fetchOperationLogExport(
   params: Omit<OperationLogSearchParams, 'current' | 'size'>
-): Promise<Blob> {
+): Promise<Blob | null> {
   const userStore = useUserStore();
-  const res = await axios.get('/api/admin/operation-log/export', {
-    params,
-    responseType: 'blob',
-    headers: { Authorization: `Bearer ${userStore.accessToken}` }
-  });
-  return res.data;
+  try {
+    const res = await axios.get('/api/admin/operation-log/export', {
+      params,
+      responseType: 'blob',
+      headers: { Authorization: `Bearer ${userStore.accessToken}` }
+    });
+    if (res.data.type === 'application/json') {
+      const text = await res.data.text();
+      const json = JSON.parse(text);
+      ElMessage.error(json.msg);
+      return null;
+    }
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.data instanceof Blob) {
+      const text = await error.response.data.text();
+      const json = JSON.parse(text);
+      ElMessage.error(json.msg);
+    }
+    return null;
+  }
 }

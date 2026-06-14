@@ -284,14 +284,12 @@
         Object.entries(searchForm).filter(([, v]) => v !== undefined && v !== '')
       ) as unknown as Record<string, string>;
       const blob = await fetchOperationLogExport(exportParams);
+      if (!blob) return;
       const filename = `操作日志_${new Date().toISOString().slice(0, 10)}.xlsx`;
       FileSaver.saveAs(blob, filename);
       ElMessage.success('导出成功');
     } catch (error) {
-      if (error !== 'cancel') {
-        console.error('导出失败:', error);
-        ElMessage.error('导出失败');
-      }
+      // ElMessageBox 取消
     } finally {
       exportLoading.value = false;
     }
