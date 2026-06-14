@@ -1,42 +1,82 @@
 <template>
   <ElDialog
-    v-model="dialogVisible"
-    :title="dialogType === 'add' ? '添加用户' : '编辑用户'"
-    width="30%"
+    v-model="visible"
+    :title="dialogType === 'add' ? '新增用户' : '编辑用户'"
+    width="700px"
     align-center
+    @close="handleClose"
   >
-    <ElForm ref="formRef" :model="formData" :rules="rules" label-width="80px">
-      <ElFormItem label="用户名" prop="username">
-        <ElInput
-          v-model="formData.username"
-          placeholder="请输入用户名"
-          maxlength="20"
-          show-word-limit
-        />
-      </ElFormItem>
-      <ElFormItem label="手机号" prop="phone">
-        <ElInput v-model="formData.phone" placeholder="请输入手机号" maxlength="11" />
-      </ElFormItem>
-      <ElFormItem label="性别" prop="gender">
-        <ElSelect v-model="formData.gender">
-          <ElOption label="男" value="男" />
-          <ElOption label="女" value="女" />
-        </ElSelect>
-      </ElFormItem>
-      <ElFormItem label="角色" prop="role">
-        <ElSelect v-model="formData.role" multiple>
+    <ElForm ref="formRef" :model="form" :rules="rules" label-width="100px" label-position="right">
+      <!-- 基本信息：两列布局 -->
+      <ElRow :gutter="20">
+        <ElCol :span="12">
+          <ElFormItem label="用户UID" prop="userUid" required>
+            <ElInput
+              v-model="form.userUid"
+              placeholder="请输入用户UID"
+              :disabled="dialogType === 'edit'"
+              clearable
+              maxlength="32"
+              @blur="form.userUid = form.userUid.trim()"
+            />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="昵称" prop="nickname" required>
+            <ElInput
+              v-model="form.nickname"
+              placeholder="请输入昵称"
+              clearable
+              maxlength="20"
+              @blur="form.nickname = form.nickname.trim()"
+            />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="头像" prop="avatar">
+            <ElInput v-model="form.avatar" placeholder="请输入头像URL" clearable maxlength="255" />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="个人网站" prop="website">
+            <ElInput v-model="form.website" placeholder="请输入个人网站" clearable maxlength="255" />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="24">
+          <ElFormItem label="个人简介" prop="intro">
+            <ElInput
+              v-model="form.intro"
+              type="textarea"
+              :rows="2"
+              placeholder="请输入个人简介"
+              maxlength="100"
+              show-word-limit
+            />
+          </ElFormItem>
+        </ElCol>
+        <ElCol :span="12">
+          <ElFormItem label="状态" prop="status">
+            <ElSwitch v-model="form.status" :active-value="1" :inactive-value="0" />
+          </ElFormItem>
+        </ElCol>
+      </ElRow>
+
+      <!-- 角色分配 -->
+      <ElDivider content-position="left">角色分配</ElDivider>
+      <ElFormItem label="角色" prop="roleIds">
+        <ElSelect v-model="form.roleIds" placeholder="请选择角色" multiple clearable>
           <ElOption
-            v-for="role in roleList"
-            :key="role.roleCode"
-            :value="role.roleCode"
+            v-for="role in roleOptions"
+            :key="role.id"
             :label="role.roleName"
+            :value="role.id"
           />
         </ElSelect>
       </ElFormItem>
     </ElForm>
     <template #footer>
       <div class="dialog-footer">
-        <ElButton @click="dialogVisible = false">取消</ElButton>
+        <ElButton @click="handleClose">取消</ElButton>
         <ElButton type="primary" @click="handleSubmit">提交</ElButton>
       </div>
     </template>
@@ -44,90 +84,142 @@
 </template>
 
 <script setup lang="ts">
-  import { MOCK_ROLE_LIST } from '@/apis/user';
-  import type { UserListItem } from '@/apis/user';
   import type { FormInstance, FormRules } from 'element-plus';
+  import type { UserFormParams } from '@/apis/user/types';
+  import type { UserListItem, RoleOption } from '@/apis/user';
+  import { MOCK_ROLE_LIST } from '@/apis/user';
 
   interface Props {
-    visible: boolean;
-    type: 'add' | 'edit';
-    userData?: Partial<UserListItem>;
+    modelValue: boolean;
+    dialogType: 'add' | 'edit';
+    userData?: UserListItem;
   }
 
   interface Emits {
-    (e: 'update:visible', value: boolean): void;
-    (e: 'submit'): void;
+    (e: 'update:modelValue', value: boolean): void;
+    (e: 'success'): void;
   }
 
-  const props = defineProps<Props>();
+  const props = withDefaults(defineProps<Props>(), {
+    modelValue: false,
+    dialogType: 'add',
+    userData: undefined
+  });
+
   const emit = defineEmits<Emits>();
 
-  /** 角色列表数据 */
-  const roleList = ref(MOCK_ROLE_LIST);
-
-  /** 对话框显示控制 */
-  const dialogVisible = computed({
-    get: () => props.visible,
-    set: (value) => emit('update:visible', value)
-  });
-
-  const dialogType = computed(() => props.type);
-
-  /** 表单实例 */
   const formRef = ref<FormInstance>();
 
-  /** 表单数据 */
-  const formData = reactive({
-    username: '',
-    phone: '',
-    gender: '男',
-    role: [] as string[]
+  /** 弹窗显示状态双向绑定 */
+  const visible = computed({
+    get: () => props.modelValue,
+    set: (value) => emit('update:modelValue', value)
   });
 
-  /** 表单验证规则 */
-  const rules: FormRules = {
-    username: [
-      { required: true, message: '请输入用户名', trigger: 'blur' },
+  /** 角色下拉选项 */
+  const roleOptions = ref<RoleOption[]>(MOCK_ROLE_LIST);
+
+  /**
+   * 表单验证规则
+   */
+  const rules = reactive<FormRules>({
+    userUid: [
+      { required: true, message: '请输入用户UID', trigger: 'blur' },
+      { min: 2, max: 32, message: '长度在 2 到 32 个字符', trigger: 'blur' }
+    ],
+    nickname: [
+      { required: true, message: '请输入昵称', trigger: 'blur' },
       { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
-    ],
-    phone: [
-      { required: true, message: '请输入手机号', trigger: 'blur' },
-      { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号格式', trigger: 'blur' }
-    ],
-    gender: [{ required: true, message: '请选择性别', trigger: 'blur' }],
-    role: [{ required: true, message: '请选择角色', trigger: 'blur' }]
-  };
+    ]
+  });
+
+  /**
+   * 表单数据
+   */
+  const form = reactive<UserFormParams>({
+    userUid: '',
+    nickname: '',
+    avatar: '',
+    website: '',
+    intro: '',
+    status: 1,
+    roleIds: []
+  });
+
+  /** 默认表单值 */
+  const defaultForm = (): UserFormParams => ({
+    userUid: '',
+    nickname: '',
+    avatar: '',
+    website: '',
+    intro: '',
+    status: 1,
+    roleIds: []
+  });
+
+  /**
+   * 监听弹窗打开，初始化表单数据
+   */
+  watch(
+    () => props.modelValue,
+    (newVal) => {
+      if (newVal) initForm();
+    }
+  );
+
+  /**
+   * 监听用户数据变化，更新表单
+   */
+  watch(
+    () => props.userData,
+    (newData) => {
+      if (newData && props.modelValue) initForm();
+    },
+    { deep: true }
+  );
 
   /**
    * 初始化表单数据
    */
-  const initFormData = () => {
-    const isEdit = props.type === 'edit' && props.userData;
-    const row = props.userData;
-
-    Object.assign(formData, {
-      username: isEdit && row ? row.userName || '' : '',
-      phone: isEdit && row ? row.userPhone || '' : '',
-      gender: isEdit && row ? row.userGender || '男' : '男',
-      role: isEdit && row ? (Array.isArray(row.userRoles) ? row.userRoles : []) : []
-    });
+  const initForm = async () => {
+    if (props.dialogType === 'edit' && props.userData) {
+      try {
+        const { mockFetchUserDetail } = await import('@/apis/user');
+        const detail = await mockFetchUserDetail(props.userData.userUid);
+        Object.assign(form, {
+          userUid: detail.userUid,
+          nickname: detail.nickname,
+          avatar: detail.avatar,
+          website: detail.website || '',
+          intro: detail.intro || '',
+          status: detail.status,
+          roleIds: [...detail.roleIds]
+        });
+      } catch {
+        // 详情获取失败时，用列表数据兜底
+        const roleMap = new Map(roleOptions.value.map((r) => [r.roleName, r.id]));
+        Object.assign(form, {
+          userUid: props.userData!.userUid,
+          nickname: props.userData!.nickname,
+          avatar: props.userData!.avatar,
+          website: '',
+          intro: '',
+          status: props.userData!.status,
+          roleIds: props.userData!.roles.map((name) => roleMap.get(name)).filter(Boolean) as number[]
+        });
+      }
+    } else {
+      Object.assign(form, defaultForm());
+    }
   };
 
   /**
-   * 监听对话框状态变化
+   * 关闭弹窗并重置表单
    */
-  watch(
-    () => [props.visible, props.type, props.userData],
-    ([visible]) => {
-      if (visible) {
-        initFormData();
-        nextTick(() => {
-          formRef.value?.clearValidate();
-        });
-      }
-    },
-    { immediate: true }
-  );
+  const handleClose = () => {
+    visible.value = false;
+    formRef.value?.resetFields();
+  };
 
   /**
    * 提交表单
@@ -135,12 +227,48 @@
   const handleSubmit = async () => {
     if (!formRef.value) return;
 
-    await formRef.value.validate((valid) => {
-      if (valid) {
-        ElMessage.success(dialogType.value === 'add' ? '添加成功' : '更新成功');
-        dialogVisible.value = false;
-        emit('submit');
+    try {
+      await formRef.value.validate();
+
+      if (props.dialogType === 'add') {
+        ElMessage.success('新增成功');
+      } else {
+        ElMessage.success('修改成功');
       }
-    });
+      emit('success');
+      handleClose();
+    } catch {
+      // 表单校验失败或接口报错（接口报错由全局拦截器展示）
+    }
   };
 </script>
+
+<style scoped lang="scss">
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  :deep(.el-form-item) {
+    margin-bottom: 20px;
+  }
+
+  :deep(.el-form-item__label) {
+    font-weight: 500;
+    color: #606266;
+  }
+
+  :deep(.el-input__wrapper) {
+    box-shadow: 0 0 0 1px #dcdfe6 inset;
+    transition: all 0.3s;
+
+    &:hover {
+      box-shadow: 0 0 0 1px #c0c4cc inset;
+    }
+
+    &.is-focus {
+      box-shadow: 0 0 0 1px #409eff inset;
+    }
+  }
+</style>
