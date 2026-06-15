@@ -127,10 +127,10 @@
               <span>QQ</span>
             </div>
             <div class="auth-status">
-              <span v-if="qqBinding" class="auth-bound">已绑定</span>
+              <span v-if="qqBound" class="auth-bound">已绑定</span>
               <span v-else class="auth-unbound">未绑定</span>
               <ElPopconfirm
-                v-if="qqBinding"
+                v-if="qqBound"
                 title="确定解绑该QQ账号？"
                 confirm-button-text="解绑"
                 cancel-button-text="取消"
@@ -148,10 +148,10 @@
               <span>微博</span>
             </div>
             <div class="auth-status">
-              <span v-if="weiboBinding" class="auth-bound">已绑定</span>
+              <span v-if="weiboBound" class="auth-bound">已绑定</span>
               <span v-else class="auth-unbound">未绑定</span>
               <ElPopconfirm
-                v-if="weiboBinding"
+                v-if="weiboBound"
                 title="确定解绑该微博账号？"
                 confirm-button-text="解绑"
                 cancel-button-text="取消"
@@ -190,7 +190,7 @@
 
 <script setup lang="ts">
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
-  import type { UserFormParams, AuthMethodItem } from '@/apis/user/types';
+  import type { UserFormParams } from '@/apis/user/types';
   import type { UserListItem, RoleOption } from '@/apis/user';
   import { MOCK_ROLE_LIST } from '@/apis/user';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
@@ -226,14 +226,11 @@
   /** 角色下拉选项 */
   const roleOptions = ref<RoleOption[]>(MOCK_ROLE_LIST);
 
-  /** 第三方绑定列表（仅编辑时使用） */
-  const authBindings = ref<AuthMethodItem[]>([]);
+  /** QQ绑定状态 */
+  const qqBound = ref(false);
 
-  /** QQ绑定 */
-  const qqBinding = computed(() => authBindings.value.find((a) => a.loginType === 2));
-
-  /** 微博绑定 */
-  const weiboBinding = computed(() => authBindings.value.find((a) => a.loginType === 3));
+  /** 微博绑定状态 */
+  const weiboBound = ref(false);
 
   /** 确认密码校验 */
   const validateConfirmPassword = (
@@ -322,46 +319,28 @@
   /**
    * 初始化表单数据
    */
-  const initForm = async () => {
+  const initForm = () => {
     if (props.dialogType === 'edit' && props.userData) {
-      try {
-        const { mockFetchUserDetail } = await import('@/apis/user');
-        const detail = await mockFetchUserDetail(props.userData.userUid);
-        Object.assign(form, {
-          userUid: detail.userUid,
-          nickname: detail.nickname,
-          email: detail.authMethods.find((a) => a.loginType === 1)?.identifier || '',
-          avatar: detail.avatar,
-          website: detail.website || '',
-          intro: detail.intro || '',
-          status: detail.status,
-          roleIds: [...detail.roleIds]
-        });
-        // 加载第三方绑定（QQ / 微博）
-        authBindings.value = detail.authMethods.filter((a) => a.loginType !== 1);
-      } catch {
-        // 详情获取失败时，用列表数据兜底
-        const roleMap = new Map(roleOptions.value.map((r) => [r.roleName, r.id]));
-        Object.assign(form, {
-          userUid: props.userData!.userUid,
-          nickname: props.userData!.nickname,
-          email: props.userData!.email || '',
-          avatar: props.userData!.avatar,
-          website: '',
-          intro: '',
-          status: props.userData!.status,
-          roleIds: props
-            .userData!.roles.map((name) => roleMap.get(name))
-            .filter(Boolean) as number[]
-        });
-        authBindings.value = [];
-      }
+      const roleMap = new Map(roleOptions.value.map((r) => [r.roleName, r.id]));
+      Object.assign(form, {
+        userUid: props.userData.userUid,
+        nickname: props.userData.nickname,
+        email: props.userData.email || '',
+        avatar: props.userData.avatar,
+        website: props.userData.website || '',
+        intro: props.userData.intro || '',
+        status: props.userData.status,
+        roleIds: props.userData.roles.map((name) => roleMap.get(name)).filter(Boolean) as number[]
+      });
+      qqBound.value = props.userData.qqBound;
+      weiboBound.value = props.userData.weiboBound;
     } else {
       Object.assign(form, defaultForm());
       form.userUid = undefined;
       form.password = '';
       form.confirmPassword = '';
-      authBindings.value = [];
+      qqBound.value = false;
+      weiboBound.value = false;
     }
   };
 
@@ -381,7 +360,8 @@
    * 解绑第三方账号
    */
   const unbindAuth = (loginType: number) => {
-    authBindings.value = authBindings.value.filter((a) => a.loginType !== loginType);
+    if (loginType === 2) qqBound.value = false;
+    if (loginType === 3) weiboBound.value = false;
     ElMessage.success('解绑成功');
   };
 
@@ -521,6 +501,7 @@
 
 <style>
   .user-dialog .el-dialog__body {
+    padding-left: 20px !important;
     padding-right: 20px !important;
   }
 </style>

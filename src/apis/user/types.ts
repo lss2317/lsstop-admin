@@ -1,15 +1,13 @@
 /**
  * 用户接口类型定义
  *
- * 对应数据库表：blog_user / blog_user_auth / blog_user_profile / blog_user_role
- *
  * @module apis/user/types
  */
 
-/** 用户状态：0-禁用 1-启用（对应 blog_user.status） */
+/** 用户状态：0-禁用 1-启用 */
 export type UserStatus = 0 | 1;
 
-/** 登录方式：1-邮箱 2-QQ 3-微博（对应 blog_user_auth.login_type） */
+/** 登录方式：1-邮箱 2-QQ 3-微博 */
 export type LoginType = 1 | 2 | 3;
 
 /** 认证方式项 */
@@ -22,20 +20,28 @@ export interface AuthMethodItem {
 
 /** 用户列表项（后端聚合 VO） */
 export interface UserListItem {
-  /** 用户UID（对应 blog_user.user_uid） */
+  /** 用户UID */
   userUid: string;
-  /** 昵称（对应 blog_user_profile.nickname） */
+  /** 昵称 */
   nickname: string;
-  /** 头像（对应 blog_user_profile.avatar） */
+  /** 头像 */
   avatar: string;
-  /** 主要邮箱（blog_user_auth 中 login_type=1 的 identifier） */
+  /** 主要邮箱 */
   email: string | null;
+  /** 个人网站 */
+  website: string | null;
+  /** 个人简介 */
+  intro: string | null;
   /** 状态：0-禁用 1-启用 */
   status: UserStatus;
   /** 最近登录时间 */
   lastLoginTime: string | null;
   /** 角色名称列表 */
   roles: string[];
+  /** 是否绑定QQ */
+  qqBound: boolean;
+  /** 是否绑定微博 */
+  weiboBound: boolean;
   /** 创建时间 */
   createTime: string;
 }

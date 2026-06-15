@@ -174,9 +174,13 @@ const MOCK_USER_LIST: UserListItem[] = [
     nickname: '张三',
     avatar: AVATAR,
     email: 'zhangsan@example.com',
+    website: 'https://zhangsan.dev',
+    intro: '全栈开发者，热爱开源',
     status: 1,
     lastLoginTime: '2025-06-14 10:30:00',
     roles: ['管理员', '编辑者', '运营人员'],
+    qqBound: true,
+    weiboBound: false,
     createTime: '2025-01-15 08:00:00'
   },
   {
@@ -184,9 +188,13 @@ const MOCK_USER_LIST: UserListItem[] = [
     nickname: '李四',
     avatar: AVATAR,
     email: 'lisi@example.com',
+    website: null,
+    intro: '前端工程师',
     status: 1,
     lastLoginTime: '2025-06-13 14:20:00',
     roles: ['编辑者'],
+    qqBound: false,
+    weiboBound: false,
     createTime: '2025-02-20 09:30:00'
   },
   {
@@ -194,9 +202,13 @@ const MOCK_USER_LIST: UserListItem[] = [
     nickname: '王五',
     avatar: AVATAR,
     email: null,
+    website: null,
+    intro: null,
     status: 0,
     lastLoginTime: '2025-05-01 16:45:00',
     roles: ['观察者'],
+    qqBound: false,
+    weiboBound: true,
     createTime: '2025-03-10 11:00:00'
   },
   {
@@ -204,9 +216,13 @@ const MOCK_USER_LIST: UserListItem[] = [
     nickname: '赵六',
     avatar: AVATAR,
     email: 'zhaoliu@example.com',
+    website: 'https://zhaoliu.cc',
+    intro: '运营推广',
     status: 1,
     lastLoginTime: '2025-06-14 08:15:00',
     roles: ['运营人员'],
+    qqBound: false,
+    weiboBound: false,
     createTime: '2025-04-05 13:20:00'
   },
   {
@@ -214,9 +230,13 @@ const MOCK_USER_LIST: UserListItem[] = [
     nickname: '孙七',
     avatar: AVATAR,
     email: 'sunqi@example.com',
+    website: null,
+    intro: null,
     status: 1,
     lastLoginTime: null,
     roles: ['观察者', '运营人员'],
+    qqBound: true,
+    weiboBound: false,
     createTime: '2025-05-18 10:00:00'
   },
   {
@@ -224,9 +244,13 @@ const MOCK_USER_LIST: UserListItem[] = [
     nickname: '周八',
     avatar: AVATAR,
     email: null,
+    website: null,
+    intro: null,
     status: 0,
     lastLoginTime: '2025-06-01 09:00:00',
     roles: [],
+    qqBound: false,
+    weiboBound: false,
     createTime: '2025-06-01 09:00:00'
   }
 ];
