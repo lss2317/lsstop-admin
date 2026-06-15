@@ -186,6 +186,14 @@
       </div>
     </template>
   </ElDialog>
+
+  <!-- 头像裁剪弹窗 -->
+  <AvatarCropperDialog
+    v-model="cropDialogVisible"
+    :image-file="cropImageFile"
+    @save="handleCropSave"
+    @close="handleCropClose"
+  />
 </template>
 
 <script setup lang="ts">
@@ -194,6 +202,7 @@
   import type { UserListItem, RoleOption } from '@/apis/user';
   import { MOCK_ROLE_LIST } from '@/apis/user';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
+  import AvatarCropperDialog from './avatar-cropper-dialog.vue';
 
   interface Props {
     modelValue: boolean;
@@ -231,6 +240,10 @@
 
   /** 微博绑定状态 */
   const weiboBound = ref(false);
+
+  /** 裁剪弹窗状态 */
+  const cropDialogVisible = ref(false);
+  const cropImageFile = ref<File | null>(null);
 
   /** 确认密码校验 */
   const validateConfirmPassword = (
@@ -345,15 +358,22 @@
   };
 
   /**
-   * 头像上传变化
+   * 头像选择 → 打开裁剪弹窗
    */
   const handleAvatarChange = (uploadFile: UploadFile) => {
     if (!uploadFile.raw) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      form.avatar = (e.target?.result as string) || '';
-    };
-    reader.readAsDataURL(uploadFile.raw);
+    cropImageFile.value = uploadFile.raw;
+    cropDialogVisible.value = true;
+  };
+
+  /** 裁剪保存 */
+  const handleCropSave = (dataURL: string) => {
+    form.avatar = dataURL;
+  };
+
+  /** 裁剪关闭 */
+  const handleCropClose = () => {
+    cropImageFile.value = null;
   };
 
   /**
