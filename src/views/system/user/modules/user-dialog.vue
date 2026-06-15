@@ -2,6 +2,7 @@
   <ElDialog
     v-model="visible"
     :title="dialogType === 'add' ? '新增用户' : '编辑用户'"
+    class="user-dialog"
     width="700px"
     align-center
     @close="handleClose"
@@ -102,7 +103,7 @@
             <ElInput
               v-model="form.intro"
               type="textarea"
-              :rows="2"
+              :rows="3"
               placeholder="请输入个人简介"
               maxlength="100"
               show-word-limit
@@ -515,5 +516,11 @@
     &.is-focus {
       box-shadow: 0 0 0 1px #409eff inset;
     }
+  }
+</style>
+
+<style>
+  .user-dialog .el-dialog__body {
+    padding-right: 20px !important;
   }
 </style>

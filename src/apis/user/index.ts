@@ -236,7 +236,13 @@ export const MOCK_ROLE_LIST: RoleOption[] = [
   { id: 1, roleName: '管理员' },
   { id: 2, roleName: '编辑者' },
   { id: 3, roleName: '观察者' },
-  { id: 4, roleName: '运营人员' }
+  { id: 4, roleName: '运营人员' },
+  { id: 5, roleName: '审核员' },
+  { id: 6, roleName: '财务' },
+  { id: 7, roleName: '客服' },
+  { id: 8, roleName: '数据分析师' },
+  { id: 9, roleName: '技术支持' },
+  { id: 10, roleName: '访客' }
 ];
 
 /** 模拟用户详情 */
