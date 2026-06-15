@@ -483,11 +483,13 @@
   .auth-bound {
     color: #67c23a;
     font-size: 13px;
+    margin-right: 8px;
   }
 
   .auth-unbound {
     color: #c0c4cc;
     font-size: 13px;
+    margin-right: 8px;
   }
 
   .dialog-footer {
