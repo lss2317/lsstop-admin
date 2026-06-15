@@ -129,7 +129,6 @@
       prop: 'createTime',
       label: '创建日期',
       width: 180,
-      sortable: true,
       formatter: (row: RoleItem) => formatDateTime(row.createTime)
     },
     {

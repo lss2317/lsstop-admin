@@ -137,14 +137,18 @@
       formatter: (row) => {
         return h('div', { class: 'user flex-c' }, [
           h(ElImage, {
-            class: 'size-9.5 rounded-md',
+            class: 'size-9.5 rounded-md shrink-0',
             src: row.avatar,
             previewSrcList: [row.avatar],
             previewTeleported: true
           }),
-          h('div', { class: 'ml-2' }, [
-            h('p', { class: 'user-name' }, row.nickname),
-            h('p', { class: 'text-xs text-gray-400' }, row.email || '-')
+          h('div', { class: 'ml-2 min-w-0' }, [
+            h('p', { class: 'user-name truncate', title: row.nickname }, row.nickname),
+            h(
+              'p',
+              { class: 'text-xs text-gray-400 truncate', title: row.email || '-' },
+              row.email || '-'
+            )
           ])
         ]);
       }
@@ -196,6 +200,7 @@
       prop: 'status',
       label: '状态',
       width: 80,
+      align: 'center',
       formatter: (row) => {
         const statusConfig = getUserStatusConfig(row.status);
         return h(
