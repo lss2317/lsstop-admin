@@ -18,10 +18,18 @@ export interface AuthMethodItem {
   identifier: string;
 }
 
+/** 角色简要信息（列表嵌入用） */
+export interface RoleBrief {
+  /** 角色ID */
+  id: number;
+  /** 角色名称 */
+  roleName: string;
+}
+
 /** 用户列表项（后端聚合 VO） */
 export interface UserListItem {
-  /** 用户UID */
-  userUid: string;
+  /** 用户ID */
+  userId: string;
   /** 昵称 */
   nickname: string;
   /** 头像 */
@@ -36,20 +44,18 @@ export interface UserListItem {
   status: UserStatus;
   /** 最近登录时间 */
   lastLoginTime: string | null;
-  /** 角色名称列表 */
-  roles: string[];
+  /** 角色列表 */
+  roles: RoleBrief[];
   /** 是否绑定QQ */
   qqBound: boolean;
   /** 是否绑定微博 */
   weiboBound: boolean;
-  /** 创建时间 */
-  createTime: string;
 }
 
 /** 用户详情（编辑弹窗用） */
 export interface UserDetail {
-  /** 用户UID */
-  userUid: string;
+  /** 用户ID */
+  userId: string;
   /** 昵称 */
   nickname: string;
   /** 头像 */
@@ -74,8 +80,8 @@ export interface UserDetail {
 
 /** 用户搜索参数 */
 export interface UserSearchParams {
-  /** 用户UID（精确搜索） */
-  userUid?: string;
+  /** 用户ID */
+  userId?: string;
   /** 昵称（模糊搜索） */
   nickname?: string;
   /** 邮箱（模糊搜索） */
@@ -102,8 +108,8 @@ export interface UserListResponse {
 
 /** 新增/编辑用户表单参数 */
 export interface UserFormParams {
-  /** 用户UID（编辑时后端从路径获取，新增时后端自动生成） */
-  userUid?: string;
+  /** 用户ID（编辑时后端从路径获取，新增时后端自动生成） */
+  userId?: string;
   /** 昵称 */
   nickname: string;
   /** 邮箱 */
@@ -164,16 +170,16 @@ export interface ApiPermissionNode {
 
 /** 保存用户菜单权限参数 */
 export interface SaveUserMenuPermissionParams {
-  /** 用户UID */
-  userUid: string;
+  /** 用户ID */
+  userId: string;
   /** 选中的菜单 ID 列表 */
   menuIds: number[];
 }
 
 /** 保存用户接口权限参数 */
 export interface SaveUserApiPermissionParams {
-  /** 用户UID */
-  userUid: string;
+  /** 用户ID */
+  userId: string;
   /** 选中的接口 ID 列表 */
   apiIds: number[];
 }

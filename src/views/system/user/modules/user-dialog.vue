@@ -334,22 +334,21 @@
    */
   const initForm = () => {
     if (props.dialogType === 'edit' && props.userData) {
-      const roleMap = new Map(roleOptions.value.map((r) => [r.roleName, r.id]));
       Object.assign(form, {
-        userUid: props.userData.userUid,
+        userId: props.userData.userId,
         nickname: props.userData.nickname,
         email: props.userData.email || '',
         avatar: props.userData.avatar,
         website: props.userData.website || '',
         intro: props.userData.intro || '',
         status: props.userData.status,
-        roleIds: props.userData.roles.map((name) => roleMap.get(name)).filter(Boolean) as number[]
+        roleIds: props.userData.roles.map((r) => r.id)
       });
       qqBound.value = props.userData.qqBound;
       weiboBound.value = props.userData.weiboBound;
     } else {
       Object.assign(form, defaultForm());
-      form.userUid = undefined;
+      form.userId = undefined;
       form.password = '';
       form.confirmPassword = '';
       qqBound.value = false;
@@ -410,7 +409,7 @@
         ElMessage.success('新增成功');
       } else {
         const { mockFetchUpdateUser } = await import('@/apis/user');
-        await mockFetchUpdateUser({ ...form, userUid: form.userUid! });
+        await mockFetchUpdateUser({ ...form, userId: form.userId! });
         ElMessage.success('修改成功');
       }
       emit('success');

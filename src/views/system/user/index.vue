@@ -66,7 +66,7 @@
 <script setup lang="ts">
   import { useTable } from '@/hooks/core/useTable';
   import type { ColumnOption } from '@/types/component';
-  import type { UserListItem, UserSearchParams } from '@/apis/user';
+  import type { UserListItem, UserSearchParams, RoleBrief } from '@/apis/user';
   import type { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue';
   import { mockFetchUserList } from '@/apis/user';
   import { ElTag, ElMessageBox, ElImage, ElPopover } from 'element-plus';
@@ -93,7 +93,7 @@
 
   /** 搜索表单 */
   const searchForm = reactive<UserSearchParams>({
-    userUid: undefined,
+    userId: undefined,
     nickname: undefined,
     email: undefined,
     status: undefined,
@@ -124,7 +124,7 @@
    */
   const createColumns = (): ColumnOption<UserListItem>[] => [
     {
-      prop: 'userUid',
+      prop: 'userId',
       label: '用户ID',
       minWidth: 160,
       showOverflowTooltip: true,
@@ -166,8 +166,8 @@
         const visible = row.roles.slice(0, MAX_SHOW);
         const overflow = row.roles.slice(MAX_SHOW);
 
-        const roleTag = (role: string) =>
-          h(ElTag, { type: 'info', class: 'role-tag', title: role }, () => role);
+        const roleTag = (role: RoleBrief) =>
+          h(ElTag, { type: 'info', class: 'role-tag', title: role.roleName }, () => role.roleName);
 
         const tags = visible.map(roleTag);
 
@@ -359,7 +359,7 @@
       .then(async () => {
         try {
           const { fetchDeleteUser } = await import('@/apis/user');
-          await fetchDeleteUser(row.userUid);
+          await fetchDeleteUser(row.userId);
           ElMessage.success('删除成功');
           await refreshData();
         } catch (error) {

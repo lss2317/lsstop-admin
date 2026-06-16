@@ -54,10 +54,10 @@
    */
   const formItems = computed(() => [
     {
-      label: '用户UID',
-      key: 'userUid',
+      label: '用户ID',
+      key: 'userId',
       type: 'input',
-      placeholder: '请输入用户UID',
+      placeholder: '请输入用户ID',
       clearable: true
     },
     {

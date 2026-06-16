@@ -96,7 +96,7 @@
         try {
           const [tree, permission] = await Promise.all([
             mockFetchMenuPermissionTree(),
-            mockFetchUserMenuPermission(props.userData.userUid)
+            mockFetchUserMenuPermission(props.userData.userId)
           ]);
           menuTree.value = tree;
           await nextTick();

@@ -102,7 +102,7 @@
         try {
           const [tree, permission] = await Promise.all([
             mockFetchApiPermissionTree(),
-            mockFetchUserApiPermission(props.userData.userUid)
+            mockFetchUserApiPermission(props.userData.userId)
           ]);
           apiPermissionList.value = tree;
           await nextTick();
