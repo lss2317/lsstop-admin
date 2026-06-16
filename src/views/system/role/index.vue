@@ -15,9 +15,9 @@
         @refresh="refreshData"
       >
         <template #left>
-          <ElSpace wrap>
-            <ElButton @click="showDialog('add')" v-ripple>新增角色</ElButton>
-          </ElSpace>
+          <ElButton type="primary" plain class="!rounded-lg" @click="showDialog('add')" v-ripple>
+            新增角色
+          </ElButton>
         </template>
       </ArtTableHeader>
 
