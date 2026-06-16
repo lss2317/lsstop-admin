@@ -34,22 +34,22 @@ export interface UserListItem {
   nickname: string;
   /** 头像 */
   avatar: string;
-  /** 主要邮箱 */
+  /** 邮箱 */
   email: string | null;
   /** 个人网站 */
   website: string | null;
   /** 个人简介 */
   intro: string | null;
-  /** 状态：0-禁用 1-启用 */
+  /** 是否绑定QQ */
+  qqBound: boolean;
+  /** 是否绑定微博 */
+  weiboBound: boolean;
+  /** 状态：0-禁用 1-正常 */
   status: UserStatus;
   /** 最近登录时间 */
   lastLoginTime: string | null;
   /** 角色列表 */
   roles: RoleBrief[];
-  /** 是否绑定QQ */
-  qqBound: boolean;
-  /** 是否绑定微博 */
-  weiboBound: boolean;
 }
 
 /** 用户详情（编辑弹窗用） */

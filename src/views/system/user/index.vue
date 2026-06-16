@@ -68,7 +68,7 @@
   import type { ColumnOption } from '@/types/component';
   import type { UserListItem, UserSearchParams, RoleBrief } from '@/apis/user';
   import type { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue';
-  import { mockFetchUserList } from '@/apis/user';
+  import { fetchUserList } from '@/apis/user';
   import { ElTag, ElMessageBox, ElImage, ElPopover } from 'element-plus';
   import { formatDateTime } from '@/utils/format';
   import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue';
@@ -127,8 +127,7 @@
       prop: 'userId',
       label: '用户ID',
       minWidth: 160,
-      showOverflowTooltip: true,
-      align: 'center'
+      showOverflowTooltip: true
     },
     {
       prop: 'userInfo',
@@ -272,7 +271,7 @@
     refreshData
   } = useTable({
     core: {
-      apiFn: mockFetchUserList,
+      apiFn: fetchUserList,
       apiParams: {
         current: 1,
         size: 20

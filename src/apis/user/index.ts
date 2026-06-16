@@ -178,15 +178,15 @@ const MOCK_USER_LIST: UserListItem[] = [
     email: 'zhangsan@example.com',
     website: 'https://zhangsan.dev',
     intro: '全栈开发者，热爱开源',
+    qqBound: true,
+    weiboBound: false,
     status: 1,
     lastLoginTime: '2025-06-14 10:30:00',
     roles: [
       { id: 1, roleName: '管理员' },
       { id: 2, roleName: '编辑者' },
       { id: 4, roleName: '运营人员' }
-    ],
-    qqBound: true,
-    weiboBound: false
+    ]
   },
   {
     userId: 'i9j0k1l2m3n4o5p6',
@@ -195,11 +195,11 @@ const MOCK_USER_LIST: UserListItem[] = [
     email: 'lisi@example.com',
     website: null,
     intro: '前端工程师',
+    qqBound: false,
+    weiboBound: false,
     status: 1,
     lastLoginTime: '2025-06-13 14:20:00',
-    roles: [{ id: 2, roleName: '编辑者' }],
-    qqBound: false,
-    weiboBound: false
+    roles: [{ id: 2, roleName: '编辑者' }]
   },
   {
     userId: 'q7r8s9t0u1v2w3x4',
@@ -208,11 +208,11 @@ const MOCK_USER_LIST: UserListItem[] = [
     email: null,
     website: null,
     intro: null,
+    qqBound: false,
+    weiboBound: true,
     status: 0,
     lastLoginTime: '2025-05-01 16:45:00',
-    roles: [{ id: 3, roleName: '观察者' }],
-    qqBound: false,
-    weiboBound: true
+    roles: [{ id: 3, roleName: '观察者' }]
   },
   {
     userId: 'y5z6a7b8c9d0e1f2',
@@ -221,11 +221,11 @@ const MOCK_USER_LIST: UserListItem[] = [
     email: 'zhaoliu@example.com',
     website: 'https://zhaoliu.cc',
     intro: '运营推广',
+    qqBound: false,
+    weiboBound: false,
     status: 1,
     lastLoginTime: '2025-06-14 08:15:00',
-    roles: [{ id: 4, roleName: '运营人员' }],
-    qqBound: false,
-    weiboBound: false
+    roles: [{ id: 4, roleName: '运营人员' }]
   },
   {
     userId: 'g3h4i5j6k7l8m9n0',
@@ -234,14 +234,14 @@ const MOCK_USER_LIST: UserListItem[] = [
     email: 'sunqi@example.com',
     website: null,
     intro: null,
+    qqBound: true,
+    weiboBound: false,
     status: 1,
     lastLoginTime: null,
     roles: [
       { id: 3, roleName: '观察者' },
       { id: 4, roleName: '运营人员' }
-    ],
-    qqBound: true,
-    weiboBound: false
+    ]
   },
   {
     userId: 'o1p2q3r4s5t6u7v8',
@@ -250,11 +250,11 @@ const MOCK_USER_LIST: UserListItem[] = [
     email: null,
     website: null,
     intro: null,
+    qqBound: false,
+    weiboBound: false,
     status: 0,
     lastLoginTime: '2025-06-01 09:00:00',
-    roles: [],
-    qqBound: false,
-    weiboBound: false
+    roles: []
   }
 ];
 
