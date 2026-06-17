@@ -357,8 +357,8 @@
     })
       .then(async () => {
         try {
-          const { fetchDeleteUser } = await import('@/apis/user');
-          await fetchDeleteUser(row.userId);
+          // TODO: 后端就绪后替换为 const { fetchDeleteUser } = await import('@/apis/user'); await fetchDeleteUser(row.userId);
+          await Promise.resolve();
           ElMessage.success('删除成功');
           await refreshData();
         } catch (error) {

@@ -27,10 +27,6 @@ export type {
   LoginType
 } from './types';
 
-// ============================================================
-// 真实 API
-// ============================================================
-
 /**
  * 获取用户列表（分页）
  * @param params 搜索与分页参数
@@ -39,6 +35,15 @@ export function fetchUserList(params: UserSearchParams) {
   return request.get<UserListResponse>({
     url: '/user/list',
     params
+  });
+}
+
+/**
+ * 获取所有角色（弹窗下拉用）
+ */
+export function fetchRoleOptions() {
+  return request.get<RoleOption[]>({
+    url: '/role/options'
   });
 }
 
@@ -81,15 +86,6 @@ export function fetchUpdateUser(data: UserFormParams) {
 export function fetchDeleteUser(userId: string) {
   return request.del<void>({
     url: `/user/delete/${userId}`
-  });
-}
-
-/**
- * 获取所有角色（弹窗下拉用）
- */
-export function fetchRoleOptions() {
-  return request.get<RoleOption[]>({
-    url: '/role/options'
   });
 }
 
