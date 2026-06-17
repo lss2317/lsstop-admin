@@ -42,8 +42,9 @@
   import type { UserListItem } from '@/apis/user';
   import type { ApiPermissionNode } from '@/apis/role/types';
   import { fetchApiPermissionTree } from '@/apis/role';
+  import { fetchUserApiPermission } from '@/apis/user';
   // TODO: 后端就绪后启用
-  // import { fetchUserApiPermission, fetchSaveUserApiPermission } from '@/apis/user';
+  // import { fetchSaveUserApiPermission } from '@/apis/user';
 
   interface Props {
     modelValue: boolean;
@@ -101,8 +102,7 @@
         try {
           const [tree, permission] = await Promise.all([
             fetchApiPermissionTree(),
-            // TODO: 后端就绪后替换为 fetchUserApiPermission(props.userData.userId)
-            Promise.resolve<number[]>([])
+            fetchUserApiPermission(props.userData.userId)
           ]);
           apiPermissionList.value = tree;
           await nextTick();

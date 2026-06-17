@@ -36,8 +36,9 @@
   import type { UserListItem } from '@/apis/user';
   import type { MenuPermissionNode } from '@/apis/role/types';
   import { fetchMenuPermissionTree } from '@/apis/role';
+  import { fetchUserMenuPermission } from '@/apis/user';
   // TODO: 后端就绪后启用
-  // import { fetchUserMenuPermission, fetchSaveUserMenuPermission } from '@/apis/user';
+  // import { fetchSaveUserMenuPermission } from '@/apis/user';
 
   interface Props {
     modelValue: boolean;
@@ -95,8 +96,7 @@
         try {
           const [tree, permission] = await Promise.all([
             fetchMenuPermissionTree(),
-            // TODO: 后端就绪后替换为 fetchUserMenuPermission(props.userData.userId)
-            Promise.resolve<number[]>([])
+            fetchUserMenuPermission(props.userData.userId)
           ]);
           menuTree.value = tree;
           await nextTick();
