@@ -7,7 +7,6 @@ import request from '@/utils/http';
 import type {
   UserSearchParams,
   UserListResponse,
-  UserDetail,
   UserFormParams,
   RoleOption,
   SaveUserMenuPermissionParams,
@@ -18,13 +17,10 @@ export type {
   UserListItem,
   UserSearchParams,
   UserListResponse,
-  UserDetail,
   UserFormParams,
-  AuthMethodItem,
   RoleOption,
   RoleBrief,
-  UserStatus,
-  LoginType
+  UserStatus
 } from './types';
 
 /**
@@ -44,16 +40,6 @@ export function fetchUserList(params: UserSearchParams) {
 export function fetchRoleOptions() {
   return request.get<RoleOption[]>({
     url: '/role/options'
-  });
-}
-
-/**
- * 获取用户详情
- * @param userId 用户ID
- */
-export function fetchUserDetail(userId: string) {
-  return request.get<UserDetail>({
-    url: `/user/detail/${userId}`
   });
 }
 

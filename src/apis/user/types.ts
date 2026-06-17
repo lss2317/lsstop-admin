@@ -7,17 +7,6 @@
 /** 用户状态：0-禁用 1-启用 */
 export type UserStatus = 0 | 1;
 
-/** 登录方式：1-邮箱 2-QQ 3-微博 */
-export type LoginType = 1 | 2 | 3;
-
-/** 认证方式项 */
-export interface AuthMethodItem {
-  /** 登录方式 */
-  loginType: LoginType;
-  /** 登录标识（邮箱 / QQ openId / 微博 uid） */
-  identifier: string;
-}
-
 /** 角色简要信息（列表嵌入用） */
 export interface RoleBrief {
   /** 角色ID */
@@ -50,32 +39,6 @@ export interface UserListItem {
   lastLoginTime: string | null;
   /** 角色列表 */
   roles: RoleBrief[];
-}
-
-/** 用户详情（编辑弹窗用） */
-export interface UserDetail {
-  /** 用户ID */
-  userId: string;
-  /** 昵称 */
-  nickname: string;
-  /** 头像 */
-  avatar: string;
-  /** 个人网站 */
-  website: string | null;
-  /** 个人简介 */
-  intro: string | null;
-  /** 状态 */
-  status: UserStatus;
-  /** 最近登录时间 */
-  lastLoginTime: string | null;
-  /** 认证方式列表 */
-  authMethods: AuthMethodItem[];
-  /** 角色ID列表 */
-  roleIds: number[];
-  /** 创建时间 */
-  createTime: string;
-  /** 更新时间 */
-  updateTime: string;
 }
 
 /** 用户搜索参数 */

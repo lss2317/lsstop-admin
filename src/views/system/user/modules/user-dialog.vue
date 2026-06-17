@@ -126,42 +126,16 @@
               <ArtSvgIcon icon="ri:qq-line" class="text-[22px] text-[#1296db]" />
               <span>QQ</span>
             </div>
-            <div class="auth-status">
-              <span v-if="qqBound" class="auth-bound">已绑定</span>
-              <span v-else class="auth-unbound">未绑定</span>
-              <ElPopconfirm
-                v-if="qqBound"
-                title="确定解绑该QQ账号？"
-                confirm-button-text="解绑"
-                cancel-button-text="取消"
-                @confirm="unbindAuth(2)"
-              >
-                <template #reference>
-                  <ElButton type="danger" link size="small">解绑</ElButton>
-                </template>
-              </ElPopconfirm>
-            </div>
+            <span v-if="qqBound" class="auth-bound">已绑定</span>
+            <span v-else class="auth-unbound">未绑定</span>
           </div>
           <div class="auth-binding-item">
             <div class="auth-platform">
               <ArtSvgIcon icon="ri:weibo-line" class="text-[22px] text-[#e6162d]" />
               <span>微博</span>
             </div>
-            <div class="auth-status">
-              <span v-if="weiboBound" class="auth-bound">已绑定</span>
-              <span v-else class="auth-unbound">未绑定</span>
-              <ElPopconfirm
-                v-if="weiboBound"
-                title="确定解绑该微博账号？"
-                confirm-button-text="解绑"
-                cancel-button-text="取消"
-                @confirm="unbindAuth(3)"
-              >
-                <template #reference>
-                  <ElButton type="danger" link size="small">解绑</ElButton>
-                </template>
-              </ElPopconfirm>
-            </div>
+            <span v-if="weiboBound" class="auth-bound">已绑定</span>
+            <span v-else class="auth-unbound">未绑定</span>
           </div>
         </div>
       </template>
@@ -389,15 +363,6 @@
   };
 
   /**
-   * 解绑第三方账号
-   */
-  const unbindAuth = (loginType: number) => {
-    if (loginType === 2) qqBound.value = false;
-    if (loginType === 3) weiboBound.value = false;
-    ElMessage.success('解绑成功');
-  };
-
-  /**
    * 关闭弹窗并重置表单
    */
   const handleClose = () => {
@@ -486,22 +451,14 @@
     color: #303133;
   }
 
-  .auth-status {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
   .auth-bound {
     color: #67c23a;
     font-size: 13px;
-    margin-right: 8px;
   }
 
   .auth-unbound {
     color: #c0c4cc;
     font-size: 13px;
-    margin-right: 8px;
   }
 
   .dialog-footer {
