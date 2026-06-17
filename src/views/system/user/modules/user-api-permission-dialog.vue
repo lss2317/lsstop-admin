@@ -39,12 +39,11 @@
 </template>
 
 <script setup lang="ts">
-  import type { UserListItem, ApiPermissionNode } from '@/apis/user';
-  import {
-    mockFetchApiPermissionTree,
-    mockFetchUserApiPermission,
-    mockFetchSaveUserApiPermission
-  } from '@/apis/user';
+  import type { UserListItem } from '@/apis/user';
+  import type { ApiPermissionNode } from '@/apis/role/types';
+  import { fetchApiPermissionTree } from '@/apis/role';
+  // TODO: 后端就绪后启用
+  // import { fetchUserApiPermission, fetchSaveUserApiPermission } from '@/apis/user';
 
   interface Props {
     modelValue: boolean;
@@ -101,8 +100,9 @@
         loading.value = true;
         try {
           const [tree, permission] = await Promise.all([
-            mockFetchApiPermissionTree(),
-            mockFetchUserApiPermission(props.userData.userId)
+            fetchApiPermissionTree(),
+            // TODO: 后端就绪后替换为 fetchUserApiPermission(props.userData.userId)
+            Promise.resolve<number[]>([])
           ]);
           apiPermissionList.value = tree;
           await nextTick();
@@ -224,7 +224,8 @@
       const leafKeys = getAllLeafKeys(apiPermissionList.value);
       const apiIds = checkedKeys.filter((id) => leafKeys.includes(id));
 
-      await mockFetchSaveUserApiPermission();
+      // TODO: 后端就绪后替换为 fetchSaveUserApiPermission({ userId: props.userData.userId, apiIds })
+      await Promise.resolve();
       ElMessage.success('接口权限保存成功');
       emit('success');
       handleClose();

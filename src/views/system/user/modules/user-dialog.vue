@@ -201,6 +201,8 @@
   import type { UserFormParams } from '@/apis/user/types';
   import type { UserListItem, RoleOption } from '@/apis/user';
   import { fetchRoleOptions } from '@/apis/user';
+  // TODO: 后端就绪后启用
+  // import { fetchAddUser, fetchUpdateUser } from '@/apis/user';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import AvatarCropperDialog from './avatar-cropper-dialog.vue';
 
@@ -415,12 +417,12 @@
       submitting.value = true;
 
       if (props.dialogType === 'add') {
-        const { mockFetchAddUser } = await import('@/apis/user');
-        await mockFetchAddUser({ ...form, password: form.password });
+        // TODO: 后端就绪后替换为 fetchAddUser({ ...form, password: form.password })
+        await Promise.resolve();
         ElMessage.success('新增成功');
       } else {
-        const { mockFetchUpdateUser } = await import('@/apis/user');
-        await mockFetchUpdateUser({ ...form, userId: form.userId! });
+        // TODO: 后端就绪后替换为 fetchUpdateUser({ ...form, userId: form.userId! })
+        await Promise.resolve();
         ElMessage.success('修改成功');
       }
       emit('success');

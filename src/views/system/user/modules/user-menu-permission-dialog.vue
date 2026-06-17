@@ -33,12 +33,11 @@
 </template>
 
 <script setup lang="ts">
-  import type { UserListItem, MenuPermissionNode } from '@/apis/user';
-  import {
-    mockFetchMenuPermissionTree,
-    mockFetchUserMenuPermission,
-    mockFetchSaveUserMenuPermission
-  } from '@/apis/user';
+  import type { UserListItem } from '@/apis/user';
+  import type { MenuPermissionNode } from '@/apis/role/types';
+  import { fetchMenuPermissionTree } from '@/apis/role';
+  // TODO: 后端就绪后启用
+  // import { fetchUserMenuPermission, fetchSaveUserMenuPermission } from '@/apis/user';
 
   interface Props {
     modelValue: boolean;
@@ -95,8 +94,9 @@
         loading.value = true;
         try {
           const [tree, permission] = await Promise.all([
-            mockFetchMenuPermissionTree(),
-            mockFetchUserMenuPermission(props.userData.userId)
+            fetchMenuPermissionTree(),
+            // TODO: 后端就绪后替换为 fetchUserMenuPermission(props.userData.userId)
+            Promise.resolve<number[]>([])
           ]);
           menuTree.value = tree;
           await nextTick();
@@ -132,7 +132,8 @@
       const leafKeys = getAllLeafKeys(menuTree.value);
       const menuIds = checkedKeys.filter((id) => leafKeys.includes(id));
 
-      await mockFetchSaveUserMenuPermission();
+      // TODO: 后端就绪后替换为 fetchSaveUserMenuPermission({ userId: props.userData.userId, menuIds })
+      await Promise.resolve();
       ElMessage.success('菜单权限保存成功');
       emit('success');
       handleClose();
