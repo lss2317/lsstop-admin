@@ -200,7 +200,7 @@
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
   import type { UserFormParams } from '@/apis/user/types';
   import type { UserListItem, RoleOption } from '@/apis/user';
-  import { MOCK_ROLE_LIST } from '@/apis/user';
+  import { fetchRoleOptions } from '@/apis/user';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import AvatarCropperDialog from './avatar-cropper-dialog.vue';
 
@@ -233,7 +233,18 @@
   });
 
   /** 角色下拉选项 */
-  const roleOptions = ref<RoleOption[]>(MOCK_ROLE_LIST);
+  const roleOptions = ref<RoleOption[]>([]);
+
+  /** 加载角色选项 */
+  const loadRoleOptions = async () => {
+    try {
+      roleOptions.value = await fetchRoleOptions();
+    } catch {
+      roleOptions.value = [];
+    }
+  };
+
+  onMounted(loadRoleOptions);
 
   /** QQ绑定状态 */
   const qqBound = ref(false);
