@@ -36,9 +36,7 @@
   import type { UserListItem } from '@/apis/user';
   import type { MenuPermissionNode } from '@/apis/role/types';
   import { fetchMenuPermissionTree } from '@/apis/role';
-  import { fetchUserMenuPermission } from '@/apis/user';
-  // TODO: 后端就绪后启用
-  // import { fetchSaveUserMenuPermission } from '@/apis/user';
+  import { fetchUserMenuPermission, fetchSaveUserMenuPermission } from '@/apis/user';
 
   interface Props {
     modelValue: boolean;
@@ -132,8 +130,7 @@
       const leafKeys = getAllLeafKeys(menuTree.value);
       const menuIds = checkedKeys.filter((id) => leafKeys.includes(id));
 
-      // TODO: 后端就绪后替换为 fetchSaveUserMenuPermission({ userId: props.userData.userId, menuIds })
-      await Promise.resolve();
+      await fetchSaveUserMenuPermission({ userId: props.userData.userId, menuIds });
       ElMessage.success('菜单权限保存成功');
       emit('success');
       handleClose();

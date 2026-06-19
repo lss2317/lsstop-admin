@@ -42,9 +42,7 @@
   import type { UserListItem } from '@/apis/user';
   import type { ApiPermissionNode } from '@/apis/role/types';
   import { fetchApiPermissionTree } from '@/apis/role';
-  import { fetchUserApiPermission } from '@/apis/user';
-  // TODO: 后端就绪后启用
-  // import { fetchSaveUserApiPermission } from '@/apis/user';
+  import { fetchUserApiPermission, fetchSaveUserApiPermission } from '@/apis/user';
 
   interface Props {
     modelValue: boolean;
@@ -224,8 +222,7 @@
       const leafKeys = getAllLeafKeys(apiPermissionList.value);
       const apiIds = checkedKeys.filter((id) => leafKeys.includes(id));
 
-      // TODO: 后端就绪后替换为 fetchSaveUserApiPermission({ userId: props.userData.userId, apiIds })
-      await Promise.resolve();
+      await fetchSaveUserApiPermission({ userId: props.userData.userId, apiIds });
       ElMessage.success('接口权限保存成功');
       emit('success');
       handleClose();
