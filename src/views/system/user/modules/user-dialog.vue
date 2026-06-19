@@ -251,7 +251,7 @@
   const rules = reactive<FormRules>({
     nickname: [
       { required: true, message: '请输入昵称', trigger: 'blur' },
-      { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+      { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
     ],
     email: [
       { required: true, message: '请输入邮箱', trigger: 'blur' },

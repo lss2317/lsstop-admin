@@ -158,7 +158,7 @@
       minWidth: 150,
       formatter: (row) => {
         if (!row.roles || row.roles.length === 0) {
-          return h(ElTag, { type: 'info' }, () => '无角色');
+          return '-';
         }
 
         const MAX_SHOW = 2;
