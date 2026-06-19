@@ -165,6 +165,7 @@
   <AvatarCropperDialog
     v-model="cropDialogVisible"
     :image-file="cropImageFile"
+    :loading="uploadingAvatar"
     @save="handleCropSave"
     @close="handleCropClose"
   />
@@ -174,7 +175,7 @@
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
   import type { UserFormParams } from '@/apis/user/types';
   import type { UserListItem, RoleOption } from '@/apis/user';
-  import { fetchRoleOptions } from '@/apis/user';
+  import { fetchRoleOptions, fetchUploadAvatar } from '@/apis/user';
   // TODO: 后端就绪后启用
   // import { fetchAddUser, fetchUpdateUser } from '@/apis/user';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
@@ -231,6 +232,7 @@
   /** 裁剪弹窗状态 */
   const cropDialogVisible = ref(false);
   const cropImageFile = ref<File | null>(null);
+  const uploadingAvatar = ref(false);
 
   /** 确认密码校验 */
   const validateConfirmPassword = (
@@ -353,8 +355,16 @@
   };
 
   /** 裁剪保存 */
-  const handleCropSave = (dataURL: string) => {
-    form.avatar = dataURL;
+  const handleCropSave = async (file: File) => {
+    uploadingAvatar.value = true;
+    try {
+      const url = await fetchUploadAvatar(file);
+      form.avatar = url;
+    } catch {
+      // 接口报错由全局拦截器展示
+    } finally {
+      uploadingAvatar.value = false;
+    }
   };
 
   /** 裁剪关闭 */

@@ -55,7 +55,13 @@
 
     <template #footer>
       <ElButton @click="handleCancel">取消</ElButton>
-      <ElButton type="primary" :disabled="!ready" @click="handleSave">保存</ElButton>
+      <ElButton
+        type="primary"
+        :disabled="!ready || props.loading"
+        :loading="props.loading"
+        @click="handleSave"
+        >保存</ElButton
+      >
     </template>
   </ElDialog>
 </template>
@@ -67,16 +73,19 @@
     modelValue: boolean;
     imageFile: File | null;
     outputSize?: number;
+    loading?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    outputSize: 400
+    outputSize: 400,
+    loading: false
   });
 
   const emit = defineEmits<{
     'update:modelValue': [value: boolean];
-    save: [dataURL: string];
+    save: [file: File];
     close: [];
+    error: [message: string];
   }>();
 
   const visible = computed({
@@ -342,9 +351,19 @@
 
     outputCtx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
 
-    const dataURL = outputCanvas.toDataURL('image/jpeg', 0.92);
-    emit('save', dataURL);
-    visible.value = false;
+    outputCanvas.toBlob(
+      (blob) => {
+        if (blob) {
+          const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+          emit('save', file);
+          visible.value = false;
+        } else {
+          emit('error', '图片处理失败');
+        }
+      },
+      'image/jpeg',
+      0.92
+    );
   };
 
   // 取消

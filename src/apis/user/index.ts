@@ -119,6 +119,21 @@ export function fetchSaveUserApiPermission(data: SaveUserApiPermissionParams) {
   });
 }
 
+/**
+ * 上传用户头像
+ * @param file 裁剪后的图片文件
+ * @returns 新头像URL
+ */
+export function fetchUploadAvatar(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return request.post<string>({
+    url: '/file/avatar',
+    data: formData,
+    showSuccessMessage: false
+  });
+}
+
 // ============================================================
 // Mock 数据（开发阶段使用）
 // ============================================================
