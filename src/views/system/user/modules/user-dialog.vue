@@ -165,9 +165,9 @@
   <AvatarCropperDialog
     v-model="cropDialogVisible"
     :image-file="cropImageFile"
-    :loading="uploadingAvatar"
     @save="handleCropSave"
     @close="handleCropClose"
+    @error="(msg: string) => ElMessage.error(msg)"
   />
 </template>
 

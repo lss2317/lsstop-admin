@@ -55,11 +55,7 @@
 
     <template #footer>
       <ElButton @click="handleCancel">取消</ElButton>
-      <ElButton
-        type="primary"
-        :disabled="!ready || props.loading"
-        :loading="props.loading"
-        @click="handleSave"
+      <ElButton type="primary" :disabled="!ready || saving" :loading="saving" @click="handleSave"
         >保存</ElButton
       >
     </template>
@@ -73,12 +69,10 @@
     modelValue: boolean;
     imageFile: File | null;
     outputSize?: number;
-    loading?: boolean;
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    outputSize: 400,
-    loading: false
+    outputSize: 400
   });
 
   const emit = defineEmits<{
@@ -128,6 +122,9 @@
   // 初始化完成状态
   const ready = ref(false);
 
+  // 防重复保存
+  const saving = ref(false);
+
   // 监听弹窗打开
   watch(visible, async (val) => {
     if (val) {
@@ -150,6 +147,7 @@
   const resetState = () => {
     loadId++;
     ready.value = false;
+    saving.value = false;
     image.value = null;
     scale.value = 1;
     minScale.value = 1;
@@ -331,7 +329,9 @@
 
   // 保存裁剪结果
   const handleSave = () => {
-    if (!image.value) return;
+    if (!image.value || saving.value) return;
+
+    saving.value = true;
 
     const outputCanvas = document.createElement('canvas');
     const outputCtx = outputCanvas.getContext('2d');
@@ -358,6 +358,7 @@
           emit('save', file);
           visible.value = false;
         } else {
+          saving.value = false;
           emit('error', '图片处理失败');
         }
       },
