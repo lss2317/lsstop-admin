@@ -141,6 +141,11 @@
           h(ArtButtonMore, {
             list: [
               {
+                key: 'edit',
+                label: '编辑角色',
+                icon: 'ri:edit-2-line'
+              },
+              {
                 key: 'permission',
                 label: '菜单权限',
                 icon: 'ri:user-3-line'
@@ -149,11 +154,6 @@
                 key: 'apiPermission',
                 label: '接口权限',
                 icon: 'ri:code-line'
-              },
-              {
-                key: 'edit',
-                label: '编辑角色',
-                icon: 'ri:edit-2-line'
               },
               {
                 key: 'delete',
@@ -250,7 +250,7 @@
         }
       })
       .catch(() => {
-        ElMessage.info('已取消删除');
+        // 用户取消删除，静默关闭
       });
   };
 </script>
