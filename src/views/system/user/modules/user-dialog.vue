@@ -142,7 +142,7 @@
 
       <!-- 角色分配 -->
       <ElDivider content-position="left">角色分配</ElDivider>
-      <ElFormItem label="角色" prop="roleIds">
+      <ElFormItem label="角色" prop="roleIds" required>
         <ElSelect v-model="form.roleIds" placeholder="请选择角色" multiple clearable>
           <ElOption
             v-for="role in roleOptions"
@@ -175,9 +175,7 @@
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
   import type { UserFormParams } from '@/apis/user/types';
   import type { UserListItem, RoleOption } from '@/apis/user';
-  import { fetchRoleOptions, fetchUploadAvatar } from '@/apis/user';
-  // TODO: 后端就绪后启用
-  // import { fetchAddUser, fetchUpdateUser } from '@/apis/user';
+  import { fetchRoleOptions, fetchUploadAvatar, fetchAddUser, fetchUpdateUser } from '@/apis/user';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import AvatarCropperDialog from './avatar-cropper-dialog.vue';
 
@@ -266,7 +264,8 @@
     confirmPassword: [
       { required: true, message: '请再次输入密码', trigger: 'blur' },
       { validator: validateConfirmPassword, trigger: 'blur' }
-    ]
+    ],
+    roleIds: [{ required: true, message: '请选择角色', trigger: 'change' }]
   });
 
   /**
@@ -392,12 +391,10 @@
       submitting.value = true;
 
       if (props.dialogType === 'add') {
-        // TODO: 后端就绪后替换为 fetchAddUser({ ...form, password: form.password })
-        await Promise.resolve();
+        await fetchAddUser({ ...form, password: form.password });
         ElMessage.success('新增成功');
       } else {
-        // TODO: 后端就绪后替换为 fetchUpdateUser({ ...form, userId: form.userId! })
-        await Promise.resolve();
+        await fetchUpdateUser({ ...form, userId: form.userId! });
         ElMessage.success('修改成功');
       }
       emit('success');
