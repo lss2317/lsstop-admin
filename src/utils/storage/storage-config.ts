@@ -17,6 +17,12 @@ export class StorageConfig {
   /** 响应式布局切换时暂存桌面端菜单类型 */
   static readonly RESPONSIVE_MENU_TYPE_KEY = 'lsstop-responsive-menu-type';
 
+  /** 记住密码-邮箱 */
+  static readonly REMEMBER_EMAIL_KEY = 'lsstop-remember-email';
+
+  /** 记住密码-密码 */
+  static readonly REMEMBER_PASSWORD_KEY = 'lsstop-remember-password';
+
   /**
    * 生成存储键名
    * @param storeId 存储ID

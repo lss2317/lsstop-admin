@@ -101,6 +101,7 @@
   import { fetchLogin } from '@/apis/auth';
   import { ElNotification, type FormInstance, type FormRules } from 'element-plus';
   import { useSettingStore } from '@/store/modules/setting';
+  import { StorageConfig } from '@/utils/storage/storage-config';
 
   defineOptions({ name: 'Login' });
 
@@ -129,6 +130,19 @@
     password: '',
     rememberPassword: true
   });
+
+  /** 初始化：从 localStorage 回填记住的账号密码 */
+  const initRememberedCreds = () => {
+    const savedEmail = localStorage.getItem(StorageConfig.REMEMBER_EMAIL_KEY);
+    const savedPwd = localStorage.getItem(StorageConfig.REMEMBER_PASSWORD_KEY);
+    if (savedEmail) {
+      formData.email = savedEmail;
+      formData.password = savedPwd ? atob(savedPwd) : '';
+      formData.rememberPassword = true;
+    }
+  };
+
+  onMounted(initRememberedCreds);
 
   const rules = computed<FormRules>(() => ({
     email: [
@@ -167,6 +181,15 @@
 
       // 存储 token
       userStore.setToken(accessToken, refreshToken);
+
+      // 记住密码：存入 localStorage（密码经 btoa 混淆）；否则清除
+      if (formData.rememberPassword) {
+        localStorage.setItem(StorageConfig.REMEMBER_EMAIL_KEY, email);
+        localStorage.setItem(StorageConfig.REMEMBER_PASSWORD_KEY, btoa(password));
+      } else {
+        localStorage.removeItem(StorageConfig.REMEMBER_EMAIL_KEY);
+        localStorage.removeItem(StorageConfig.REMEMBER_PASSWORD_KEY);
+      }
 
       // 登录成功处理
       showLoginSuccessNotice();
