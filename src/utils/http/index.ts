@@ -91,6 +91,11 @@ axiosInstance.interceptors.request.use(
 /** 响应拦截器 */
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse<BaseResponse>) => {
+    // Blob 响应走旁路，不解析 JSON code
+    if (response.config.responseType === 'blob') {
+      return response;
+    }
+
     const { code, msg } = response.data;
     if (code === ApiStatus.success) return response;
 
@@ -112,9 +117,23 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const responseData = error.response?.data;
 
+    // Blob 错误响应：尝试解析 JSON 以获取错误码
+    let errorCode: number | undefined;
+    if (error.config?.responseType === 'blob' && responseData instanceof Blob) {
+      try {
+        const text = await responseData.text();
+        const json = JSON.parse(text);
+        errorCode = json.code;
+      } catch {
+        // 不是 JSON，保持 undefined
+      }
+    } else {
+      errorCode = responseData?.code;
+    }
+
     // Token 过期且非重试请求且非刷新接口 → 尝试刷新
     if (
-      responseData?.code === ApiStatus.tokenExpired &&
+      errorCode === ApiStatus.tokenExpired &&
       error.config &&
       !error.config._isRetry &&
       !error.config.url?.includes(REFRESH_URL)
@@ -263,4 +282,5 @@ const api = {
   }
 };
 
+export { axiosInstance };
 export default api;

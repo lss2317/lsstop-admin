@@ -3,10 +3,9 @@
  *
  * @module apis/operation-log
  */
-import request from '@/utils/http';
+import request, { axiosInstance } from '@/utils/http';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import { useUserStore } from '@/store/modules/user';
 import type {
   OperationLogSearchParams,
   OperationLogListResponse,
@@ -43,12 +42,10 @@ export function fetchDeleteOperationLog(params: BatchDeleteParams) {
 export async function fetchOperationLogExport(
   params: Omit<OperationLogSearchParams, 'current' | 'size'>
 ): Promise<Blob | null> {
-  const userStore = useUserStore();
   try {
-    const res = await axios.get('/api/admin/operation-log/export', {
+    const res = await axiosInstance.get('/operation-log/export', {
       params,
-      responseType: 'blob',
-      headers: { Authorization: `Bearer ${userStore.accessToken}` }
+      responseType: 'blob'
     });
     if (res.data.type === 'application/json') {
       const text = await res.data.text();

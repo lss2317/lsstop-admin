@@ -3,10 +3,9 @@
  *
  * @module apis/login-log
  */
-import request from '@/utils/http';
+import request, { axiosInstance } from '@/utils/http';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import { useUserStore } from '@/store/modules/user';
 import type {
   LoginLogSearchParams,
   LoginLogListResponse,
@@ -43,12 +42,10 @@ export function fetchDeleteLoginLog(params: LoginLogBatchDeleteParams) {
 export async function fetchLoginLogExport(
   params: Omit<LoginLogSearchParams, 'current' | 'size'>
 ): Promise<Blob | null> {
-  const userStore = useUserStore();
   try {
-    const res = await axios.get('/api/admin/login-log/export', {
+    const res = await axiosInstance.get('/login-log/export', {
       params,
-      responseType: 'blob',
-      headers: { Authorization: `Bearer ${userStore.accessToken}` }
+      responseType: 'blob'
     });
     if (res.data.type === 'application/json') {
       const text = await res.data.text();
