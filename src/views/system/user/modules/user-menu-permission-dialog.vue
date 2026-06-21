@@ -33,6 +33,7 @@
 </template>
 
 <script setup lang="ts">
+  import { ElMessage } from 'element-plus';
   import type { UserListItem } from '@/apis/user';
   import type { MenuPermissionNode } from '@/apis/role/types';
   import { fetchMenuPermissionTree } from '@/apis/role';

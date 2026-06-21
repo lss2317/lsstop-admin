@@ -39,6 +39,7 @@
 </template>
 
 <script setup lang="ts">
+  import { ElMessage } from 'element-plus';
   import type { UserListItem } from '@/apis/user';
   import type { ApiPermissionNode } from '@/apis/role/types';
   import { fetchApiPermissionTree } from '@/apis/role';

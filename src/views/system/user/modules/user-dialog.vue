@@ -54,7 +54,7 @@
               v-model="form.website"
               placeholder="请输入个人网站"
               clearable
-              maxlength="255"
+              maxlength="200"
             />
           </ElFormItem>
         </ElCol>
@@ -68,13 +68,6 @@
               clearable
               maxlength="20"
               @input="(val: string) => (form.password = val.replace(/\s/g, ''))"
-              @paste="
-                (e: ClipboardEvent) => {
-                  e.preventDefault();
-                  const text = e.clipboardData?.getData('text') || '';
-                  form.password += text.replace(/\s/g, '');
-                }
-              "
             />
           </ElFormItem>
         </ElCol>
@@ -88,13 +81,6 @@
               clearable
               maxlength="20"
               @input="(val: string) => (form.confirmPassword = val.replace(/\s/g, ''))"
-              @paste="
-                (e: ClipboardEvent) => {
-                  e.preventDefault();
-                  const text = e.clipboardData?.getData('text') || '';
-                  form.confirmPassword += text.replace(/\s/g, '');
-                }
-              "
             />
           </ElFormItem>
         </ElCol>
@@ -107,6 +93,7 @@
               placeholder="请输入个人简介"
               maxlength="100"
               show-word-limit
+              @blur="form.intro = (form.intro || '').trim()"
             />
           </ElFormItem>
         </ElCol>
@@ -172,6 +159,7 @@
 </template>
 
 <script setup lang="ts">
+  import { ElMessage } from 'element-plus';
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
   import type { UserFormParams } from '@/apis/user/types';
   import type { UserListItem, RoleOption } from '@/apis/user';
@@ -265,7 +253,8 @@
       { required: true, message: '请再次输入密码', trigger: 'blur' },
       { validator: validateConfirmPassword, trigger: 'blur' }
     ],
-    roleIds: [{ required: true, message: '请选择角色', trigger: 'change' }]
+    roleIds: [{ required: true, message: '请选择角色', trigger: 'change' }],
+    website: [{ max: 200, message: '长度不超过 200 个字符', trigger: 'blur' }]
   });
 
   /**

@@ -10,13 +10,6 @@
           clearable
           maxlength="20"
           @input="(val: string) => (form.password = val.replace(/\s/g, ''))"
-          @paste="
-            (e: ClipboardEvent) => {
-              e.preventDefault();
-              const text = e.clipboardData?.getData('text') || '';
-              form.password += text.replace(/\s/g, '');
-            }
-          "
         />
       </ElFormItem>
       <ElFormItem label="确认密码" prop="confirmPassword">
@@ -28,13 +21,6 @@
           clearable
           maxlength="20"
           @input="(val: string) => (form.confirmPassword = val.replace(/\s/g, ''))"
-          @paste="
-            (e: ClipboardEvent) => {
-              e.preventDefault();
-              const text = e.clipboardData?.getData('text') || '';
-              form.confirmPassword += text.replace(/\s/g, '');
-            }
-          "
         />
       </ElFormItem>
     </ElForm>
@@ -46,6 +32,7 @@
 </template>
 
 <script setup lang="ts">
+  import { ElMessage } from 'element-plus';
   import type { FormInstance, FormRules } from 'element-plus';
   import type { UserListItem } from '@/apis/user';
 
