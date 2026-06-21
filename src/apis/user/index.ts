@@ -10,7 +10,8 @@ import type {
   UserFormParams,
   RoleOption,
   SaveUserMenuPermissionParams,
-  SaveUserApiPermissionParams
+  SaveUserApiPermissionParams,
+  ResetPasswordParams
 } from './types';
 
 export type {
@@ -134,15 +135,13 @@ export function fetchUploadAvatar(file: File) {
   });
 }
 
-// ============================================================
-// Mock 数据（开发阶段使用）
-// ============================================================
-
 /**
- * 模拟重置用户密码
+ * 重置用户密码
+ * @param data 重置密码参数
  */
-export function mockFetchResetPassword(_userId: string, _password: string): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, 300);
+export function fetchResetPassword(data: ResetPasswordParams) {
+  return request.put<void>({
+    url: '/user/reset-password',
+    data
   });
 }

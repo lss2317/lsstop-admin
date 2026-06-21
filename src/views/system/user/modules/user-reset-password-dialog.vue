@@ -128,8 +128,8 @@
       await formRef.value.validate();
       submitting.value = true;
 
-      const { mockFetchResetPassword } = await import('@/apis/user');
-      await mockFetchResetPassword(props.userData.userId, form.password);
+      const { fetchResetPassword } = await import('@/apis/user');
+      await fetchResetPassword({ userId: props.userData.userId, password: form.password });
       ElMessage.success('密码重置成功');
       handleClose();
     } catch {

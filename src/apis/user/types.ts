@@ -146,3 +146,11 @@ export interface SaveUserApiPermissionParams {
   /** 选中的接口 ID 列表 */
   apiIds: number[];
 }
+
+/** 重置密码参数 */
+export interface ResetPasswordParams {
+  /** 用户ID */
+  userId: string;
+  /** 新密码 */
+  password: string;
+}

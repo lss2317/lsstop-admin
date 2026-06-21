@@ -68,7 +68,7 @@
   import type { ColumnOption } from '@/types/component';
   import type { UserListItem, UserSearchParams, RoleBrief } from '@/apis/user';
   import type { ButtonMoreItem } from '@/components/core/forms/art-button-more/index.vue';
-  import { fetchUserList } from '@/apis/user';
+  import { fetchUserList, fetchDeleteUser } from '@/apis/user';
   import { ElTag, ElMessageBox, ElImage, ElPopover } from 'element-plus';
   import { formatDateTime } from '@/utils/format';
   import ArtButtonMore from '@/components/core/forms/art-button-more/index.vue';
@@ -356,14 +356,9 @@
       type: 'warning'
     })
       .then(async () => {
-        try {
-          // TODO: 后端就绪后替换为 const { fetchDeleteUser } = await import('@/apis/user'); await fetchDeleteUser(row.userId);
-          await Promise.resolve();
-          ElMessage.success('删除成功');
-          await refreshData();
-        } catch (error) {
-          console.error('删除失败:', error);
-        }
+        await fetchDeleteUser(row.userId);
+        ElMessage.success('删除成功');
+        await refreshData();
       })
       .catch(() => {
         // 用户取消删除，静默关闭
