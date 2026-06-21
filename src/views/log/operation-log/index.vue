@@ -148,6 +148,13 @@
       formatter: (row: OperationLogItem) =>
         h(ElTag, { type: operationTagType(row.operationType) }, () => row.operationType)
     },
+    {
+      prop: 'description',
+      label: '操作描述',
+      minWidth: 160,
+      showOverflowTooltip: true,
+      align: 'center'
+    },
     { prop: 'userId', label: '用户ID', minWidth: 160, showOverflowTooltip: true, align: 'center' },
     {
       prop: 'nickname',
