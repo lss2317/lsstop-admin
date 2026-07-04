@@ -5,35 +5,32 @@
       <!-- 左侧：个人信息卡片 -->
       <div class="w-112 shrink-0 max-md:w-full">
         <ElCard class="art-card profile-card" :body-style="{ padding: 0 }">
-          <div class="relative overflow-hidden text-center pb-9">
-            <!-- Banner 背景 -->
-            <img
-              class="absolute top-0 left-0 w-full h-50 object-cover"
-              :src="bannerBg"
-              alt="banner"
-            />
-
-            <!-- 头像 -->
-            <ElUpload
-              class="avatar-upload-wrapper"
-              :auto-upload="false"
-              :show-file-list="false"
-              accept="image/*"
-              @change="handleAvatarChange"
-            >
-              <ElImage
-                class="relative z-10 w-20 h-20 mt-30 mx-auto rounded-full border-2 border-white cursor-pointer object-cover"
-                :src="profile.avatar"
-                fit="cover"
-              />
-            </ElUpload>
-
-            <!-- 用户名 & 简介 -->
-            <h2 class="mt-5 text-xl font-medium text-g-800">{{ profile.nickname }}</h2>
-            <p class="mt-2 text-sm text-g-500">{{ profile.intro || '这个人很懒，什么都没写~' }}</p>
+          <div class="pb-9">
+            <!-- 顶部：头像 + 基本信息 -->
+            <div class="flex items-center gap-5 px-6 pt-6 pb-5">
+              <ElUpload
+                class="avatar-upload-wrapper shrink-0"
+                :auto-upload="false"
+                :show-file-list="false"
+                accept="image/*"
+                @change="handleAvatarChange"
+              >
+                <ElImage
+                  class="size-18 rounded-md cursor-pointer object-cover"
+                  :src="profile.avatar"
+                  fit="cover"
+                />
+              </ElUpload>
+              <div class="min-w-0">
+                <h2 class="text-xl font-medium text-g-800">{{ profile.nickname }}</h2>
+                <p class="mt-1 text-sm text-g-500 truncate">{{
+                  profile.intro || '这个人很懒，什么都没写~'
+                }}</p>
+              </div>
+            </div>
 
             <!-- 详细信息 -->
-            <div class="w-75 mx-auto mt-7.5 text-left">
+            <div class="px-6 pt-5">
               <div class="flex-c mt-2.5">
                 <ArtSvgIcon icon="ri:mail-line" class="text-base text-g-500 shrink-0" />
                 <span class="ml-2 text-sm text-g-600 truncate">{{ profile.email }}</span>
@@ -66,18 +63,24 @@
             </div>
 
             <!-- 第三方绑定 -->
-            <div class="mt-7.5 border-t border-g-300/60">
+            <div class="mt-5 border-t border-g-300/60 px-6">
               <h3 class="mt-5 text-sm font-medium text-g-700">第三方账号绑定</h3>
-              <div class="flex justify-center gap-12 mt-3 pb-6">
-                <div class="flex-c gap-2">
-                  <ArtSvgIcon icon="ri:qq-line" class="text-xl text-[#1296db]" />
-                  <span v-if="profile.qqBound" class="text-xs text-[#67c23a]">已绑定</span>
-                  <span v-else class="text-xs text-g-400">未绑定</span>
+              <div class="auth-binding-row mt-3 pb-6">
+                <div class="auth-binding-item">
+                  <div class="auth-platform">
+                    <ArtSvgIcon icon="ri:qq-line" class="text-xl text-[#1296db]" />
+                    <span>QQ</span>
+                  </div>
+                  <span v-if="profile.qqBound" class="auth-bound">已绑定</span>
+                  <span v-else class="auth-unbound">未绑定</span>
                 </div>
-                <div class="flex-c gap-2">
-                  <ArtSvgIcon icon="ri:weibo-line" class="text-xl text-[#e6162d]" />
-                  <span v-if="profile.weiboBound" class="text-xs text-[#67c23a]">已绑定</span>
-                  <span v-else class="text-xs text-g-400">未绑定</span>
+                <div class="auth-binding-item">
+                  <div class="auth-platform">
+                    <ArtSvgIcon icon="ri:weibo-line" class="text-xl text-[#e6162d]" />
+                    <span>微博</span>
+                  </div>
+                  <span v-if="profile.weiboBound" class="auth-bound">已绑定</span>
+                  <span v-else class="auth-unbound">未绑定</span>
                 </div>
               </div>
             </div>
@@ -235,7 +238,6 @@
   import AvatarCropperDialog from '@/views/system/user/modules/avatar-cropper-dialog.vue';
   import { formatDateTime } from '@/utils/format';
   import avatarImg from '@/assets/images/user/avatar.webp';
-  import bannerBg from '@/assets/images/user/bg.webp';
 
   defineOptions({ name: 'UserCenter' });
 
@@ -448,5 +450,39 @@
     :deep(.el-card__body) {
       padding: 24px;
     }
+  }
+
+  .auth-binding-row {
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+  }
+
+  .auth-binding-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 45%;
+    padding: 8px 14px;
+    background: #fafafa;
+    border-radius: 8px;
+  }
+
+  .auth-platform {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    color: #303133;
+  }
+
+  .auth-bound {
+    color: #67c23a;
+    font-size: 13px;
+  }
+
+  .auth-unbound {
+    color: #c0c4cc;
+    font-size: 13px;
   }
 </style>
