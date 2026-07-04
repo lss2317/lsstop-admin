@@ -1,0 +1,452 @@
+<!-- 个人中心页面 -->
+<template>
+  <div class="user-center-page pb-5">
+    <div class="flex-b gap-5 items-start max-md:block">
+      <!-- 左侧：个人信息卡片 -->
+      <div class="w-112 shrink-0 max-md:w-full">
+        <ElCard class="art-card profile-card" :body-style="{ padding: 0 }">
+          <div class="relative overflow-hidden text-center pb-9">
+            <!-- Banner 背景 -->
+            <img
+              class="absolute top-0 left-0 w-full h-50 object-cover"
+              :src="bannerBg"
+              alt="banner"
+            />
+
+            <!-- 头像 -->
+            <ElUpload
+              class="avatar-upload-wrapper"
+              :auto-upload="false"
+              :show-file-list="false"
+              accept="image/*"
+              @change="handleAvatarChange"
+            >
+              <ElImage
+                class="relative z-10 w-20 h-20 mt-30 mx-auto rounded-full border-2 border-white cursor-pointer object-cover"
+                :src="profile.avatar"
+                fit="cover"
+              />
+            </ElUpload>
+
+            <!-- 用户名 & 简介 -->
+            <h2 class="mt-5 text-xl font-medium text-g-800">{{ profile.nickname }}</h2>
+            <p class="mt-2 text-sm text-g-500">{{ profile.intro || '这个人很懒，什么都没写~' }}</p>
+
+            <!-- 详细信息 -->
+            <div class="w-75 mx-auto mt-7.5 text-left">
+              <div class="flex-c mt-2.5">
+                <ArtSvgIcon icon="ri:mail-line" class="text-base text-g-500 shrink-0" />
+                <span class="ml-2 text-sm text-g-600 truncate">{{ profile.email }}</span>
+              </div>
+              <div class="flex-c mt-2.5">
+                <ArtSvgIcon icon="ri:user-star-line" class="text-base text-g-500 shrink-0" />
+                <span class="ml-2 text-sm text-g-600">
+                  <ElTag
+                    v-for="role in profile.roles"
+                    :key="role.id"
+                    type="info"
+                    size="small"
+                    class="mr-1"
+                  >
+                    {{ role.roleName }}
+                  </ElTag>
+                  <span v-if="!profile.roles?.length" class="text-g-400">暂无角色</span>
+                </span>
+              </div>
+              <div class="flex-c mt-2.5">
+                <ArtSvgIcon icon="ri:links-line" class="text-base text-g-500 shrink-0" />
+                <span class="ml-2 text-sm text-g-600 truncate">
+                  {{ profile.website || '未填写' }}
+                </span>
+              </div>
+              <div class="flex-c mt-2.5">
+                <ArtSvgIcon icon="ri:time-line" class="text-base text-g-500 shrink-0" />
+                <span class="ml-2 text-sm text-g-600">{{ lastLoginText }}</span>
+              </div>
+            </div>
+
+            <!-- 第三方绑定 -->
+            <div class="mt-7.5 border-t border-g-300/60">
+              <h3 class="mt-5 text-sm font-medium text-g-700">第三方账号绑定</h3>
+              <div class="flex justify-center gap-12 mt-3 pb-6">
+                <div class="flex-c gap-2">
+                  <ArtSvgIcon icon="ri:qq-line" class="text-xl text-[#1296db]" />
+                  <span v-if="profile.qqBound" class="text-xs text-[#67c23a]">已绑定</span>
+                  <span v-else class="text-xs text-g-400">未绑定</span>
+                </div>
+                <div class="flex-c gap-2">
+                  <ArtSvgIcon icon="ri:weibo-line" class="text-xl text-[#e6162d]" />
+                  <span v-if="profile.weiboBound" class="text-xs text-[#67c23a]">已绑定</span>
+                  <span v-else class="text-xs text-g-400">未绑定</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ElCard>
+      </div>
+
+      <!-- 右侧：设置表单 -->
+      <div class="flex-1 min-w-0 max-md:mt-3.5">
+        <!-- 基本设置 -->
+        <ElCard class="art-card setting-card mb-5" :body-style="{ padding: '24px' }">
+          <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
+            <h1 class="text-lg font-medium text-g-800">基本设置</h1>
+            <ElButton type="primary" :loading="profileSubmitting" @click="toggleProfileEdit">
+              {{ isProfileEdit ? '保存' : '编辑' }}
+            </ElButton>
+          </div>
+
+          <ElForm
+            ref="profileFormRef"
+            :model="profileForm"
+            :rules="profileRules"
+            label-width="86px"
+            label-position="top"
+            class="pt-5"
+          >
+            <ElRow :gutter="20">
+              <ElCol :span="12">
+                <ElFormItem label="昵称" prop="nickname" required>
+                  <ElInput
+                    v-model="profileForm.nickname"
+                    :disabled="!isProfileEdit"
+                    placeholder="请输入昵称"
+                    maxlength="20"
+                    @blur="profileForm.nickname = profileForm.nickname.trim()"
+                  />
+                </ElFormItem>
+              </ElCol>
+              <ElCol :span="12">
+                <ElFormItem label="邮箱" prop="email" required>
+                  <ElInput
+                    v-model="profileForm.email"
+                    :disabled="!isProfileEdit"
+                    placeholder="请输入邮箱"
+                    maxlength="100"
+                    @blur="profileForm.email = profileForm.email.trim()"
+                  />
+                </ElFormItem>
+              </ElCol>
+              <ElCol :span="12">
+                <ElFormItem label="个人网站" prop="website">
+                  <ElInput
+                    v-model="profileForm.website"
+                    :disabled="!isProfileEdit"
+                    placeholder="请输入个人网站"
+                    maxlength="200"
+                  />
+                </ElFormItem>
+              </ElCol>
+              <ElCol :span="12">
+                <ElFormItem label="状态">
+                  <ElTag :type="profile.status === 1 ? 'success' : 'warning'" size="default">
+                    {{ profile.status === 1 ? '启用' : '禁用' }}
+                  </ElTag>
+                </ElFormItem>
+              </ElCol>
+              <ElCol :span="24">
+                <ElFormItem label="个人简介" prop="intro">
+                  <ElInput
+                    v-model="profileForm.intro"
+                    type="textarea"
+                    :rows="4"
+                    :disabled="!isProfileEdit"
+                    placeholder="介绍一下自己..."
+                    maxlength="100"
+                    show-word-limit
+                    @blur="profileForm.intro = (profileForm.intro || '').trim()"
+                  />
+                </ElFormItem>
+              </ElCol>
+            </ElRow>
+          </ElForm>
+        </ElCard>
+
+        <!-- 更改密码 -->
+        <ElCard class="art-card setting-card" :body-style="{ padding: '24px' }">
+          <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
+            <h1 class="text-lg font-medium text-g-800">更改密码</h1>
+            <ElButton type="primary" :loading="passwordSubmitting" @click="togglePasswordEdit">
+              {{ isPasswordEdit ? '保存' : '编辑' }}
+            </ElButton>
+          </div>
+
+          <ElForm
+            ref="passwordFormRef"
+            :model="passwordForm"
+            :rules="passwordRules"
+            label-width="86px"
+            label-position="top"
+            class="pt-5"
+          >
+            <ElFormItem label="当前密码" prop="oldPassword" required>
+              <ElInput
+                v-model="passwordForm.oldPassword"
+                type="password"
+                :disabled="!isPasswordEdit"
+                placeholder="请输入当前密码"
+                show-password
+                maxlength="20"
+                @input="(val: string) => (passwordForm.oldPassword = val.replace(/\s/g, ''))"
+              />
+            </ElFormItem>
+            <ElFormItem label="新密码" prop="newPassword" required>
+              <ElInput
+                v-model="passwordForm.newPassword"
+                type="password"
+                :disabled="!isPasswordEdit"
+                placeholder="请输入新密码，6~20位"
+                show-password
+                maxlength="20"
+                @input="(val: string) => (passwordForm.newPassword = val.replace(/\s/g, ''))"
+              />
+            </ElFormItem>
+            <ElFormItem label="确认新密码" prop="confirmPassword" required>
+              <ElInput
+                v-model="passwordForm.confirmPassword"
+                type="password"
+                :disabled="!isPasswordEdit"
+                placeholder="请再次输入新密码"
+                show-password
+                maxlength="20"
+                @input="(val: string) => (passwordForm.confirmPassword = val.replace(/\s/g, ''))"
+              />
+            </ElFormItem>
+          </ElForm>
+        </ElCard>
+      </div>
+    </div>
+
+    <!-- 头像裁剪弹窗 -->
+    <AvatarCropperDialog
+      v-model="cropDialogVisible"
+      :image-file="cropImageFile"
+      @save="handleCropSave"
+      @error="(msg: string) => ElMessage.error(msg)"
+    />
+  </div>
+</template>
+
+<script setup lang="ts">
+  import { ElMessage } from 'element-plus';
+  import type { FormInstance, FormRules, UploadFile } from 'element-plus';
+  import type { UserProfileInfo, UpdateProfileParams } from '@/apis/user-center';
+  import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
+  import AvatarCropperDialog from '@/views/system/user/modules/avatar-cropper-dialog.vue';
+  import { formatDateTime } from '@/utils/format';
+  import avatarImg from '@/assets/images/user/avatar.webp';
+  import bannerBg from '@/assets/images/user/bg.webp';
+
+  defineOptions({ name: 'UserCenter' });
+
+  // ============================================================
+  // Mock 数据
+  // ============================================================
+
+  /** 当前用户详情 Mock */
+  const profile = reactive<UserProfileInfo>({
+    userId: 'usr_a1b2c3d4',
+    nickname: '张三',
+    email: 'zhangsan@example.com',
+    avatar: avatarImg,
+    website: 'https://zhangsan.dev',
+    intro: '全栈开发工程师，热爱开源与技术分享。',
+    status: 1,
+    lastLoginTime: '2026-06-27T10:30:00',
+    createTime: '2025-03-15T08:00:00',
+    qqBound: true,
+    weiboBound: false,
+    roles: [
+      { id: 1, roleName: '管理员' },
+      { id: 2, roleName: '编辑者' }
+    ]
+  });
+
+  const lastLoginText = computed(() => {
+    return profile.lastLoginTime ? formatDateTime(profile.lastLoginTime) : '暂无记录';
+  });
+
+  // ============================================================
+  // 编辑/保存切换
+  // ============================================================
+
+  const isProfileEdit = ref(false);
+  const isPasswordEdit = ref(false);
+
+  // ============================================================
+  // 基本设置
+  // ============================================================
+
+  const profileFormRef = ref<FormInstance>();
+  const profileSubmitting = ref(false);
+
+  const profileForm = reactive<UpdateProfileParams>({
+    nickname: profile.nickname,
+    email: profile.email,
+    avatar: profile.avatar,
+    website: profile.website || '',
+    intro: profile.intro || ''
+  });
+
+  const syncProfileForm = () => {
+    profileForm.nickname = profile.nickname;
+    profileForm.email = profile.email;
+    profileForm.avatar = profile.avatar;
+    profileForm.website = profile.website || '';
+    profileForm.intro = profile.intro || '';
+  };
+
+  const profileRules: FormRules = {
+    nickname: [
+      { required: true, message: '请输入昵称', trigger: 'blur' },
+      { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
+    ],
+    email: [
+      { required: true, message: '请输入邮箱', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    ],
+    website: [{ max: 200, message: '长度不超过 200 个字符', trigger: 'blur' }]
+  };
+
+  /**
+   * 切换基本设置编辑状态
+   */
+  const toggleProfileEdit = async () => {
+    if (isProfileEdit.value) {
+      // 保存
+      if (!profileFormRef.value || profileSubmitting.value) return;
+      try {
+        await profileFormRef.value.validate();
+        profileSubmitting.value = true;
+
+        // Mock 保存
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        profile.nickname = profileForm.nickname;
+        profile.email = profileForm.email;
+        profile.avatar = profileForm.avatar;
+        profile.website = profileForm.website || null;
+        profile.intro = profileForm.intro || null;
+
+        ElMessage.success('个人资料更新成功');
+        isProfileEdit.value = false;
+      } catch {
+        // 校验失败
+      } finally {
+        profileSubmitting.value = false;
+      }
+    } else {
+      // 进入编辑
+      syncProfileForm();
+      isProfileEdit.value = true;
+    }
+  };
+
+  // ============================================================
+  // 头像上传
+  // ============================================================
+
+  const cropDialogVisible = ref(false);
+  const cropImageFile = ref<File | null>(null);
+
+  const handleAvatarChange = (uploadFile: UploadFile) => {
+    if (!uploadFile.raw) return;
+    cropImageFile.value = uploadFile.raw;
+    cropDialogVisible.value = true;
+  };
+
+  const handleCropSave = async (file: File) => {
+    // Mock 上传
+    const url = URL.createObjectURL(file);
+    profile.avatar = url;
+    profileForm.avatar = url;
+    ElMessage.success('头像更新成功');
+  };
+
+  // ============================================================
+  // 更改密码
+  // ============================================================
+
+  const passwordFormRef = ref<FormInstance>();
+  const passwordSubmitting = ref(false);
+
+  const passwordForm = reactive({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+  const validateConfirmPassword = (
+    _rule: unknown,
+    value: string,
+    callback: (err?: Error) => void
+  ) => {
+    if (value !== passwordForm.newPassword) {
+      callback(new Error('两次输入的新密码不一致'));
+    } else {
+      callback();
+    }
+  };
+
+  const passwordRules: FormRules = {
+    oldPassword: [
+      { required: true, message: '请输入当前密码', trigger: 'blur' },
+      { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+    ],
+    newPassword: [
+      { required: true, message: '请输入新密码', trigger: 'blur' },
+      { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' }
+    ],
+    confirmPassword: [
+      { required: true, message: '请再次输入新密码', trigger: 'blur' },
+      { validator: validateConfirmPassword, trigger: 'blur' }
+    ]
+  };
+
+  /**
+   * 切换密码编辑状态
+   */
+  const togglePasswordEdit = async () => {
+    if (isPasswordEdit.value) {
+      // 保存
+      if (!passwordFormRef.value || passwordSubmitting.value) return;
+      try {
+        await passwordFormRef.value.validate();
+        passwordSubmitting.value = true;
+
+        // Mock 保存
+        await new Promise((resolve) => setTimeout(resolve, 600));
+
+        ElMessage.success('密码修改成功');
+        passwordFormRef.value.resetFields();
+        isPasswordEdit.value = false;
+      } catch {
+        // 校验失败
+      } finally {
+        passwordSubmitting.value = false;
+      }
+    } else {
+      // 进入编辑
+      isPasswordEdit.value = true;
+    }
+  };
+</script>
+
+<style scoped lang="scss">
+  .profile-card {
+    overflow: hidden;
+    border-radius: calc(var(--custom-radius) + 2px);
+
+    :deep(.el-card__body) {
+      padding: 0;
+    }
+  }
+
+  .setting-card {
+    border-radius: calc(var(--custom-radius) + 2px);
+
+    :deep(.el-card__body) {
+      padding: 24px;
+    }
+  }
+</style>
