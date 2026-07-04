@@ -3,7 +3,7 @@
   <div class="user-center-page pb-5">
     <div class="flex-b gap-5 items-start max-md:block">
       <!-- 左侧：个人信息卡片 -->
-      <div class="w-112 shrink-0 max-md:w-full">
+      <div class="w-[45%] shrink-0 max-md:w-full">
         <ElCard class="art-card profile-card" :body-style="{ padding: 0 }">
           <div class="pb-9">
             <!-- 顶部：头像 + 基本信息 -->
@@ -30,25 +30,25 @@
             </div>
 
             <!-- 详细信息 -->
-            <div class="grid grid-cols-2 gap-4 px-6 pt-5">
-              <div class="flex-c min-w-0">
-                <ArtSvgIcon icon="ri:mail-line" class="text-base text-g-500 shrink-0" />
+            <div class="grid grid-cols-2 gap-3 px-6 pt-5">
+              <div class="auth-binding-item !w-full !justify-start gap-2">
+                <ArtSvgIcon icon="ri:mail-line" class="text-base text-[#409eff] shrink-0" />
                 <ElTooltip :content="profile.email" placement="top" :show-after="500">
-                  <span class="ml-2 text-sm text-g-600 truncate">{{ profile.email }}</span>
+                  <span class="max-w-[80%] text-sm text-g-600 truncate">{{ profile.email }}</span>
                 </ElTooltip>
               </div>
-              <div class="flex-c min-w-0">
-                <ArtSvgIcon icon="ri:links-line" class="text-base text-g-500 shrink-0" />
+              <div class="auth-binding-item !w-full !justify-start gap-2">
+                <ArtSvgIcon icon="ri:links-line" class="text-base text-[#67c23a] shrink-0" />
                 <ElTooltip :content="profile.website || '未填写'" placement="top" :show-after="500">
-                  <span class="ml-2 text-sm text-g-600 truncate">
+                  <span class="max-w-[80%] text-sm text-g-600 truncate">
                     {{ profile.website || '未填写' }}
                   </span>
                 </ElTooltip>
               </div>
-              <div class="flex-c min-w-0">
-                <ArtSvgIcon icon="ri:user-star-line" class="text-base text-g-500 shrink-0" />
-                <span v-if="!profile.roles?.length" class="ml-2 text-sm text-g-400">暂无角色</span>
-                <span v-else class="ml-2 text-sm text-g-600">
+              <div class="auth-binding-item !w-full !justify-start gap-2">
+                <ArtSvgIcon icon="ri:user-star-line" class="text-base text-[#e6a23c] shrink-0" />
+                <span v-if="!profile.roles?.length" class="text-sm text-g-400">暂无角色</span>
+                <span v-else class="max-w-[80%] text-sm text-g-600">
                   <ElTag
                     v-for="role in visibleRoles"
                     :key="role.id"
@@ -78,9 +78,9 @@
                   </ElPopover>
                 </span>
               </div>
-              <div class="flex-c min-w-0">
-                <ArtSvgIcon icon="ri:time-line" class="text-base text-g-500 shrink-0" />
-                <span class="ml-2 text-sm text-g-600 truncate">{{ lastLoginText }}</span>
+              <div class="auth-binding-item !w-full !justify-start gap-2">
+                <ArtSvgIcon icon="ri:time-line" class="text-base text-[#909399] shrink-0" />
+                <span class="text-sm text-g-600 truncate">{{ lastLoginText }}</span>
               </div>
             </div>
 
@@ -264,7 +264,8 @@
     weiboBound: false,
     roles: [
       { id: 1, roleName: '管理员' },
-      { id: 2, roleName: '编辑者' }
+      { id: 2, roleName: '编辑者' },
+      { id: 3, roleName: '访客' }
     ]
   });
 
