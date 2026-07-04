@@ -48,25 +48,31 @@
               <div class="auth-binding-item !w-full !justify-start gap-2">
                 <ArtSvgIcon icon="ri:user-star-line" class="text-base text-[#e6a23c] shrink-0" />
                 <span v-if="!profile.roles?.length" class="text-sm text-g-400">暂无角色</span>
-                <span v-else class="max-w-[80%] text-sm text-g-600">
-                  <ElTag
-                    v-for="role in visibleRoles"
-                    :key="role.id"
-                    type="info"
-                    size="small"
-                    class="mr-1"
-                  >
-                    {{ role.roleName }}
-                  </ElTag>
+                <span
+                  v-else
+                  class="flex flex-1 items-center flex-nowrap overflow-hidden min-w-0 text-sm text-g-600"
+                >
+                  <span class="flex flex-1 items-center min-w-0 overflow-hidden">
+                    <ElTag
+                      v-for="role in visibleRoles"
+                      :key="role.id"
+                      type="info"
+                      size="small"
+                      class="role-tag"
+                    >
+                      {{ role.roleName }}
+                    </ElTag>
+                  </span>
                   <ElPopover
                     v-if="overflowRoles.length > 0"
                     trigger="hover"
                     placement="top"
                     :show-arrow="false"
                     :popper-style="{ padding: '8px' }"
+                    class="shrink-0"
                   >
                     <template #reference>
-                      <ElTag type="info" size="small" class="cursor-pointer"
+                      <ElTag type="info" size="small" class="cursor-pointer shrink-0"
                         >+{{ overflowRoles.length }}</ElTag
                       >
                     </template>
@@ -265,7 +271,9 @@
     roles: [
       { id: 1, roleName: '管理员' },
       { id: 2, roleName: '编辑者' },
-      { id: 3, roleName: '访客' }
+      { id: 3, roleName: '访客' },
+      { id: 4, roleName: '测试' },
+      { id: 5, roleName: '测试111' }
     ]
   });
 
@@ -493,5 +501,17 @@
   .auth-unbound {
     color: #c0c4cc;
     font-size: 13px;
+  }
+
+  .role-tag {
+    flex: 1 1 0;
+    min-width: 0;
+    margin-right: 4px;
+
+    :deep(.el-tag__content) {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
   }
 </style>
