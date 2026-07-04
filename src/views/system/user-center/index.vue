@@ -30,16 +30,27 @@
             </div>
 
             <!-- 详细信息 -->
-            <div class="px-6 pt-5">
-              <div class="flex-c mt-2.5">
+            <div class="grid grid-cols-2 gap-4 px-6 pt-5">
+              <div class="flex-c min-w-0">
                 <ArtSvgIcon icon="ri:mail-line" class="text-base text-g-500 shrink-0" />
-                <span class="ml-2 text-sm text-g-600 truncate">{{ profile.email }}</span>
+                <ElTooltip :content="profile.email" placement="top" :show-after="500">
+                  <span class="ml-2 text-sm text-g-600 truncate">{{ profile.email }}</span>
+                </ElTooltip>
               </div>
-              <div class="flex-c mt-2.5">
+              <div class="flex-c min-w-0">
+                <ArtSvgIcon icon="ri:links-line" class="text-base text-g-500 shrink-0" />
+                <ElTooltip :content="profile.website || '未填写'" placement="top" :show-after="500">
+                  <span class="ml-2 text-sm text-g-600 truncate">
+                    {{ profile.website || '未填写' }}
+                  </span>
+                </ElTooltip>
+              </div>
+              <div class="flex-c min-w-0">
                 <ArtSvgIcon icon="ri:user-star-line" class="text-base text-g-500 shrink-0" />
-                <span class="ml-2 text-sm text-g-600">
+                <span v-if="!profile.roles?.length" class="ml-2 text-sm text-g-400">暂无角色</span>
+                <span v-else class="ml-2 text-sm text-g-600">
                   <ElTag
-                    v-for="role in profile.roles"
+                    v-for="role in visibleRoles"
                     :key="role.id"
                     type="info"
                     size="small"
@@ -47,18 +58,29 @@
                   >
                     {{ role.roleName }}
                   </ElTag>
-                  <span v-if="!profile.roles?.length" class="text-g-400">暂无角色</span>
+                  <ElPopover
+                    v-if="overflowRoles.length > 0"
+                    trigger="hover"
+                    placement="top"
+                    :show-arrow="false"
+                    :popper-style="{ padding: '8px' }"
+                  >
+                    <template #reference>
+                      <ElTag type="info" size="small" class="cursor-pointer"
+                        >+{{ overflowRoles.length }}</ElTag
+                      >
+                    </template>
+                    <div class="flex flex-wrap gap-1">
+                      <ElTag v-for="role in profile.roles" :key="role.id" type="info" size="small">
+                        {{ role.roleName }}
+                      </ElTag>
+                    </div>
+                  </ElPopover>
                 </span>
               </div>
-              <div class="flex-c mt-2.5">
-                <ArtSvgIcon icon="ri:links-line" class="text-base text-g-500 shrink-0" />
-                <span class="ml-2 text-sm text-g-600 truncate">
-                  {{ profile.website || '未填写' }}
-                </span>
-              </div>
-              <div class="flex-c mt-2.5">
+              <div class="flex-c min-w-0">
                 <ArtSvgIcon icon="ri:time-line" class="text-base text-g-500 shrink-0" />
-                <span class="ml-2 text-sm text-g-600">{{ lastLoginText }}</span>
+                <span class="ml-2 text-sm text-g-600 truncate">{{ lastLoginText }}</span>
               </div>
             </div>
 
@@ -86,87 +108,9 @@
             </div>
           </div>
         </ElCard>
-      </div>
-
-      <!-- 右侧：设置表单 -->
-      <div class="flex-1 min-w-0 max-md:mt-3.5">
-        <!-- 基本设置 -->
-        <ElCard class="art-card setting-card mb-5" :body-style="{ padding: '24px' }">
-          <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
-            <h1 class="text-lg font-medium text-g-800">基本设置</h1>
-            <ElButton type="primary" :loading="profileSubmitting" @click="toggleProfileEdit">
-              {{ isProfileEdit ? '保存' : '编辑' }}
-            </ElButton>
-          </div>
-
-          <ElForm
-            ref="profileFormRef"
-            :model="profileForm"
-            :rules="profileRules"
-            label-width="86px"
-            label-position="top"
-            class="pt-5"
-          >
-            <ElRow :gutter="20">
-              <ElCol :span="12">
-                <ElFormItem label="昵称" prop="nickname" required>
-                  <ElInput
-                    v-model="profileForm.nickname"
-                    :disabled="!isProfileEdit"
-                    placeholder="请输入昵称"
-                    maxlength="20"
-                    @blur="profileForm.nickname = profileForm.nickname.trim()"
-                  />
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="12">
-                <ElFormItem label="邮箱" prop="email" required>
-                  <ElInput
-                    v-model="profileForm.email"
-                    :disabled="!isProfileEdit"
-                    placeholder="请输入邮箱"
-                    maxlength="100"
-                    @blur="profileForm.email = profileForm.email.trim()"
-                  />
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="12">
-                <ElFormItem label="个人网站" prop="website">
-                  <ElInput
-                    v-model="profileForm.website"
-                    :disabled="!isProfileEdit"
-                    placeholder="请输入个人网站"
-                    maxlength="200"
-                  />
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="12">
-                <ElFormItem label="状态">
-                  <ElTag :type="profile.status === 1 ? 'success' : 'warning'" size="default">
-                    {{ profile.status === 1 ? '启用' : '禁用' }}
-                  </ElTag>
-                </ElFormItem>
-              </ElCol>
-              <ElCol :span="24">
-                <ElFormItem label="个人简介" prop="intro">
-                  <ElInput
-                    v-model="profileForm.intro"
-                    type="textarea"
-                    :rows="4"
-                    :disabled="!isProfileEdit"
-                    placeholder="介绍一下自己..."
-                    maxlength="100"
-                    show-word-limit
-                    @blur="profileForm.intro = (profileForm.intro || '').trim()"
-                  />
-                </ElFormItem>
-              </ElCol>
-            </ElRow>
-          </ElForm>
-        </ElCard>
 
         <!-- 更改密码 -->
-        <ElCard class="art-card setting-card" :body-style="{ padding: '24px' }">
+        <ElCard class="art-card setting-card mt-5" :body-style="{ padding: '24px' }">
           <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
             <h1 class="text-lg font-medium text-g-800">更改密码</h1>
             <ElButton type="primary" :loading="passwordSubmitting" @click="togglePasswordEdit">
@@ -218,6 +162,67 @@
           </ElForm>
         </ElCard>
       </div>
+
+      <!-- 右侧：设置表单 -->
+      <div class="flex-1 min-w-0 max-md:mt-3.5">
+        <!-- 基本设置 -->
+        <ElCard class="art-card setting-card mb-5" :body-style="{ padding: '24px' }">
+          <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
+            <h1 class="text-lg font-medium text-g-800">基本设置</h1>
+            <ElButton type="primary" :loading="profileSubmitting" @click="toggleProfileEdit">
+              {{ isProfileEdit ? '保存' : '编辑' }}
+            </ElButton>
+          </div>
+
+          <ElForm
+            ref="profileFormRef"
+            :model="profileForm"
+            :rules="profileRules"
+            label-width="86px"
+            label-position="top"
+            class="pt-5"
+          >
+            <ElFormItem label="昵称" prop="nickname" required>
+              <ElInput
+                v-model="profileForm.nickname"
+                :disabled="!isProfileEdit"
+                placeholder="请输入昵称"
+                maxlength="20"
+                @blur="profileForm.nickname = profileForm.nickname.trim()"
+              />
+            </ElFormItem>
+            <ElFormItem label="邮箱" prop="email" required>
+              <ElInput
+                v-model="profileForm.email"
+                :disabled="!isProfileEdit"
+                placeholder="请输入邮箱"
+                maxlength="100"
+                @blur="profileForm.email = profileForm.email.trim()"
+              />
+            </ElFormItem>
+            <ElFormItem label="个人网站" prop="website">
+              <ElInput
+                v-model="profileForm.website"
+                :disabled="!isProfileEdit"
+                placeholder="请输入个人网站"
+                maxlength="200"
+              />
+            </ElFormItem>
+            <ElFormItem label="个人简介" prop="intro">
+              <ElInput
+                v-model="profileForm.intro"
+                type="textarea"
+                :rows="4"
+                :disabled="!isProfileEdit"
+                placeholder="介绍一下自己..."
+                maxlength="100"
+                show-word-limit
+                @blur="profileForm.intro = (profileForm.intro || '').trim()"
+              />
+            </ElFormItem>
+          </ElForm>
+        </ElCard>
+      </div>
     </div>
 
     <!-- 头像裁剪弹窗 -->
@@ -253,7 +258,6 @@
     avatar: avatarImg,
     website: 'https://zhangsan.dev',
     intro: '全栈开发工程师，热爱开源与技术分享。',
-    status: 1,
     lastLoginTime: '2026-06-27T10:30:00',
     createTime: '2025-03-15T08:00:00',
     qqBound: true,
@@ -267,6 +271,10 @@
   const lastLoginText = computed(() => {
     return profile.lastLoginTime ? formatDateTime(profile.lastLoginTime) : '暂无记录';
   });
+
+  const MAX_SHOW = 2;
+  const visibleRoles = computed(() => profile.roles.slice(0, MAX_SHOW));
+  const overflowRoles = computed(() => profile.roles.slice(MAX_SHOW));
 
   // ============================================================
   // 编辑/保存切换

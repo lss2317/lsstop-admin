@@ -4,7 +4,7 @@
  * @module apis/user-center/types
  */
 
-import type { UserStatus, RoleBrief } from '@/apis/user';
+import type { RoleBrief } from '@/apis/user';
 
 /** 当前用户详情（个人中心用） */
 export interface UserProfileInfo {
@@ -20,8 +20,6 @@ export interface UserProfileInfo {
   website: string | null;
   /** 个人简介 */
   intro: string | null;
-  /** 状态：0-禁用 1-正常 */
-  status: UserStatus;
   /** 最近登录时间 */
   lastLoginTime: string | null;
   /** 创建时间 */
