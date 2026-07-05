@@ -4,9 +4,19 @@
  * @module apis/user-center
  */
 import request from '@/utils/http';
-import type { ChangePasswordParams, UpdateProfileParams } from './types';
+import type {
+  ChangePasswordParams,
+  UpdateProfileParams,
+  SendChangeEmailCodeParams,
+  ChangeEmailParams
+} from './types';
 
-export type { ChangePasswordParams, UpdateProfileParams } from './types';
+export type {
+  ChangePasswordParams,
+  UpdateProfileParams,
+  SendChangeEmailCodeParams,
+  ChangeEmailParams
+} from './types';
 
 /**
  * 更新个人资料
@@ -26,6 +36,28 @@ export function fetchUpdateProfile(data: UpdateProfileParams) {
 export function fetchChangePassword(data: ChangePasswordParams) {
   return request.put<void>({
     url: '/user/change-password',
+    data
+  });
+}
+
+/**
+ * 发送修改邮箱验证码
+ * @param data 新邮箱参数
+ */
+export function fetchSendChangeEmailCode(data: SendChangeEmailCodeParams) {
+  return request.post<void>({
+    url: '/user/change-email/send-code',
+    data
+  });
+}
+
+/**
+ * 修改邮箱
+ * @param data 修改邮箱参数
+ */
+export function fetchChangeEmail(data: ChangeEmailParams) {
+  return request.put<void>({
+    url: '/user/change-email',
     data
   });
 }

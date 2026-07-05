@@ -1,7 +1,7 @@
 <!-- 个人中心页面 -->
 <template>
   <div class="user-center-page pb-5">
-    <div class="flex-b gap-5 items-start max-md:block">
+    <div class="flex-b gap-5 items-stretch max-md:block">
       <!-- 左侧：个人信息卡片 -->
       <div class="w-[45%] shrink-0 max-md:w-full">
         <ElCard class="art-card profile-card" :body-style="{ padding: 0 }">
@@ -170,9 +170,9 @@
       </div>
 
       <!-- 右侧：设置表单 -->
-      <div class="flex-1 min-w-0 max-md:mt-3.5">
+      <div class="flex-1 flex flex-col min-w-0 max-md:mt-3.5">
         <!-- 基本设置 -->
-        <ElCard class="art-card setting-card mb-5" :body-style="{ padding: '24px' }">
+        <ElCard class="art-card setting-card" :body-style="{ padding: '24px' }">
           <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
             <h1 class="text-lg font-medium text-g-800">基本设置</h1>
             <ElButton type="primary" :loading="profileSubmitting" @click="toggleProfileEdit">
@@ -209,13 +209,60 @@
               <ElInput
                 v-model="profileForm.intro"
                 type="textarea"
-                :rows="4"
+                :rows="5"
                 :disabled="!isProfileEdit"
                 placeholder="介绍一下自己..."
                 maxlength="100"
                 show-word-limit
                 @blur="profileForm.intro = (profileForm.intro || '').trim()"
               />
+            </ElFormItem>
+          </ElForm>
+        </ElCard>
+
+        <!-- 更改邮箱 -->
+        <ElCard class="art-card setting-card mt-5" :body-style="{ padding: '24px' }">
+          <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
+            <h1 class="text-lg font-medium text-g-800">更改邮箱</h1>
+            <ElButton type="primary" :loading="emailSubmitting" @click="toggleEmailEdit">
+              {{ isEmailEdit ? '保存' : '编辑' }}
+            </ElButton>
+          </div>
+
+          <ElForm
+            ref="emailFormRef"
+            :model="emailForm"
+            :rules="emailRules"
+            label-width="86px"
+            label-position="top"
+            class="pt-5"
+          >
+            <ElFormItem label="新邮箱" prop="email" required>
+              <ElInput
+                v-model="emailForm.email"
+                :disabled="!isEmailEdit"
+                placeholder="请输入新邮箱"
+                maxlength="100"
+                @blur="emailForm.email = emailForm.email.trim()"
+              />
+            </ElFormItem>
+            <ElFormItem label="验证码" prop="code" required>
+              <div class="flex gap-3">
+                <ElInput
+                  v-model="emailForm.code"
+                  :disabled="!isEmailEdit"
+                  placeholder="请输入验证码"
+                  maxlength="6"
+                  class="flex-1"
+                />
+                <ElButton
+                  :disabled="!isEmailEdit || codeCountdown > 0"
+                  :loading="isSendingCode"
+                  @click="sendChangeEmailCode"
+                >
+                  {{ codeCountdown > 0 ? `${codeCountdown}s` : '获取验证码' }}
+                </ElButton>
+              </div>
             </ElFormItem>
           </ElForm>
         </ElCard>
@@ -237,7 +284,12 @@
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
   import { fetchGetUserInfo } from '@/apis/auth';
   import type { UserInfo } from '@/apis/auth/types';
-  import { fetchUpdateProfile, fetchChangePassword } from '@/apis/user-center';
+  import {
+    fetchUpdateProfile,
+    fetchChangePassword,
+    fetchSendChangeEmailCode,
+    fetchChangeEmail
+  } from '@/apis/user-center';
   import type { UpdateProfileParams } from '@/apis/user-center';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import AvatarCropperDialog from '@/views/system/user/modules/avatar-cropper-dialog.vue';
@@ -293,6 +345,7 @@
 
   const isProfileEdit = ref(false);
   const isPasswordEdit = ref(false);
+  const isEmailEdit = ref(false);
 
   // ============================================================
   // 基本设置
@@ -442,6 +495,85 @@
     } else {
       // 进入编辑
       isPasswordEdit.value = true;
+    }
+  };
+
+  // ============================================================
+  // 更改邮箱
+  // ============================================================
+
+  const emailFormRef = ref<FormInstance>();
+  const emailSubmitting = ref(false);
+  const isSendingCode = ref(false);
+  const codeCountdown = ref(0);
+  let codeTimer: ReturnType<typeof setInterval> | null = null;
+
+  const emailForm = reactive({
+    email: '',
+    code: ''
+  });
+
+  const emailRules: FormRules = {
+    email: [
+      { required: true, message: '请输入新邮箱', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
+    ],
+    code: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
+  };
+
+  const startCodeCountdown = () => {
+    codeCountdown.value = 60;
+    codeTimer = setInterval(() => {
+      codeCountdown.value--;
+      if (codeCountdown.value <= 0) {
+        if (codeTimer) clearInterval(codeTimer);
+        codeTimer = null;
+      }
+    }, 1000);
+  };
+
+  const sendChangeEmailCode = async () => {
+    if (!emailForm.email) {
+      ElMessage.warning('请先输入新邮箱');
+      return;
+    }
+    isSendingCode.value = true;
+    try {
+      await fetchSendChangeEmailCode({ email: emailForm.email.trim() });
+      ElMessage.success('验证码已发送');
+      startCodeCountdown();
+    } catch {
+      // 接口已处理错误提示
+    } finally {
+      isSendingCode.value = false;
+    }
+  };
+
+  const toggleEmailEdit = async () => {
+    if (isEmailEdit.value) {
+      if (!emailFormRef.value || emailSubmitting.value) return;
+      try {
+        await emailFormRef.value.validate();
+        emailSubmitting.value = true;
+
+        await fetchChangeEmail({
+          email: emailForm.email.trim(),
+          code: emailForm.code
+        });
+
+        profile.email = emailForm.email.trim();
+        ElMessage.success('邮箱修改成功');
+        emailFormRef.value.resetFields();
+        isEmailEdit.value = false;
+      } catch {
+        // 校验失败
+      } finally {
+        emailSubmitting.value = false;
+      }
+    } else {
+      emailForm.email = '';
+      emailForm.code = '';
+      isEmailEdit.value = true;
     }
   };
 </script>

@@ -21,3 +21,17 @@ export interface UpdateProfileParams {
   /** 个人简介 */
   intro?: string;
 }
+
+/** 发送修改邮箱验证码参数 */
+export interface SendChangeEmailCodeParams {
+  /** 新邮箱 */
+  email: string;
+}
+
+/** 修改邮箱参数 */
+export interface ChangeEmailParams {
+  /** 新邮箱 */
+  email: string;
+  /** 验证码 */
+  code: string;
+}
