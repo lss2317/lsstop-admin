@@ -16,10 +16,6 @@ export interface ChangePasswordParams {
 export interface UpdateProfileParams {
   /** 昵称 */
   nickname: string;
-  /** 邮箱 */
-  email: string;
-  /** 头像URL */
-  avatar: string;
   /** 个人网站 */
   website?: string;
   /** 个人简介 */

@@ -58,7 +58,7 @@
                       :key="role.id"
                       type="info"
                       size="small"
-                      class="role-tag"
+                      class="role-tag max-w-[80px]"
                     >
                       {{ role.roleName }}
                     </ElTag>
@@ -197,15 +197,6 @@
                 @blur="profileForm.nickname = profileForm.nickname.trim()"
               />
             </ElFormItem>
-            <ElFormItem label="邮箱" prop="email" required>
-              <ElInput
-                v-model="profileForm.email"
-                :disabled="!isProfileEdit"
-                placeholder="请输入邮箱"
-                maxlength="100"
-                @blur="profileForm.email = profileForm.email.trim()"
-              />
-            </ElFormItem>
             <ElFormItem label="个人网站" prop="website">
               <ElInput
                 v-model="profileForm.website"
@@ -278,6 +269,7 @@
     try {
       const data = await fetchGetUserInfo();
       Object.assign(profile, data);
+      syncProfileForm();
     } finally {
       loading.value = false;
     }
@@ -311,16 +303,12 @@
 
   const profileForm = reactive<UpdateProfileParams>({
     nickname: profile.nickname,
-    email: profile.email,
-    avatar: profile.avatar,
     website: profile.website || '',
     intro: profile.intro || ''
   });
 
   const syncProfileForm = () => {
     profileForm.nickname = profile.nickname;
-    profileForm.email = profile.email;
-    profileForm.avatar = profile.avatar;
     profileForm.website = profile.website || '';
     profileForm.intro = profile.intro || '';
   };
@@ -329,10 +317,6 @@
     nickname: [
       { required: true, message: '请输入昵称', trigger: 'blur' },
       { min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' }
-    ],
-    email: [
-      { required: true, message: '请输入邮箱', trigger: 'blur' },
-      { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }
     ],
     website: [{ max: 200, message: '长度不超过 200 个字符', trigger: 'blur' }]
   };
@@ -348,11 +332,12 @@
         await profileFormRef.value.validate();
         profileSubmitting.value = true;
 
-        await fetchUpdateProfile({ ...profileForm });
+        await fetchUpdateProfile({
+          ...profileForm,
+          nickname: profileForm.nickname.trim()
+        });
 
         profile.nickname = profileForm.nickname;
-        profile.email = profileForm.email;
-        profile.avatar = profileForm.avatar;
         profile.website = profileForm.website || '';
         profile.intro = profileForm.intro || '';
 
@@ -387,7 +372,6 @@
     // Mock 上传
     const url = URL.createObjectURL(file);
     profile.avatar = url;
-    profileForm.avatar = url;
     ElMessage.success('头像更新成功');
   };
 
