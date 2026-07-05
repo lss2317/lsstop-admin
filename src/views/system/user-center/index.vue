@@ -86,7 +86,7 @@
               </div>
               <div class="auth-binding-item !w-full !justify-start gap-2">
                 <ArtSvgIcon icon="ri:time-line" class="text-base text-[#909399] shrink-0" />
-                <span class="text-sm text-g-600 truncate">{{ lastLoginText }}</span>
+                <span class="text-sm text-g-600 truncate">{{ createTimeText }}</span>
               </div>
             </div>
 
@@ -264,7 +264,6 @@
     avatar: avatarImg,
     website: 'https://zhangsan.dev',
     intro: '全栈开发工程师，热爱开源与技术分享。',
-    lastLoginTime: '2026-06-27T10:30:00',
     createTime: '2025-03-15T08:00:00',
     qqBound: true,
     weiboBound: false,
@@ -277,8 +276,8 @@
     ]
   });
 
-  const lastLoginText = computed(() => {
-    return profile.lastLoginTime ? formatDateTime(profile.lastLoginTime) : '暂无记录';
+  const createTimeText = computed(() => {
+    return profile.createTime ? formatDateTime(profile.createTime) : '暂无记录';
   });
 
   const MAX_SHOW = 2;

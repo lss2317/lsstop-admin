@@ -20,8 +20,6 @@ export interface UserProfileInfo {
   website: string | null;
   /** 个人简介 */
   intro: string | null;
-  /** 最近登录时间 */
-  lastLoginTime: string | null;
   /** 创建时间 */
   createTime: string;
   /** 是否绑定QQ */

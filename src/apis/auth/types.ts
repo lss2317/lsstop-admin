@@ -1,3 +1,5 @@
+import type { RoleBrief } from '@/apis/user';
+
 /** 登录参数 */
 export interface LoginParams {
   /** 邮箱 */
@@ -38,4 +40,12 @@ export interface UserInfo {
   intro: string;
   /** 个人网站 */
   website: string;
+  /** 创建时间 */
+  createTime: string;
+  /** 是否绑定QQ */
+  qqBound: boolean;
+  /** 是否绑定微博 */
+  weiboBound: boolean;
+  /** 角色列表 */
+  roles: RoleBrief[];
 }
