@@ -4,18 +4,9 @@
  * @module apis/user-center
  */
 import request from '@/utils/http';
-import type { UserProfileInfo, ChangePasswordParams, UpdateProfileParams } from './types';
+import type { ChangePasswordParams, UpdateProfileParams } from './types';
 
-export type { UserProfileInfo, ChangePasswordParams, UpdateProfileParams } from './types';
-
-/**
- * 获取当前用户详细信息（个人中心用）
- */
-export function fetchUserProfile() {
-  return request.get<UserProfileInfo>({
-    url: '/user/profile'
-  });
-}
+export type { ChangePasswordParams, UpdateProfileParams } from './types';
 
 /**
  * 更新个人资料

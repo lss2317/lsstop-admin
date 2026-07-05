@@ -244,36 +244,47 @@
 <script setup lang="ts">
   import { ElMessage } from 'element-plus';
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
-  import type { UserProfileInfo, UpdateProfileParams } from '@/apis/user-center';
+  import { fetchGetUserInfo } from '@/apis/auth';
+  import type { UserInfo } from '@/apis/auth/types';
+  import { fetchUpdateProfile, fetchChangePassword } from '@/apis/user-center';
+  import type { UpdateProfileParams } from '@/apis/user-center';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import AvatarCropperDialog from '@/views/system/user/modules/avatar-cropper-dialog.vue';
   import { formatDateTime } from '@/utils/format';
-  import avatarImg from '@/assets/images/user/avatar.webp';
 
   defineOptions({ name: 'UserCenter' });
 
   // ============================================================
-  // Mock 数据
+  // 用户信息
   // ============================================================
 
-  /** 当前用户详情 Mock */
-  const profile = reactive<UserProfileInfo>({
-    userId: 'usr_a1b2c3d4',
-    nickname: '张三',
-    email: 'zhangsan@example.com',
-    avatar: avatarImg,
-    website: 'https://zhangsan.dev',
-    intro: '全栈开发工程师，热爱开源与技术分享。',
-    createTime: '2025-03-15T08:00:00',
-    qqBound: true,
+  const profile = reactive<UserInfo>({
+    userId: '',
+    nickname: '',
+    email: '',
+    avatar: '',
+    website: '',
+    intro: '',
+    createTime: '',
+    qqBound: false,
     weiboBound: false,
-    roles: [
-      { id: 1, roleName: '管理员' },
-      { id: 2, roleName: '编辑者' },
-      { id: 3, roleName: '访客' },
-      { id: 4, roleName: '测试' },
-      { id: 5, roleName: '测试111' }
-    ]
+    roles: []
+  });
+
+  const loading = ref(true);
+
+  const loadProfile = async () => {
+    loading.value = true;
+    try {
+      const data = await fetchGetUserInfo();
+      Object.assign(profile, data);
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  onMounted(() => {
+    loadProfile();
   });
 
   const createTimeText = computed(() => {
@@ -337,14 +348,13 @@
         await profileFormRef.value.validate();
         profileSubmitting.value = true;
 
-        // Mock 保存
-        await new Promise((resolve) => setTimeout(resolve, 600));
+        await fetchUpdateProfile({ ...profileForm });
 
         profile.nickname = profileForm.nickname;
         profile.email = profileForm.email;
         profile.avatar = profileForm.avatar;
-        profile.website = profileForm.website || null;
-        profile.intro = profileForm.intro || null;
+        profile.website = profileForm.website || '';
+        profile.intro = profileForm.intro || '';
 
         ElMessage.success('个人资料更新成功');
         isProfileEdit.value = false;
@@ -432,8 +442,10 @@
         await passwordFormRef.value.validate();
         passwordSubmitting.value = true;
 
-        // Mock 保存
-        await new Promise((resolve) => setTimeout(resolve, 600));
+        await fetchChangePassword({
+          oldPassword: passwordForm.oldPassword,
+          newPassword: passwordForm.newPassword
+        });
 
         ElMessage.success('密码修改成功');
         passwordFormRef.value.resetFields();
