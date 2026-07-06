@@ -191,19 +191,17 @@
 
   :deep(.el-form-item__label) {
     font-weight: 500;
-    color: #606266;
   }
 
   :deep(.el-input__wrapper) {
-    box-shadow: 0 0 0 1px #dcdfe6 inset;
-    transition: all 0.3s;
+    box-shadow: 0 0 0 1px var(--el-border-color) inset;
 
     &:hover {
-      box-shadow: 0 0 0 1px #c0c4cc inset;
+      box-shadow: 0 0 0 1px var(--el-border-color-hover) inset;
     }
 
     &.is-focus {
-      box-shadow: 0 0 0 1px #409eff inset;
+      box-shadow: 0 0 0 1px var(--el-color-primary) inset;
     }
   }
 </style>

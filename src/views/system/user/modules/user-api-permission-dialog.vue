@@ -247,8 +247,9 @@
   }
 
   .api-path {
-    color: var(--el-text-color-secondary);
+    color: var(--el-text-color-primary);
     font-size: 12px;
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    opacity: 0.65;
   }
 </style>
