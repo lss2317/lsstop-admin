@@ -243,11 +243,11 @@
 
   .api-name {
     font-weight: 500;
-    color: #303133;
+    color: var(--el-text-color-primary);
   }
 
   .api-path {
-    color: #909399;
+    color: var(--el-text-color-secondary);
     font-size: 12px;
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
   }

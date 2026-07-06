@@ -418,9 +418,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px dashed #dcdfe6;
+    border: 1px dashed var(--el-border-color);
     border-radius: 4px;
-    background: #fafafa;
+    background: var(--el-fill-color-light);
   }
 
   .auth-binding-row {
@@ -435,7 +435,8 @@
     justify-content: space-between;
     width: 40%;
     padding: 8px 14px;
-    background: #fafafa;
+    background: var(--el-fill-color-light);
+    border: 1px solid var(--el-border-color-lighter);
     border-radius: 8px;
   }
 
@@ -444,7 +445,7 @@
     align-items: center;
     gap: 8px;
     font-weight: 500;
-    color: #303133;
+    color: var(--el-text-color-primary);
   }
 
   .auth-bound {
@@ -453,7 +454,7 @@
   }
 
   .auth-unbound {
-    color: #c0c4cc;
+    color: var(--el-text-color-placeholder);
     font-size: 13px;
   }
 
@@ -469,19 +470,17 @@
 
   :deep(.el-form-item__label) {
     font-weight: 500;
-    color: #606266;
   }
 
   :deep(.el-input__wrapper) {
-    box-shadow: 0 0 0 1px #dcdfe6 inset;
-    transition: all 0.3s;
+    box-shadow: 0 0 0 1px var(--el-border-color) inset;
 
     &:hover {
-      box-shadow: 0 0 0 1px #c0c4cc inset;
+      box-shadow: 0 0 0 1px var(--el-border-color-hover) inset;
     }
 
     &.is-focus {
-      box-shadow: 0 0 0 1px #409eff inset;
+      box-shadow: 0 0 0 1px var(--el-color-primary) inset;
     }
   }
 </style>

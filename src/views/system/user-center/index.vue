@@ -640,7 +640,8 @@
     justify-content: space-between;
     width: 45%;
     padding: 8px 14px;
-    background: #fafafa;
+    background: var(--el-fill-color-light);
+    border: 1px solid var(--el-border-color-lighter);
     border-radius: 8px;
   }
 
@@ -649,7 +650,7 @@
     align-items: center;
     gap: 6px;
     font-weight: 500;
-    color: #303133;
+    color: var(--el-text-color-primary);
   }
 
   .auth-bound {
@@ -658,7 +659,7 @@
   }
 
   .auth-unbound {
-    color: #c0c4cc;
+    color: var(--el-text-color-placeholder);
     font-size: 13px;
   }
 
