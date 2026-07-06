@@ -119,9 +119,15 @@
         <ElCard class="art-card setting-card mt-5" :body-style="{ padding: '24px' }">
           <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
             <h1 class="text-lg font-medium text-g-800">更改密码</h1>
-            <ElButton type="primary" :loading="passwordSubmitting" @click="togglePasswordEdit">
-              {{ isPasswordEdit ? '保存' : '编辑' }}
-            </ElButton>
+            <template v-if="isPasswordEdit">
+              <div class="flex gap-2">
+                <ElButton @click="cancelPasswordEdit">取消</ElButton>
+                <ElButton type="primary" :loading="passwordSubmitting" @click="savePassword">
+                  保存
+                </ElButton>
+              </div>
+            </template>
+            <ElButton v-else type="primary" @click="enterPasswordEdit">编辑</ElButton>
           </div>
 
           <ElForm
@@ -175,9 +181,15 @@
         <ElCard class="art-card setting-card" :body-style="{ padding: '24px' }">
           <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
             <h1 class="text-lg font-medium text-g-800">基本设置</h1>
-            <ElButton type="primary" :loading="profileSubmitting" @click="toggleProfileEdit">
-              {{ isProfileEdit ? '保存' : '编辑' }}
-            </ElButton>
+            <template v-if="isProfileEdit">
+              <div class="flex gap-2">
+                <ElButton @click="cancelProfileEdit">取消</ElButton>
+                <ElButton type="primary" :loading="profileSubmitting" @click="saveProfile">
+                  保存
+                </ElButton>
+              </div>
+            </template>
+            <ElButton v-else type="primary" @click="enterProfileEdit">编辑</ElButton>
           </div>
 
           <ElForm
@@ -224,9 +236,15 @@
         <ElCard class="art-card setting-card mt-5" :body-style="{ padding: '24px' }">
           <div class="flex-b items-center px-1 pb-4 border-b border-g-300/60">
             <h1 class="text-lg font-medium text-g-800">更改邮箱</h1>
-            <ElButton type="primary" :loading="emailSubmitting" @click="toggleEmailEdit">
-              {{ isEmailEdit ? '保存' : '编辑' }}
-            </ElButton>
+            <template v-if="isEmailEdit">
+              <div class="flex gap-2">
+                <ElButton @click="cancelEmailEdit">取消</ElButton>
+                <ElButton type="primary" :loading="emailSubmitting" @click="saveEmail">
+                  保存
+                </ElButton>
+              </div>
+            </template>
+            <ElButton v-else type="primary" @click="enterEmailEdit">编辑</ElButton>
           </div>
 
           <ElForm
@@ -374,37 +392,40 @@
     website: [{ max: 200, message: '长度不超过 200 个字符', trigger: 'blur' }]
   };
 
-  /**
-   * 切换基本设置编辑状态
-   */
-  const toggleProfileEdit = async () => {
-    if (isProfileEdit.value) {
-      // 保存
-      if (!profileFormRef.value || profileSubmitting.value) return;
-      try {
-        await profileFormRef.value.validate();
-        profileSubmitting.value = true;
+  /** 进入基本设置编辑 */
+  const enterProfileEdit = () => {
+    syncProfileForm();
+    isProfileEdit.value = true;
+  };
 
-        await fetchUpdateProfile({
-          ...profileForm,
-          nickname: profileForm.nickname.trim()
-        });
+  /** 取消基本设置编辑 */
+  const cancelProfileEdit = () => {
+    syncProfileForm();
+    isProfileEdit.value = false;
+  };
 
-        profile.nickname = profileForm.nickname;
-        profile.website = profileForm.website || '';
-        profile.intro = profileForm.intro || '';
+  /** 保存基本设置 */
+  const saveProfile = async () => {
+    if (!profileFormRef.value || profileSubmitting.value) return;
+    try {
+      await profileFormRef.value.validate();
+      profileSubmitting.value = true;
 
-        ElMessage.success('个人资料更新成功');
-        isProfileEdit.value = false;
-      } catch {
-        // 校验失败
-      } finally {
-        profileSubmitting.value = false;
-      }
-    } else {
-      // 进入编辑
-      syncProfileForm();
-      isProfileEdit.value = true;
+      await fetchUpdateProfile({
+        ...profileForm,
+        nickname: profileForm.nickname.trim()
+      });
+
+      profile.nickname = profileForm.nickname;
+      profile.website = profileForm.website || '';
+      profile.intro = profileForm.intro || '';
+
+      ElMessage.success('个人资料更新成功');
+      isProfileEdit.value = false;
+    } catch {
+      // 校验失败
+    } finally {
+      profileSubmitting.value = false;
     }
   };
 
@@ -468,33 +489,36 @@
     ]
   };
 
-  /**
-   * 切换密码编辑状态
-   */
-  const togglePasswordEdit = async () => {
-    if (isPasswordEdit.value) {
-      // 保存
-      if (!passwordFormRef.value || passwordSubmitting.value) return;
-      try {
-        await passwordFormRef.value.validate();
-        passwordSubmitting.value = true;
+  /** 进入密码编辑 */
+  const enterPasswordEdit = () => {
+    isPasswordEdit.value = true;
+  };
 
-        await fetchChangePassword({
-          oldPassword: passwordForm.oldPassword,
-          newPassword: passwordForm.newPassword
-        });
+  /** 取消密码编辑 */
+  const cancelPasswordEdit = () => {
+    passwordFormRef.value?.resetFields();
+    isPasswordEdit.value = false;
+  };
 
-        ElMessage.success('密码修改成功');
-        passwordFormRef.value.resetFields();
-        isPasswordEdit.value = false;
-      } catch {
-        // 校验失败
-      } finally {
-        passwordSubmitting.value = false;
-      }
-    } else {
-      // 进入编辑
-      isPasswordEdit.value = true;
+  /** 保存密码 */
+  const savePassword = async () => {
+    if (!passwordFormRef.value || passwordSubmitting.value) return;
+    try {
+      await passwordFormRef.value.validate();
+      passwordSubmitting.value = true;
+
+      await fetchChangePassword({
+        oldPassword: passwordForm.oldPassword,
+        newPassword: passwordForm.newPassword
+      });
+
+      ElMessage.success('密码修改成功');
+      passwordFormRef.value.resetFields();
+      isPasswordEdit.value = false;
+    } catch {
+      // 校验失败
+    } finally {
+      passwordSubmitting.value = false;
     }
   };
 
@@ -549,31 +573,39 @@
     }
   };
 
-  const toggleEmailEdit = async () => {
-    if (isEmailEdit.value) {
-      if (!emailFormRef.value || emailSubmitting.value) return;
-      try {
-        await emailFormRef.value.validate();
-        emailSubmitting.value = true;
+  /** 进入邮箱编辑 */
+  const enterEmailEdit = () => {
+    emailForm.email = '';
+    emailForm.code = '';
+    isEmailEdit.value = true;
+  };
 
-        await fetchChangeEmail({
-          newEmail: emailForm.email.trim(),
-          code: emailForm.code
-        });
+  /** 取消邮箱编辑 */
+  const cancelEmailEdit = () => {
+    emailFormRef.value?.resetFields();
+    isEmailEdit.value = false;
+  };
 
-        profile.email = emailForm.email.trim();
-        ElMessage.success('邮箱修改成功');
-        emailFormRef.value.resetFields();
-        isEmailEdit.value = false;
-      } catch {
-        // 校验失败
-      } finally {
-        emailSubmitting.value = false;
-      }
-    } else {
-      emailForm.email = '';
-      emailForm.code = '';
-      isEmailEdit.value = true;
+  /** 保存邮箱 */
+  const saveEmail = async () => {
+    if (!emailFormRef.value || emailSubmitting.value) return;
+    try {
+      await emailFormRef.value.validate();
+      emailSubmitting.value = true;
+
+      await fetchChangeEmail({
+        newEmail: emailForm.email.trim(),
+        code: emailForm.code
+      });
+
+      profile.email = emailForm.email.trim();
+      ElMessage.success('邮箱修改成功');
+      emailFormRef.value.resetFields();
+      isEmailEdit.value = false;
+    } catch {
+      // 校验失败
+    } finally {
+      emailSubmitting.value = false;
     }
   };
 </script>
