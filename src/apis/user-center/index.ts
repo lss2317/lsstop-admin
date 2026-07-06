@@ -41,12 +41,12 @@ export function fetchChangePassword(data: ChangePasswordParams) {
 }
 
 /**
- * 发送修改邮箱验证码
- * @param data 新邮箱参数
+ * 发送验证码
+ * @param data 验证码参数
  */
 export function fetchSendChangeEmailCode(data: SendChangeEmailCodeParams) {
   return request.post<void>({
-    url: '/user/change-email/send-code',
+    url: '/auth/code',
     data
   });
 }
@@ -57,7 +57,7 @@ export function fetchSendChangeEmailCode(data: SendChangeEmailCodeParams) {
  */
 export function fetchChangeEmail(data: ChangeEmailParams) {
   return request.put<void>({
-    url: '/user/change-email',
+    url: '/user/email',
     data
   });
 }

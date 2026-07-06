@@ -539,7 +539,7 @@
     }
     isSendingCode.value = true;
     try {
-      await fetchSendChangeEmailCode({ email: emailForm.email.trim() });
+      await fetchSendChangeEmailCode({ email: emailForm.email.trim(), purpose: 4 });
       ElMessage.success('验证码已发送');
       startCodeCountdown();
     } catch {
@@ -557,7 +557,7 @@
         emailSubmitting.value = true;
 
         await fetchChangeEmail({
-          email: emailForm.email.trim(),
+          newEmail: emailForm.email.trim(),
           code: emailForm.code
         });
 

@@ -22,16 +22,18 @@ export interface UpdateProfileParams {
   intro?: string;
 }
 
-/** 发送修改邮箱验证码参数 */
+/** 发送验证码参数 */
 export interface SendChangeEmailCodeParams {
-  /** 新邮箱 */
+  /** 邮箱地址 */
   email: string;
+  /** 1-登录 2-注册 3-找回密码 4-修改邮箱 */
+  purpose: number;
 }
 
 /** 修改邮箱参数 */
 export interface ChangeEmailParams {
   /** 新邮箱 */
-  email: string;
+  newEmail: string;
   /** 验证码 */
   code: string;
 }
