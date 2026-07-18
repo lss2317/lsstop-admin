@@ -234,7 +234,9 @@
     detailVisible.value = true;
   };
 
-  const operationTagType = (type: string): 'success' | 'warning' | 'danger' | 'info' => {
+  const operationTagType = (
+    type: string
+  ): 'success' | 'warning' | 'danger' | 'primary' | 'info' => {
     switch (type) {
       case '新增':
         return 'success';
@@ -242,6 +244,8 @@
         return 'warning';
       case '删除':
         return 'danger';
+      case '上传':
+        return 'primary';
       default:
         return 'info';
     }

@@ -54,7 +54,8 @@
   const operationTypeOptions = ref([
     { label: '新增', value: '新增' },
     { label: '编辑', value: '编辑' },
-    { label: '删除', value: '删除' }
+    { label: '删除', value: '删除' },
+    { label: '上传', value: '上传' }
   ]);
 
   /**
