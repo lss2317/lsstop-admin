@@ -37,14 +37,22 @@
         <SettingSidebar v-model="activeTab" />
 
         <main class="setting-content">
-          <BlogInfoPanel
-            v-show="activeTab === 'base'"
-            :model-value="form"
-            @avatar-change="handleAvatarChange"
-          />
-          <SocialConnectionPanel v-show="activeTab === 'links'" :model-value="form" />
-          <CommentSettingsPanel v-show="activeTab === 'comment'" :model-value="form" />
-          <AboutEditorPanel v-show="activeTab === 'about'" :model-value="form" />
+          <Transition name="setting-panel-switch">
+            <BlogInfoPanel
+              v-show="activeTab === 'base'"
+              :model-value="form"
+              @avatar-change="handleAvatarChange"
+            />
+          </Transition>
+          <Transition name="setting-panel-switch">
+            <SocialConnectionPanel v-show="activeTab === 'links'" :model-value="form" />
+          </Transition>
+          <Transition name="setting-panel-switch">
+            <CommentSettingsPanel v-show="activeTab === 'comment'" :model-value="form" />
+          </Transition>
+          <Transition name="setting-panel-switch">
+            <AboutEditorPanel v-show="activeTab === 'about'" :model-value="form" />
+          </Transition>
         </main>
       </div>
     </ElForm>
@@ -61,8 +69,7 @@
 
 <script setup lang="ts">
   import type { WebsiteConfigItem } from '@/apis/setting/types';
-  import { fetchSettingInfo, fetchUpdateSetting } from '@/apis/setting';
-  import { fetchUploadAvatar } from '@/apis/user';
+  import { fetchSettingInfo, fetchUpdateSetting, fetchUploadWebsiteAvatar } from '@/apis/setting';
   import { ElMessageBox } from 'element-plus';
   import type { FormInstance, FormRules, UploadFile } from 'element-plus';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
@@ -148,7 +155,7 @@
   /** 裁剪保存 → 上传图片并回填字段 */
   const handleCropSave = async (file: File) => {
     try {
-      const url = await fetchUploadAvatar(file);
+      const url = await fetchUploadWebsiteAvatar(file);
       form[avatarField.value] = url;
     } catch {
       // 接口报错由全局拦截器展示
@@ -270,7 +277,34 @@
   }
 
   .setting-content {
+    position: relative;
     min-width: 0;
+  }
+
+  .setting-panel-switch-enter-active,
+  .setting-panel-switch-leave-active {
+    transition:
+      opacity 0.18s ease,
+      transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  .setting-panel-switch-leave-active {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .setting-panel-switch-enter-from {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+  }
+
+  .setting-panel-switch-leave-to {
+    opacity: 0;
+    transform: translate3d(0, -4px, 0);
   }
 
   @media screen and (width <= 980px) {

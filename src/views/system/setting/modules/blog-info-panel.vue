@@ -4,7 +4,7 @@
       <span class="panel-icon"><ArtSvgIcon icon="ri:global-line" /></span>
       <div>
         <h2>博客信息</h2>
-        <p>设置博客头像、名称、博主信息和首页简介</p>
+        <p>设置博主头像、访客默认头像和博客基本信息</p>
       </div>
     </div>
 

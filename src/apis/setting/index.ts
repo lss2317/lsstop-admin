@@ -26,3 +26,18 @@ export function fetchUpdateSetting(data: WebsiteConfigItem) {
     data
   });
 }
+
+/**
+ * 上传网站配置头像
+ * @param file 裁剪后的图片文件
+ * @returns 头像访问URL
+ */
+export function fetchUploadWebsiteAvatar(file: File) {
+  const formData = new FormData();
+  formData.append('file', file);
+  return request.post<string>({
+    url: '/file/website-avatar',
+    data: formData,
+    showSuccessMessage: false
+  });
+}

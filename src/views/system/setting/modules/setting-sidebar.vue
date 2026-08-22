@@ -1,29 +1,36 @@
 <template>
   <aside class="art-card setting-nav">
     <p class="nav-caption">配置分类</p>
-    <button
-      v-for="item in settingNavItems"
-      :key="item.name"
-      type="button"
-      class="nav-item"
-      :class="{ active: model === item.name }"
-      @click="model = item.name"
-    >
-      <span class="nav-icon"><ArtSvgIcon :icon="item.icon" /></span>
-      <span class="nav-copy">
-        <strong>{{ item.label }}</strong>
-        <small>{{ item.description }}</small>
-      </span>
-      <ArtSvgIcon icon="ri:arrow-right-s-line" class="nav-arrow" />
-    </button>
+    <div ref="navListRef" class="nav-list">
+      <span class="nav-active-indicator" :style="indicatorStyle" aria-hidden="true"></span>
+      <button
+        v-for="item in settingNavItems"
+        :key="item.name"
+        type="button"
+        class="nav-item"
+        :class="{ active: model === item.name }"
+        :data-tab="item.name"
+        @click="model = item.name"
+      >
+        <span class="nav-icon"><ArtSvgIcon :icon="item.icon" /></span>
+        <span class="nav-copy">
+          <strong>{{ item.label }}</strong>
+          <small>{{ item.description }}</small>
+        </span>
+        <ArtSvgIcon icon="ri:arrow-right-s-line" class="nav-arrow" />
+      </button>
+    </div>
   </aside>
 </template>
 
 <script setup lang="ts">
+  import type { CSSProperties } from 'vue';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import type { SettingTab } from '../types';
 
   const model = defineModel<SettingTab>({ required: true });
+  const navListRef = ref<HTMLElement>();
+  const indicatorStyle = ref<CSSProperties>({ opacity: 0 });
 
   const settingNavItems = [
     {
@@ -51,6 +58,29 @@
       icon: 'ri:user-heart-line'
     }
   ] as const;
+
+  const updateIndicator = () => {
+    const activeItem = navListRef.value?.querySelector<HTMLElement>(`[data-tab="${model.value}"]`);
+    if (!activeItem) return;
+
+    indicatorStyle.value = {
+      width: `${activeItem.offsetWidth}px`,
+      height: `${activeItem.offsetHeight}px`,
+      opacity: 1,
+      transform: `translate3d(${activeItem.offsetLeft}px, ${activeItem.offsetTop}px, 0)`
+    };
+  };
+
+  watch(model, () => nextTick(updateIndicator), { immediate: true });
+
+  onMounted(() => {
+    updateIndicator();
+    window.addEventListener('resize', updateIndicator);
+  });
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', updateIndicator);
+  });
 </script>
 
 <style scoped lang="scss">
@@ -68,7 +98,29 @@
     letter-spacing: 0.08em;
   }
 
+  .nav-list {
+    position: relative;
+  }
+
+  .nav-active-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--theme-color) 10%, transparent);
+    border-radius: calc(var(--custom-radius) / 2 + 4px);
+    transition:
+      width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.16s ease,
+      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: width, height, transform;
+  }
+
   .nav-item {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     width: 100%;
@@ -95,7 +147,7 @@
 
     &.active {
       color: var(--theme-color);
-      background: color-mix(in srgb, var(--theme-color) 10%, transparent);
+      background: transparent;
 
       .nav-icon {
         color: #fff;
@@ -161,10 +213,14 @@
   @media screen and (width <= 760px) {
     .setting-nav {
       position: static;
-      display: flex;
-      gap: 6px;
       padding: 8px;
       margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .nav-list {
+      display: flex;
+      gap: 6px;
       overflow-x: auto;
       scrollbar-width: none;
 
