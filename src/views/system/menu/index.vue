@@ -64,6 +64,8 @@
   import MenuSearch from './modules/menu-search.vue';
   import { formatDateTime } from '@/utils';
 
+  // 组件名需要与后端动态路由名称保持一致，用于 KeepAlive 缓存
+  // eslint-disable-next-line vue/no-reserved-component-names
   defineOptions({ name: 'Menu' });
 
   // 状态管理

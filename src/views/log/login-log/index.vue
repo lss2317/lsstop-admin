@@ -354,7 +354,7 @@
       const filename = `认证日志_${new Date().toISOString().slice(0, 10)}.xlsx`;
       FileSaver.saveAs(blob, filename);
       ElMessage.success('导出成功');
-    } catch (error) {
+    } catch {
       // ElMessageBox 取消
     } finally {
       exportLoading.value = false;
@@ -365,9 +365,9 @@
 <style scoped>
   :deep(.generated-operation-actions) {
     display: inline-flex;
-    align-items: center;
     flex-wrap: nowrap;
     gap: 8px;
+    align-items: center;
     white-space: nowrap;
   }
 
@@ -384,22 +384,22 @@
   }
 
   .detail-json-title {
+    margin-bottom: 10px;
     font-size: 15px;
     font-weight: 500;
-    margin-bottom: 10px;
     color: var(--el-text-color-primary);
   }
 
   .detail-json-content {
-    margin: 0;
     padding: 16px;
-    background-color: var(--el-fill-color-light, #f5f7fa);
-    border-radius: 6px;
-    white-space: pre-wrap;
-    word-break: break-all;
+    margin: 0;
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
     font-size: 13px;
     line-height: 1.6;
     color: var(--el-text-color-regular);
+    word-break: break-all;
+    white-space: pre-wrap;
+    background-color: var(--el-fill-color-light, #f5f7fa);
+    border-radius: 6px;
   }
 </style>

@@ -73,7 +73,7 @@
     display: inline-block;
     width: 1.2em;
     height: 1.2em;
-    vertical-align: text-bottom;
     margin: 0 1px;
+    vertical-align: text-bottom;
   }
 </style>

@@ -96,8 +96,9 @@
   /**
    * 处理搜索事件
    */
-  const handleSearch = async (params: UserSearchParams) => {
+  const handleSearch = async (params: Record<string, any>) => {
     await searchBarRef.value.validate();
-    emit('search', params);
+    // 搜索栏基于 UserSearchParams 表单生成数据，此处仅适配公共组件的事件类型
+    emit('search', params as UserSearchParams);
   };
 </script>

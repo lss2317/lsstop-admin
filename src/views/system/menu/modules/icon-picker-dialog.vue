@@ -113,10 +113,10 @@
   .icon-picker {
     .search-section {
       display: flex;
-      align-items: center;
       gap: 12px;
-      margin-bottom: 16px;
+      align-items: center;
       padding: 16px;
+      margin-bottom: 16px;
       border: 1px solid var(--el-border-color-lighter, #e4e7ed);
       border-radius: 10px;
 
@@ -126,26 +126,26 @@
 
       .label-group {
         display: flex;
-        align-items: center;
-        gap: 8px;
         flex-shrink: 0;
+        gap: 8px;
+        align-items: center;
       }
 
       .label-badge {
+        padding: 4px 12px;
         font-size: 12px;
         color: var(--el-text-color-secondary);
         white-space: nowrap;
-        padding: 4px 12px;
-        border-radius: 20px;
         background: var(--el-fill-color-light, #f5f7fa);
+        border-radius: 20px;
       }
     }
 
     .grid-section {
       height: calc(84vh - 240px);
+      overflow: hidden;
       border: 1px solid var(--el-border-color-lighter, #e4e7ed);
       border-radius: 10px;
-      overflow: hidden;
     }
 
     .icon-scrollbar {
@@ -171,11 +171,11 @@
       align-items: center;
       justify-content: center;
       height: 56px;
-      border-radius: 8px;
+      color: #4b5563;
       cursor: pointer;
       background: var(--el-fill-color-lighter, #f5f7fa);
       border: 1px solid var(--el-border-color-lighter, #e4e7ed);
-      color: #4b5563;
+      border-radius: 8px;
       transition: all 0.2s;
 
       &:hover {

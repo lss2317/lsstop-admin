@@ -181,8 +181,8 @@
 <style scoped lang="scss">
   .dialog-footer {
     display: flex;
-    justify-content: flex-end;
     gap: 12px;
+    justify-content: flex-end;
   }
 
   :deep(.el-form-item) {

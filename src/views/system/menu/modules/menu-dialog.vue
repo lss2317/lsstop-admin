@@ -732,17 +732,17 @@
   }
 
   .icon-input-inner :deep(.el-input__wrapper) {
-    box-shadow: none !important;
+    padding: 0 11px;
+    background: transparent !important;
     border: none !important;
     border-radius: 0;
-    background: transparent !important;
-    padding: 0 11px;
+    box-shadow: none !important;
   }
 
   .drawer-footer {
     display: flex;
-    justify-content: flex-end;
     gap: 12px;
+    justify-content: flex-end;
   }
 </style>
 
@@ -773,8 +773,8 @@
   }
 
   .menu-drawer .el-col {
-    padding-left: 20px !important;
     padding-right: 20px !important;
+    padding-left: 20px !important;
   }
 
   .menu-drawer .el-row {
@@ -785,17 +785,17 @@
     position: relative;
     top: -4px;
     right: -4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 30px;
     height: 30px;
     border-radius: 5px;
     transition: all 0.3s;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .menu-drawer .el-drawer__close-btn:hover {
-    background-color: var(--art-hover-color) !important;
     color: var(--art-gray-900) !important;
+    background-color: var(--art-hover-color) !important;
   }
 </style>

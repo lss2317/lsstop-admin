@@ -236,9 +236,9 @@
 <style scoped lang="scss">
   .api-node {
     display: flex;
-    align-items: center;
-    gap: 8px;
     flex: 1;
+    gap: 8px;
+    align-items: center;
   }
 
   .api-name {
@@ -247,9 +247,9 @@
   }
 
   .api-path {
-    color: var(--el-text-color-primary);
-    font-size: 12px;
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--el-text-color-primary);
     opacity: 0.65;
   }
 </style>

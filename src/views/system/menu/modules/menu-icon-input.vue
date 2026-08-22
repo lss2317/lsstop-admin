@@ -44,9 +44,9 @@
 
 <style scoped>
   .icon-input-inner :deep(.el-input__wrapper) {
-    box-shadow: none !important;
-    border: none !important;
-    background: transparent !important;
     padding: 0 11px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
 </style>

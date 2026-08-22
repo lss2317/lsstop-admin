@@ -388,26 +388,26 @@
 
   .cropper-controls {
     display: flex;
-    align-items: center;
     gap: 12px;
+    align-items: center;
     width: 100%;
     margin-top: 20px;
   }
 
   .zoom-icon {
+    flex-shrink: 0;
     font-size: 20px;
     color: var(--el-text-color-secondary);
     cursor: pointer;
     transition: color 0.2s;
-    flex-shrink: 0;
 
     &:hover:not(.disabled) {
       color: var(--el-text-color-primary);
     }
 
     &.disabled {
-      opacity: 0.4;
       cursor: not-allowed;
+      opacity: 0.4;
     }
   }
 

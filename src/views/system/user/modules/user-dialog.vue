@@ -399,8 +399,8 @@
 <style scoped lang="scss">
   .avatar-upload {
     display: flex;
-    align-items: center;
     gap: 12px;
+    align-items: center;
   }
 
   .avatar-upload :deep(.el-upload) {
@@ -418,15 +418,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--el-fill-color-light);
     border: 1px dashed var(--el-border-color);
     border-radius: 4px;
-    background: var(--el-fill-color-light);
   }
 
   .auth-binding-row {
     display: flex;
-    justify-content: space-around;
     gap: 16px;
+    justify-content: space-around;
   }
 
   .auth-binding-item {
@@ -442,26 +442,26 @@
 
   .auth-platform {
     display: flex;
-    align-items: center;
     gap: 8px;
+    align-items: center;
     font-weight: 500;
     color: var(--el-text-color-primary);
   }
 
   .auth-bound {
-    color: #67c23a;
     font-size: 13px;
+    color: #67c23a;
   }
 
   .auth-unbound {
-    color: var(--el-text-color-placeholder);
     font-size: 13px;
+    color: var(--el-text-color-placeholder);
   }
 
   .dialog-footer {
     display: flex;
-    justify-content: flex-end;
     gap: 12px;
+    justify-content: flex-end;
   }
 
   :deep(.el-form-item) {
@@ -487,7 +487,7 @@
 
 <style>
   .user-dialog .el-dialog__body {
-    padding-left: 20px !important;
     padding-right: 20px !important;
+    padding-left: 20px !important;
   }
 </style>

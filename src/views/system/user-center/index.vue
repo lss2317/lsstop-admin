@@ -643,8 +643,8 @@
 
   .auth-binding-row {
     display: flex;
-    justify-content: space-around;
     gap: 16px;
+    justify-content: space-around;
   }
 
   .auth-binding-item {
@@ -660,20 +660,20 @@
 
   .auth-platform {
     display: flex;
-    align-items: center;
     gap: 6px;
+    align-items: center;
     font-weight: 500;
     color: var(--el-text-color-primary);
   }
 
   .auth-bound {
-    color: #67c23a;
     font-size: 13px;
+    color: #67c23a;
   }
 
   .auth-unbound {
-    color: var(--el-text-color-placeholder);
     font-size: 13px;
+    color: var(--el-text-color-placeholder);
   }
 
   .role-tag {
