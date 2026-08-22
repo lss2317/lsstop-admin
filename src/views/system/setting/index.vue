@@ -1,7 +1,7 @@
 <!-- 系统设置页面 -->
 <template>
   <div class="setting-page pb-5">
-    <header class="page-header">
+    <header ref="pageHeaderRef" class="page-header">
       <div>
         <div class="page-title-row">
           <span class="page-title-icon">
@@ -17,8 +17,15 @@
           <span class="dirty-dot" />
           有未保存修改
         </span>
-        <ElButton :disabled="!isDirty || submitting" @click="handleReset">放弃修改</ElButton>
-        <ElButton type="primary" :disabled="!isDirty" :loading="submitting" @click="handleSubmit">
+        <ElButton :disabled="!isDirty || submitting || confirming" @click="handleReset">
+          放弃修改
+        </ElButton>
+        <ElButton
+          type="primary"
+          :disabled="!isDirty || confirming"
+          :loading="submitting"
+          @click="handleSubmit"
+        >
           <ArtSvgIcon icon="ri:save-line" class="mr-1" />
           保存配置
         </ElButton>
@@ -36,11 +43,7 @@
       <div class="setting-layout">
         <SettingSidebar v-model="activeTab" />
 
-        <main
-          ref="settingContentRef"
-          class="setting-content"
-          :class="`is-switching-${panelTransitionDirection}`"
-        >
+        <main class="setting-content" :class="`is-switching-${panelTransitionDirection}`">
           <Transition name="setting-panel-switch">
             <BlogInfoPanel
               v-show="activeTab === 'base'"
@@ -75,7 +78,7 @@
   import type { WebsiteConfigItem } from '@/apis/setting/types';
   import { fetchSettingInfo, fetchUpdateSetting, fetchUploadWebsiteAvatar } from '@/apis/setting';
   import { ElMessageBox } from 'element-plus';
-  import type { FormInstance, FormRules, UploadFile } from 'element-plus';
+  import type { FormInstance, FormItemRule, FormRules, UploadFile } from 'element-plus';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import AvatarCropperDialog from '@/views/system/user/modules/avatar-cropper-dialog.vue';
   import AboutEditorPanel from './modules/about-editor-panel.vue';
@@ -89,10 +92,11 @@
 
   const formRef = ref<FormInstance>();
   const submitting = ref(false);
+  const confirming = ref(false);
   const loading = ref(false);
   const activeTab = ref<SettingTab>('base');
   const panelTransitionDirection = ref<'up' | 'down'>('down');
-  const settingContentRef = ref<HTMLElement>();
+  const pageHeaderRef = ref<HTMLElement>();
   const savedSnapshot = ref('');
 
   const settingTabOrder: SettingTab[] = ['base', 'links', 'comment', 'about'];
@@ -130,22 +134,69 @@
     () => savedSnapshot.value !== '' && JSON.stringify(form) !== savedSnapshot.value
   );
 
-  const rules: FormRules = {
-    siteName: [{ required: true, message: '请输入博客名称', trigger: 'blur' }]
+  const isUrlWithProtocol = (value: unknown, protocols: string[]): boolean => {
+    if (typeof value !== 'string' || value.trim() === '') return true;
+
+    try {
+      const url = new URL(value.trim());
+      return protocols.includes(url.protocol) && Boolean(url.hostname);
+    } catch {
+      return false;
+    }
   };
 
-  /** 配置区标题滚出可视区域后，切换分类时将其平滑带回顶部。 */
-  const scrollSettingContentIntoView = () => {
-    const content = settingContentRef.value;
-    if (!content) return;
+  const validateOptionalHttpUrl: NonNullable<FormItemRule['validator']> = (
+    _rule,
+    value,
+    callback
+  ) => {
+    if (isUrlWithProtocol(value, ['http:', 'https:'])) {
+      callback();
+      return;
+    }
+    callback(new Error('请输入以 http:// 或 https:// 开头的完整链接'));
+  };
+
+  const validateOptionalWebSocketUrl: NonNullable<FormItemRule['validator']> = (
+    _rule,
+    value,
+    callback
+  ) => {
+    if (typeof value !== 'string' || value.trim() === '') {
+      callback();
+      return;
+    }
+
+    const normalizedValue = /^wss?:\/\//i.test(value.trim())
+      ? value.trim()
+      : `ws://${value.trim()}`;
+    if (isUrlWithProtocol(normalizedValue, ['ws:', 'wss:'])) {
+      callback();
+      return;
+    }
+    callback(new Error('请输入有效地址，如 localhost:8080 或 wss://example.com'));
+  };
+
+  const rules: FormRules = {
+    siteName: [{ required: true, message: '请输入博客名称', trigger: 'blur' }],
+    qqUrl: [{ validator: validateOptionalHttpUrl, trigger: 'blur' }],
+    githubUrl: [{ validator: validateOptionalHttpUrl, trigger: 'blur' }],
+    giteeUrl: [{ validator: validateOptionalHttpUrl, trigger: 'blur' }],
+    websocketUrl: [{ validator: validateOptionalWebSocketUrl, trigger: 'blur' }]
+  };
+
+  /** 页面标题滚出可视区域后，切换分类时将完整标题和操作区平滑带回顶部。 */
+  const scrollPageHeaderIntoView = () => {
+    const pageHeader = pageHeaderRef.value;
+    if (!pageHeader) return;
 
     const headerBottom = document.getElementById('app-header')?.getBoundingClientRect().bottom ?? 0;
     const safeTop = headerBottom + 12;
-    const contentTop = content.getBoundingClientRect().top;
-    if (contentTop >= safeTop) return;
+    const pageHeaderTop = pageHeader.getBoundingClientRect().top;
+    if (pageHeaderTop >= safeTop) return;
 
     const scrollOptions: ScrollToOptions = {
-      top: contentTop - safeTop,
+      top: pageHeaderTop - safeTop,
       behavior: 'smooth'
     };
     const appMain = document.getElementById('app-main');
@@ -161,7 +212,7 @@
   watch(activeTab, (currentTab, previousTab) => {
     panelTransitionDirection.value =
       settingTabOrder.indexOf(currentTab) >= settingTabOrder.indexOf(previousTab) ? 'down' : 'up';
-    nextTick(scrollSettingContentIntoView);
+    nextTick(scrollPageHeaderIntoView);
   });
 
   onMounted(() => {
@@ -221,20 +272,36 @@
   };
 
   const handleSubmit = async () => {
-    if (!formRef.value || submitting.value) return;
+    if (!formRef.value || submitting.value || confirming.value) return;
     try {
       await formRef.value.validate();
+      confirming.value = true;
+      await ElMessageBox.confirm(
+        '保存后，当前修改将立即应用到博客前台，确定继续吗？',
+        '保存网站配置',
+        {
+          confirmButtonText: '确认保存',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      );
       submitting.value = true;
       await fetchUpdateSetting({ ...form });
       ElMessage.success('保存成功');
       await getSetting();
     } catch (error) {
-      // 博客信息是目前唯一包含必填校验的分类，校验失败时自动定位
       if (error && typeof error === 'object' && 'siteName' in error) {
         activeTab.value = 'base';
+      } else if (
+        error &&
+        typeof error === 'object' &&
+        ['qqUrl', 'githubUrl', 'giteeUrl', 'websocketUrl'].some((field) => field in error)
+      ) {
+        activeTab.value = 'links';
       }
       // 接口报错由全局拦截器展示
     } finally {
+      confirming.value = false;
       submitting.value = false;
     }
   };

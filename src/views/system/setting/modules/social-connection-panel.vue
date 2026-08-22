@@ -16,9 +16,9 @@
         </div>
       </div>
       <div class="card-body">
-        <ElRow :gutter="20">
-          <ElCol :xs="24">
-            <ElFormItem label="QQ 链接" prop="qqUrl">
+        <div class="social-link-list">
+          <ElFormItem label="QQ 链接" prop="qqUrl" class="social-link-item">
+            <div class="link-input-row">
               <ElInput
                 v-model="form.qqUrl"
                 placeholder="https://wpa.qq.com/xxx"
@@ -29,10 +29,21 @@
                   <ArtSvgIcon icon="ri:qq-fill" class="social-input-icon is-qq" />
                 </template>
               </ElInput>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :xs="24">
-            <ElFormItem label="GitHub 链接" prop="githubUrl">
+              <ElButton
+                class="link-open-button"
+                :disabled="!isHttpUrl(form.qqUrl)"
+                aria-label="打开 QQ 链接"
+                title="在新窗口打开"
+                native-type="button"
+                @click="openExternalLink(form.qqUrl)"
+              >
+                <ArtSvgIcon icon="ri:external-link-line" />
+              </ElButton>
+            </div>
+          </ElFormItem>
+
+          <ElFormItem label="GitHub 链接" prop="githubUrl" class="social-link-item">
+            <div class="link-input-row">
               <ElInput
                 v-model="form.githubUrl"
                 placeholder="https://github.com/xxx"
@@ -43,10 +54,21 @@
                   <ArtSvgIcon icon="ri:github-fill" class="social-input-icon is-github" />
                 </template>
               </ElInput>
-            </ElFormItem>
-          </ElCol>
-          <ElCol :xs="24">
-            <ElFormItem label="Gitee 链接" prop="giteeUrl" class="!mb-0">
+              <ElButton
+                class="link-open-button"
+                :disabled="!isHttpUrl(form.githubUrl)"
+                aria-label="打开 GitHub 链接"
+                title="在新窗口打开"
+                native-type="button"
+                @click="openExternalLink(form.githubUrl)"
+              >
+                <ArtSvgIcon icon="ri:external-link-line" />
+              </ElButton>
+            </div>
+          </ElFormItem>
+
+          <ElFormItem label="Gitee 链接" prop="giteeUrl" class="social-link-item">
+            <div class="link-input-row">
               <ElInput
                 v-model="form.giteeUrl"
                 placeholder="https://gitee.com/xxx"
@@ -57,9 +79,19 @@
                   <ArtSvgIcon icon="ri:gitee-fill" class="social-input-icon is-gitee" />
                 </template>
               </ElInput>
-            </ElFormItem>
-          </ElCol>
-        </ElRow>
+              <ElButton
+                class="link-open-button"
+                :disabled="!isHttpUrl(form.giteeUrl)"
+                aria-label="打开 Gitee 链接"
+                title="在新窗口打开"
+                native-type="button"
+                @click="openExternalLink(form.giteeUrl)"
+              >
+                <ArtSvgIcon icon="ri:external-link-line" />
+              </ElButton>
+            </div>
+          </ElFormItem>
+        </div>
       </div>
     </ElCard>
 
@@ -82,7 +114,10 @@
               <ArtSvgIcon icon="ri:signal-tower-fill" class="social-input-icon is-websocket" />
             </template>
           </ElInput>
-          <p class="field-help">前台会自动拼接 /ws/chat，生产环境请使用加密协议 wss://。</p>
+          <p class="field-help">
+            <ArtSvgIcon icon="ri:information-line" />
+            <span>省略协议时前台会使用 ws://，并自动拼接 /ws/chat；生产环境建议使用 wss://。</span>
+          </p>
         </ElFormItem>
       </div>
     </ElCard>
@@ -94,6 +129,23 @@
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
 
   const form = defineModel<WebsiteConfigItem>({ required: true });
+
+  const isHttpUrl = (value: unknown): boolean => {
+    if (typeof value !== 'string' || !value.trim()) return false;
+
+    try {
+      const url = new URL(value.trim());
+      return ['http:', 'https:'].includes(url.protocol) && Boolean(url.hostname);
+    } catch {
+      return false;
+    }
+  };
+
+  const openExternalLink = (value: unknown) => {
+    if (!isHttpUrl(value)) return;
+    if (typeof value !== 'string') return;
+    window.open(value.trim(), '_blank', 'noopener,noreferrer');
+  };
 </script>
 
 <style scoped lang="scss">
@@ -172,12 +224,47 @@
     }
   }
 
+  .social-link-item {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .link-input-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 40px;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .link-open-button {
+    align-self: stretch;
+    width: 40px;
+    height: auto;
+    min-height: 40px;
+    padding: 0;
+    margin: 0;
+    font-size: 17px;
+  }
+
   .field-help {
+    display: flex;
+    gap: 5px;
+    align-items: flex-start;
     width: 100%;
     margin-top: 8px;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.5;
-    color: var(--art-gray-500);
+    color: var(--art-gray-600);
+
+    :deep(.art-svg-icon) {
+      flex-shrink: 0;
+      margin-top: 1px;
+      font-size: 15px;
+      color: var(--theme-color);
+    }
   }
 
   .social-input-icon {
@@ -217,6 +304,10 @@
   @media screen and (width <= 760px) {
     .panel-heading {
       margin-bottom: 12px;
+    }
+
+    .social-link-item {
+      margin-bottom: 18px;
     }
   }
 
