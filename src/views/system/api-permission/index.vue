@@ -139,26 +139,26 @@
     {
       prop: 'requestUrl',
       label: '接口路径',
-      width: 220,
       align: 'center',
       formatter: (row: ApiPermissionItem) => row.requestUrl || '-'
     },
     {
       prop: 'sort',
       label: '排序',
-      width: 80,
+      width: 100,
       align: 'center',
       formatter: (row: ApiPermissionItem) => row.sort ?? ''
     },
     {
       prop: 'updateTime',
       label: '更新时间',
-      width: 110,
+      width: 200,
       formatter: (row: ApiPermissionItem) => formatDateTime(row.updateTime)
     },
     {
       prop: 'isEnabled',
       label: '状态',
+      width: 100,
       formatter: (row: ApiPermissionItem) =>
         h(ElTag, { type: row.isEnabled === 1 ? 'success' : 'info' }, () =>
           row.isEnabled === 1 ? '启用' : '禁用'
