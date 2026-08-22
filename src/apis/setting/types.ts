@@ -26,7 +26,7 @@ export interface WebsiteConfigItem {
   githubUrl: string | null;
   /** Gitee链接 */
   giteeUrl: string | null;
-  /** 访客默认头像 */
+  /** 用户默认头像 */
   defaultUserAvatar: string | null;
   /** 评论审核(1:是、0:否) */
   enableCommentReview: number;

@@ -4,7 +4,7 @@
       <span class="panel-icon"><ArtSvgIcon icon="ri:global-line" /></span>
       <div>
         <h2>博客信息</h2>
-        <p>设置博主头像、访客默认头像和博客基本信息</p>
+        <p>设置博主头像、用户默认头像和博客基本信息</p>
       </div>
     </div>
 
@@ -12,7 +12,7 @@
       <div class="card-heading">
         <div>
           <h3>头像设置</h3>
-          <p>分别设置博主个人头像和访客默认头像</p>
+          <p>分别设置博主个人头像和用户默认头像</p>
         </div>
       </div>
 
@@ -22,7 +22,7 @@
             class="avatar-upload"
             :auto-upload="false"
             :show-file-list="false"
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.gif,.webp"
             @change="(file: UploadFile) => emit('avatarChange', 'siteAvatar', file)"
           >
             <div class="avatar-frame">
@@ -44,7 +44,7 @@
           <div class="media-copy">
             <strong>博主头像</strong>
             <p>展示在博客首页、侧边栏和“关于我”页面</p>
-            <span>建议上传主体居中的 1:1 图片，支持 JPG、PNG 或 WebP</span>
+            <span>建议上传主体居中的 1:1 图片，支持 JPG、PNG、GIF 或 WebP，不超过 5MB</span>
           </div>
         </div>
 
@@ -53,7 +53,7 @@
             class="avatar-upload"
             :auto-upload="false"
             :show-file-list="false"
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.gif,.webp"
             @change="(file: UploadFile) => emit('avatarChange', 'defaultUserAvatar', file)"
           >
             <div class="avatar-frame">
@@ -73,9 +73,9 @@
             </div>
           </ElUpload>
           <div class="media-copy">
-            <strong>访客默认头像</strong>
-            <p>评论、留言等用户未设置头像时使用</p>
-            <span>建议保持主体居中，避免圆形裁切时丢失内容</span>
+            <strong>用户默认头像</strong>
+            <p>新用户注册或后台创建用户时，未设置头像将使用</p>
+            <span>同时用于头像缺失场景；支持 JPG、PNG、GIF 或 WebP，不超过 5MB</span>
           </div>
         </div>
       </div>
@@ -92,7 +92,7 @@
       <div class="card-body">
         <ElRow :gutter="20">
           <ElCol :xs="24" :md="12">
-            <ElFormItem label="博客名称" prop="siteName" required>
+            <ElFormItem label="博客名称" prop="siteName">
               <ElInput
                 v-model="form.siteName"
                 placeholder="请输入博客名称"
@@ -134,7 +134,7 @@
                 :rows="4"
                 resize="none"
                 placeholder="用一句简短的话介绍你的博客"
-                maxlength="200"
+                maxlength="500"
                 show-word-limit
               />
             </ElFormItem>

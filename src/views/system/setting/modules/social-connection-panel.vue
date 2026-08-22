@@ -23,7 +23,7 @@
                 v-model="form.qqUrl"
                 placeholder="https://wpa.qq.com/xxx"
                 clearable
-                maxlength="200"
+                maxlength="255"
               >
                 <template #prefix>
                   <ArtSvgIcon icon="ri:qq-fill" class="social-input-icon is-qq" />
@@ -48,7 +48,7 @@
                 v-model="form.githubUrl"
                 placeholder="https://github.com/xxx"
                 clearable
-                maxlength="200"
+                maxlength="255"
               >
                 <template #prefix>
                   <ArtSvgIcon icon="ri:github-fill" class="social-input-icon is-github" />
@@ -73,7 +73,7 @@
                 v-model="form.giteeUrl"
                 placeholder="https://gitee.com/xxx"
                 clearable
-                maxlength="200"
+                maxlength="255"
               >
                 <template #prefix>
                   <ArtSvgIcon icon="ri:gitee-fill" class="social-input-icon is-gitee" />
@@ -108,7 +108,7 @@
             v-model="form.websocketUrl"
             placeholder="wss://example.com"
             clearable
-            maxlength="200"
+            maxlength="255"
           >
             <template #prefix>
               <ArtSvgIcon icon="ri:signal-tower-fill" class="social-input-icon is-websocket" />

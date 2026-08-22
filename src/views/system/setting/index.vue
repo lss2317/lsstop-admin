@@ -37,6 +37,7 @@
       :model="form"
       :rules="rules"
       label-position="top"
+      hide-required-asterisk
       class="setting-form"
       v-loading="loading"
     >
@@ -102,6 +103,8 @@
   const settingTabOrder: SettingTab[] = ['base', 'links', 'comment', 'about'];
 
   // 图片上传相关
+  const MAX_AVATAR_FILE_SIZE = 5 * 1024 * 1024;
+  const ALLOWED_AVATAR_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
   const cropDialogVisible = ref(false);
   const cropImageFile = ref<File | null>(null);
   const avatarField = ref<AvatarField>('siteAvatar');
@@ -167,18 +170,77 @@
       return;
     }
 
-    const normalizedValue = /^wss?:\/\//i.test(value.trim())
-      ? value.trim()
-      : `ws://${value.trim()}`;
-    if (isUrlWithProtocol(normalizedValue, ['ws:', 'wss:'])) {
-      callback();
+    const trimmedValue = value.trim();
+    const hasWebSocketProtocol = /^wss?:\/\//i.test(trimmedValue);
+    if ((!hasWebSocketProtocol && trimmedValue.includes('://')) || /\s/.test(trimmedValue)) {
+      callback(new Error('请输入有效地址，如 localhost:8080 或 wss://example.com'));
       return;
+    }
+
+    const normalizedValue = hasWebSocketProtocol ? trimmedValue : `ws://${trimmedValue}`;
+    try {
+      const url = new URL(normalizedValue);
+      const port = url.port ? Number(url.port) : undefined;
+      const isValid =
+        ['ws:', 'wss:'].includes(url.protocol) &&
+        Boolean(url.hostname) &&
+        !url.username &&
+        !url.password &&
+        !url.hash &&
+        (port === undefined || (Number.isInteger(port) && port > 0 && port <= 65535));
+      if (isValid) {
+        callback();
+        return;
+      }
+    } catch {
+      // 交由下方返回统一的格式错误提示
     }
     callback(new Error('请输入有效地址，如 localhost:8080 或 wss://example.com'));
   };
 
+  const validateSiteStartTime: NonNullable<FormItemRule['validator']> = (
+    _rule,
+    value,
+    callback
+  ) => {
+    if (typeof value !== 'string' || value.trim() === '') {
+      callback();
+      return;
+    }
+
+    const timestamp = new Date(value.replace(' ', 'T')).getTime();
+    if (Number.isNaN(timestamp)) {
+      callback(new Error('博客创建时间格式不正确'));
+      return;
+    }
+    if (timestamp > Date.now()) {
+      callback(new Error('博客创建时间不能晚于当前时间'));
+      return;
+    }
+    callback();
+  };
+
   const rules: FormRules = {
-    siteName: [{ required: true, message: '请输入博客名称', trigger: 'blur' }],
+    siteName: [
+      { required: true, whitespace: true, message: '请输入博客名称', trigger: 'blur' },
+      { max: 50, message: '博客名称不能超过50个字符', trigger: 'blur' }
+    ],
+    siteAuthor: [
+      { required: true, whitespace: true, message: '请输入博主名称', trigger: 'blur' },
+      { max: 50, message: '博主名称不能超过50个字符', trigger: 'blur' }
+    ],
+    siteStartTime: [
+      { required: true, message: '请选择博客创建时间', trigger: 'change' },
+      { validator: validateSiteStartTime, trigger: 'change' }
+    ],
+    siteIntro: [
+      { required: true, whitespace: true, message: '请输入博客简介', trigger: 'blur' },
+      { max: 500, message: '博客简介不能超过500个字符', trigger: 'blur' }
+    ],
+    about: [
+      { required: true, whitespace: true, message: '请填写关于我', trigger: 'blur' },
+      { max: 5000, message: '关于我不能超过5000个字符', trigger: 'blur' }
+    ],
     qqUrl: [{ validator: validateOptionalHttpUrl, trigger: 'blur' }],
     githubUrl: [{ validator: validateOptionalHttpUrl, trigger: 'blur' }],
     giteeUrl: [{ validator: validateOptionalHttpUrl, trigger: 'blur' }],
@@ -236,6 +298,19 @@
   /** 图片选择 → 打开裁剪弹窗，记录当前编辑的字段 */
   const handleAvatarChange = (field: AvatarField, uploadFile: UploadFile) => {
     if (!uploadFile.raw) return;
+
+    // 与后端图片上传白名单保持一致，避免选择后才收到接口错误
+    if (!ALLOWED_AVATAR_TYPES.includes(uploadFile.raw.type)) {
+      ElMessage.warning('仅支持 JPG、PNG、GIF、WebP 格式的图片');
+      return;
+    }
+
+    // 原始图片最大允许5MB，超出时不进入裁剪和上传流程
+    if (uploadFile.raw.size > MAX_AVATAR_FILE_SIZE) {
+      ElMessage.warning('图片大小不能超过5MB');
+      return;
+    }
+
     avatarField.value = field;
     cropImageFile.value = uploadFile.raw;
     cropDialogVisible.value = true;
@@ -275,6 +350,11 @@
     if (!formRef.value || submitting.value || confirming.value) return;
     try {
       await formRef.value.validate();
+      if (!form.defaultUserAvatar?.trim()) {
+        activeTab.value = 'base';
+        ElMessage.warning('请先上传用户默认头像');
+        return;
+      }
       confirming.value = true;
       await ElMessageBox.confirm(
         '保存后，当前修改将立即应用到博客前台，确定继续吗？',
@@ -290,14 +370,18 @@
       ElMessage.success('保存成功');
       await getSetting();
     } catch (error) {
-      if (error && typeof error === 'object' && 'siteName' in error) {
-        activeTab.value = 'base';
-      } else if (
-        error &&
-        typeof error === 'object' &&
-        ['qqUrl', 'githubUrl', 'giteeUrl', 'websocketUrl'].some((field) => field in error)
-      ) {
-        activeTab.value = 'links';
+      if (error && typeof error === 'object') {
+        if (
+          ['siteName', 'siteAuthor', 'siteStartTime', 'siteIntro'].some((field) => field in error)
+        ) {
+          activeTab.value = 'base';
+        } else if (
+          ['qqUrl', 'githubUrl', 'giteeUrl', 'websocketUrl'].some((field) => field in error)
+        ) {
+          activeTab.value = 'links';
+        } else if ('about' in error) {
+          activeTab.value = 'about';
+        }
       }
       // 接口报错由全局拦截器展示
     } finally {
