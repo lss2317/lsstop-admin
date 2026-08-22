@@ -111,10 +111,10 @@
     background: color-mix(in srgb, var(--theme-color) 10%, transparent);
     border-radius: calc(var(--custom-radius) / 2 + 4px);
     transition:
-      width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-      height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 0.16s ease,
-      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      width 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.14s ease,
+      transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
     will-change: width, height, transform;
   }
 

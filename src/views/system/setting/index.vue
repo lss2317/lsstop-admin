@@ -281,11 +281,11 @@
     min-width: 0;
   }
 
-  .setting-panel-switch-enter-active,
-  .setting-panel-switch-leave-active {
+  .setting-panel-switch-enter-active {
+    z-index: 1;
     transition:
-      opacity 0.18s ease,
-      transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity 0.22s ease 0.03s,
+      transform 0.26s cubic-bezier(0.22, 1, 0.36, 1) 0.03s;
     will-change: opacity, transform;
   }
 
@@ -293,18 +293,20 @@
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 0;
     width: 100%;
     pointer-events: none;
+    transition: opacity 0.14s ease;
+    will-change: opacity;
   }
 
   .setting-panel-switch-enter-from {
     opacity: 0;
-    transform: translate3d(0, 8px, 0);
+    transform: translate3d(0, 5px, 0);
   }
 
   .setting-panel-switch-leave-to {
     opacity: 0;
-    transform: translate3d(0, -4px, 0);
   }
 
   @media screen and (width <= 980px) {
