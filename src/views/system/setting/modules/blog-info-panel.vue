@@ -124,7 +124,7 @@
               <ElDatePicker
                 v-model="form.siteStartTime"
                 type="datetime"
-                value-format="YYYY-MM-DD HH:mm:ss"
+                value-format="YYYY-MM-DDTHH:mm:ss"
                 placeholder="请选择博客创建时间"
                 :prefix-icon="CalendarEventIcon"
                 class="w-full"
