@@ -627,8 +627,7 @@
 
 <style scoped lang="scss">
   .setting-page {
-    max-width: 1180px;
-    margin: 0 auto;
+    width: 100%;
   }
 
   .page-header {
