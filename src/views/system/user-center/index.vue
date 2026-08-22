@@ -45,14 +45,14 @@
                   </span>
                 </ElTooltip>
               </div>
-              <div class="auth-binding-item !w-full !justify-start gap-2">
+              <div ref="roleInfoRef" class="auth-binding-item !w-full !justify-start gap-2">
                 <ArtSvgIcon icon="ri:user-star-line" class="text-base text-[#e6a23c] shrink-0" />
                 <span v-if="!profile.roles?.length" class="text-sm text-g-400">暂无角色</span>
                 <span
                   v-else
                   class="flex flex-1 items-center flex-nowrap overflow-hidden min-w-0 text-sm text-g-600"
                 >
-                  <span class="flex flex-1 items-center min-w-0 overflow-hidden">
+                  <span class="flex items-center min-w-0 overflow-hidden">
                     <ElTag
                       v-for="role in visibleRoles"
                       :key="role.id"
@@ -353,9 +353,22 @@
     return profile.createTime ? formatDateTime(profile.createTime) : '暂无记录';
   });
 
-  const MAX_SHOW = 2;
-  const visibleRoles = computed(() => profile.roles.slice(0, MAX_SHOW));
-  const overflowRoles = computed(() => profile.roles.slice(MAX_SHOW));
+  const roleInfoRef = ref<HTMLElement>();
+  const visibleRoleCount = ref(2);
+  const visibleRoles = computed(() => profile.roles.slice(0, visibleRoleCount.value));
+  const overflowRoles = computed(() => profile.roles.slice(visibleRoleCount.value));
+
+  /** 根据角色信息格的实际宽度调整展示数量，避免窄屏下所有角色同时被截断。 */
+  useResizeObserver(roleInfoRef, (entries) => {
+    const width = entries[0]?.contentRect.width ?? 0;
+    if (width >= 330) {
+      visibleRoleCount.value = 3;
+    } else if (width >= 220) {
+      visibleRoleCount.value = 2;
+    } else {
+      visibleRoleCount.value = 1;
+    }
+  });
 
   // ============================================================
   // 编辑/保存切换
@@ -664,7 +677,7 @@
   }
 
   .role-tag {
-    flex: 1 1 0;
+    flex: 0 1 auto;
     min-width: 0;
     margin-right: 4px;
 
