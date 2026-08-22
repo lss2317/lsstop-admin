@@ -22,7 +22,7 @@
             class="avatar-upload"
             :auto-upload="false"
             :show-file-list="false"
-            accept=".jpg,.jpeg,.png,.gif,.webp"
+            accept="image/*"
             @change="(file: UploadFile) => emit('avatarChange', 'siteAvatar', file)"
           >
             <div class="avatar-frame">
@@ -53,7 +53,7 @@
             class="avatar-upload"
             :auto-upload="false"
             :show-file-list="false"
-            accept=".jpg,.jpeg,.png,.gif,.webp"
+            accept="image/*"
             @change="(file: UploadFile) => emit('avatarChange', 'defaultUserAvatar', file)"
           >
             <div class="avatar-frame">
@@ -99,7 +99,9 @@
                 clearable
                 maxlength="50"
               >
-                <template #prefix><ArtSvgIcon icon="ri:window-line" /></template>
+                <template #prefix>
+                  <ArtSvgIcon icon="ri:book-open-line" class="basic-input-icon is-blog" />
+                </template>
               </ElInput>
             </ElFormItem>
           </ElCol>
@@ -111,7 +113,9 @@
                 clearable
                 maxlength="50"
               >
-                <template #prefix><ArtSvgIcon icon="ri:user-3-line" /></template>
+                <template #prefix>
+                  <ArtSvgIcon icon="ri:user-star-line" class="basic-input-icon is-author" />
+                </template>
               </ElInput>
             </ElFormItem>
           </ElCol>
@@ -122,6 +126,7 @@
                 type="datetime"
                 value-format="YYYY-MM-DD HH:mm:ss"
                 placeholder="请选择博客创建时间"
+                :prefix-icon="CalendarEventIcon"
                 class="w-full"
               />
             </ElFormItem>
@@ -150,6 +155,9 @@
   import type { UploadFile } from 'element-plus';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import type { AvatarField } from '../types';
+
+  const CalendarEventIcon = () =>
+    h(ArtSvgIcon, { icon: 'ri:calendar-event-line', class: 'basic-input-icon is-date' });
 
   const form = defineModel<WebsiteConfigItem>({ required: true });
   const emit = defineEmits<{
@@ -230,6 +238,22 @@
       font-weight: 500;
       line-height: 1.3;
       color: var(--art-gray-700);
+    }
+
+    :deep(.basic-input-icon) {
+      font-size: 18px;
+
+      &.is-blog {
+        color: var(--theme-color);
+      }
+
+      &.is-author {
+        color: #8b5cf6;
+      }
+
+      &.is-date {
+        color: #f59e0b;
+      }
     }
   }
 
