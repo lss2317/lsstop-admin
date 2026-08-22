@@ -21,8 +21,13 @@
     <div v-if="!isLock">
       <ElDialog v-model="visible" :width="370" :show-close="false" @open="handleDialogOpen">
         <div class="flex-c flex-col">
-          <img class="w-16 h-16 rounded-full" src="@imgs/user/avatar.webp" alt="用户头像" />
-          <div class="mt-7.5 mb-3.5 text-base font-medium">{{ userInfo.userName }}</div>
+          <img
+            class="w-16 h-16 rounded-full object-cover"
+            :src="currentUserAvatar"
+            alt="当前用户头像"
+            @error="handleAvatarError"
+          />
+          <div class="mt-7.5 mb-3.5 text-base font-medium">{{ currentUserName }}</div>
           <ElForm
             ref="formRef"
             :model="formData"
@@ -59,9 +64,14 @@
     <!-- 解锁界面 -->
     <div v-else class="unlock-content">
       <div class="flex-c flex-col w-80">
-        <img class="w-16 h-16 mt-5 rounded-full" src="@imgs/user/avatar.webp" alt="用户头像" />
+        <img
+          class="w-16 h-16 mt-5 rounded-full object-cover"
+          :src="currentUserAvatar"
+          alt="当前用户头像"
+          @error="handleAvatarError"
+        />
         <div class="mt-3 mb-3.5 text-base font-medium">
-          {{ userInfo.userName }}
+          {{ currentUserName }}
         </div>
         <ElForm
           ref="unlockFormRef"
@@ -111,6 +121,7 @@
   import type { FormInstance, FormRules } from 'element-plus';
   import { useI18n } from 'vue-i18n';
   import CryptoJS from 'crypto-js';
+  import defaultAvatar from '@/assets/images/user/avatar.webp';
   import { useUserStore } from '@/store/modules/user';
   import { mittBus } from '@/utils/sys';
 
@@ -129,6 +140,13 @@
   const lockInputRef = ref<any>(null);
   const unlockInputRef = ref<any>(null);
   const showDevToolsWarning = ref<boolean>(false);
+  const avatarLoadFailed = ref(false);
+
+  // 锁屏始终展示当前登录用户；头像为空或加载失败时使用默认头像兜底
+  const currentUserAvatar = computed(() =>
+    userInfo.value.avatar && !avatarLoadFailed.value ? userInfo.value.avatar : defaultAvatar
+  );
+  const currentUserName = computed(() => userInfo.value.nickname || '当前用户');
 
   // 表单相关
   const formRef = ref<FormInstance>();
@@ -284,7 +302,7 @@
     document.addEventListener('dragstart', handleDragStart, true);
 
     // 监听开发者工具打开状态（仅在桌面端启用）
-    let devtools = { open: false };
+    const devtools = { open: false };
     const threshold = 160;
     let devToolsInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -406,6 +424,18 @@
   const openLockScreen = () => {
     visible.value = true;
   };
+
+  const handleAvatarError = () => {
+    avatarLoadFailed.value = true;
+  };
+
+  // 当前用户更换头像后，允许重新加载新的头像地址
+  watch(
+    () => userInfo.value.avatar,
+    () => {
+      avatarLoadFailed.value = false;
+    }
+  );
 
   // 监听锁屏状态变化
   watch(isLock, (newValue) => {
