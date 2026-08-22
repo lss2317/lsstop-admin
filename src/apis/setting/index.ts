@@ -28,15 +28,15 @@ export function fetchUpdateSetting(data: WebsiteConfigItem) {
 }
 
 /**
- * 上传网站配置头像
- * @param file 裁剪后的图片文件
- * @returns 头像访问URL
+ * 上传网站配置图片
+ * @param file 图片文件
+ * @returns 图片访问URL
  */
-export function fetchUploadWebsiteAvatar(file: File) {
+export function fetchUploadWebsiteConfigImage(file: File) {
   const formData = new FormData();
   formData.append('file', file);
   return request.post<string>({
-    url: '/file/website-avatar',
+    url: '/file/website-config',
     data: formData,
     showSuccessMessage: false
   });

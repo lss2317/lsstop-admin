@@ -115,20 +115,24 @@
                     <button
                       type="button"
                       class="markdown-tool"
-                      title="链接"
+                      title="插入链接"
                       aria-label="插入链接"
-                      @click="insertMarkdownLink"
+                      @click="openLinkDialog"
                     >
                       <ArtSvgIcon icon="ri:link" />
                     </button>
                     <button
                       type="button"
                       class="markdown-tool"
-                      title="图片"
+                      :title="imageUploading ? '图片上传中' : '上传并插入图片'"
                       aria-label="插入图片"
-                      @click="insertMarkdownImage"
+                      :disabled="imageUploading"
+                      @click="openImagePicker"
                     >
-                      <ArtSvgIcon icon="ri:image-line" />
+                      <ArtSvgIcon
+                        :icon="imageUploading ? 'ri:loader-4-line' : 'ri:image-line'"
+                        :class="{ 'is-spinning': imageUploading }"
+                      />
                     </button>
                     <button
                       type="button"
@@ -142,9 +146,9 @@
                     <button
                       type="button"
                       class="markdown-tool"
-                      title="代码块"
+                      title="插入代码块"
                       aria-label="插入代码块"
-                      @click="wrapMarkdown('```\n', '\n```', '代码')"
+                      @click="openCodeDialog"
                     >
                       <ArtSvgIcon icon="ri:code-box-line" />
                     </button>
@@ -197,18 +201,66 @@
         </ElFormItem>
       </div>
     </ElCard>
+
+    <input
+      ref="aboutImageInputRef"
+      type="file"
+      accept="image/*"
+      class="image-file-input"
+      @change="handleAboutImageSelect"
+    />
+    <MarkdownLinkDialog
+      v-model="linkDialogVisible"
+      :initial-text="linkInitialText"
+      @confirm="handleInsertLink"
+    />
+    <MarkdownCodeDialog
+      v-model="codeDialogVisible"
+      :initial-code="codeInitialCode"
+      @confirm="handleInsertCodeBlock"
+    />
   </section>
 </template>
 
 <script setup lang="ts">
+  import { fetchUploadWebsiteConfigImage } from '@/apis/setting';
   import type { WebsiteConfigItem } from '@/apis/setting/types';
-  import type { InputInstance } from 'element-plus';
+  import { ElMessage, type InputInstance } from 'element-plus';
   import MarkdownIt from 'markdown-it';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
+  import MarkdownCodeDialog from './markdown-code-dialog.vue';
+  import MarkdownLinkDialog from './markdown-link-dialog.vue';
+
+  interface MarkdownSelection {
+    start: number;
+    end: number;
+    text: string;
+  }
+
+  interface MarkdownLinkValue {
+    text: string;
+    url: string;
+  }
+
+  interface MarkdownCodeValue {
+    language: string;
+    code: string;
+  }
+
+  const ABOUT_MAX_LENGTH = 5000;
+  const ABOUT_IMAGE_MAX_SIZE = 5 * 1024 * 1024;
+  const ABOUT_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
   const form = defineModel<WebsiteConfigItem>({ required: true });
   const aboutInputRef = ref<InputInstance>();
+  const aboutImageInputRef = ref<HTMLInputElement>();
   const aboutMode = ref<'edit' | 'preview'>('edit');
+  const imageUploading = ref(false);
+  const linkDialogVisible = ref(false);
+  const codeDialogVisible = ref(false);
+  const linkInitialText = ref('');
+  const codeInitialCode = ref('');
+  const pendingSelection = ref<MarkdownSelection>({ start: 0, end: 0, text: '' });
 
   const aboutMarkdownPlaceholder = `# 关于我
 
@@ -233,6 +285,39 @@
       textarea?.focus();
       textarea?.setSelectionRange(start, end);
     });
+  };
+
+  /** 获取编辑器当前选区，供弹窗确认或异步上传完成后在原位置插入内容。 */
+  const getAboutSelection = (): MarkdownSelection => {
+    const textarea = aboutInputRef.value?.textarea;
+    const content = form.value.about ?? '';
+    const start = textarea?.selectionStart ?? content.length;
+    const end = textarea?.selectionEnd ?? start;
+    return { start, end, text: content.slice(start, end) };
+  };
+
+  /** 在指定选区插入 Markdown，并将光标移动到插入内容之后。 */
+  const insertAtSelection = (markdownText: string, selection: MarkdownSelection, block = false) => {
+    const content = form.value.about ?? '';
+    const before =
+      block && selection.start > 0 && content[selection.start - 1] !== '\n' ? '\n\n' : '';
+    const after =
+      block && selection.end < content.length && content[selection.end] !== '\n'
+        ? '\n\n'
+        : block
+          ? '\n'
+          : '';
+    const inserted = `${before}${markdownText}${after}`;
+    const value = `${content.slice(0, selection.start)}${inserted}${content.slice(selection.end)}`;
+
+    if (value.length > ABOUT_MAX_LENGTH) {
+      ElMessage.warning(`关于我内容不能超过 ${ABOUT_MAX_LENGTH} 个字符`);
+      return false;
+    }
+
+    const cursor = selection.start + inserted.length;
+    setAboutSelection(value, cursor, cursor);
+    return true;
   };
 
   /** 为当前选区包裹 Markdown 语法；未选中文字时插入示例内容并保持选中。 */
@@ -282,8 +367,65 @@
     setAboutSelection(value, lineStart + 3, lineStart + replacement.length);
   };
 
-  const insertMarkdownLink = () => wrapMarkdown('[', '](https://)', '链接文字');
-  const insertMarkdownImage = () => wrapMarkdown('![', '](https://)', '图片描述');
+  /** 打开链接弹窗，选中的文字会自动作为链接文案。 */
+  const openLinkDialog = () => {
+    pendingSelection.value = getAboutSelection();
+    linkInitialText.value = pendingSelection.value.text;
+    linkDialogVisible.value = true;
+  };
+
+  const handleInsertLink = ({ text, url }: MarkdownLinkValue) => {
+    const safeText = text.replaceAll(']', '\\]');
+    insertAtSelection(`[${safeText}](${url})`, pendingSelection.value);
+  };
+
+  /** 打开代码块弹窗，选中的内容会自动带入代码输入框。 */
+  const openCodeDialog = () => {
+    pendingSelection.value = getAboutSelection();
+    codeInitialCode.value = pendingSelection.value.text;
+    codeDialogVisible.value = true;
+  };
+
+  const handleInsertCodeBlock = ({ language, code }: MarkdownCodeValue) => {
+    insertAtSelection(`\`\`\`${language}\n${code}\n\`\`\``, pendingSelection.value, true);
+  };
+
+  /** 选择图片前保存当前光标位置，上传完成后仍插入到用户原来的编辑位置。 */
+  const openImagePicker = () => {
+    pendingSelection.value = getAboutSelection();
+    aboutImageInputRef.value?.click();
+  };
+
+  /** 上传网站配置图片，并将返回的访问地址转换为 Markdown 图片语法。 */
+  const handleAboutImageSelect = async (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    if (!ABOUT_IMAGE_TYPES.includes(file.type)) {
+      ElMessage.warning('仅支持 JPG、PNG、GIF 或 WebP 图片');
+      return;
+    }
+    if (file.size > ABOUT_IMAGE_MAX_SIZE) {
+      ElMessage.warning('图片大小不能超过 5MB');
+      return;
+    }
+
+    imageUploading.value = true;
+    try {
+      const url = await fetchUploadWebsiteConfigImage(file);
+      const description = file.name.replace(/\.[^.]+$/, '').trim() || '图片';
+      const safeDescription = description.replaceAll(']', '\\]');
+      if (insertAtSelection(`![${safeDescription}](${url})`, pendingSelection.value, true)) {
+        ElMessage.success('图片已上传并插入');
+      }
+    } catch {
+      // 上传失败由请求拦截器统一展示错误信息
+    } finally {
+      imageUploading.value = false;
+    }
+  };
 
   const insertMarkdownDivider = () => {
     const textarea = aboutInputRef.value?.textarea;
@@ -538,6 +680,20 @@
     &:active {
       background: color-mix(in srgb, var(--theme-color) 17%, transparent);
     }
+
+    &:disabled {
+      color: var(--art-gray-400);
+      cursor: not-allowed;
+      background: transparent;
+    }
+
+    .is-spinning {
+      animation: markdown-spin 0.8s linear infinite;
+    }
+  }
+
+  .image-file-input {
+    display: none;
   }
 
   .markdown-tool-divider {
@@ -642,6 +798,12 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes markdown-spin {
+    to {
+      transform: rotate(360deg);
     }
   }
 

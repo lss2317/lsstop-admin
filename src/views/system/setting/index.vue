@@ -79,7 +79,11 @@
 
 <script setup lang="ts">
   import type { WebsiteConfigItem } from '@/apis/setting/types';
-  import { fetchSettingInfo, fetchUpdateSetting, fetchUploadWebsiteAvatar } from '@/apis/setting';
+  import {
+    fetchSettingInfo,
+    fetchUpdateSetting,
+    fetchUploadWebsiteConfigImage
+  } from '@/apis/setting';
   import { fetchRoleOptions } from '@/apis/user';
   import type { RoleOption } from '@/apis/user';
   import { ElMessageBox } from 'element-plus';
@@ -344,7 +348,7 @@
   /** 裁剪保存 → 上传图片并回填字段 */
   const handleCropSave = async (file: File) => {
     try {
-      const url = await fetchUploadWebsiteAvatar(file);
+      const url = await fetchUploadWebsiteConfigImage(file);
       form[avatarField.value] = url;
     } catch {
       // 接口报错由全局拦截器展示
