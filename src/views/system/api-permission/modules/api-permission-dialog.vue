@@ -156,10 +156,7 @@
             <span class="mr-3 w-[100px] shrink-0 text-sm text-[var(--el-text-color-regular)]"
               >是否启用</span
             >
-            <ElSwitch
-              :model-value="form.isEnabled === 1"
-              @update:model-value="(v: boolean) => (form.isEnabled = v ? 1 : 0)"
-            />
+            <ElSwitch v-model="form.isEnabled" :active-value="1" :inactive-value="0" />
           </div>
         </div>
       </section>
@@ -268,27 +265,26 @@
     (newVal) => {
       if (newVal) {
         resetForm();
+        const editData = props.editData;
 
-        if (props.editData && 'id' in props.editData && props.editData.id) {
+        if (editData && 'id' in editData && editData.id) {
           // 编辑模式
-          form.apiType = inferApiType(props.editData);
+          form.apiType = inferApiType(editData);
           nextTick(() => {
             Object.assign(form, {
               parentId:
-                props.editData.parentId && props.editData.parentId !== 0
-                  ? props.editData.parentId
-                  : undefined,
-              description: props.editData.description ?? '',
-              requestMethod: props.editData.requestMethod ?? null,
-              requestUrl: props.editData.requestUrl ?? '',
-              sort: props.editData.sort ?? 1,
-              isEnabled: props.editData.isEnabled ?? 1
+                editData.parentId && editData.parentId !== 0 ? editData.parentId : undefined,
+              description: editData.description ?? '',
+              requestMethod: editData.requestMethod ?? null,
+              requestUrl: editData.requestUrl ?? '',
+              sort: editData.sort ?? 1,
+              isEnabled: editData.isEnabled ?? 1
             });
           });
-        } else if (props.editData && '_parentRow' in props.editData) {
+        } else if (editData && '_parentRow' in editData) {
           // 在父节点下新增
           nextTick(() => {
-            form.parentId = props.editData._parentRow.id;
+            form.parentId = editData._parentRow.id;
           });
         }
       }
@@ -331,7 +327,7 @@
 
   .drawer-footer {
     display: flex;
-    justify-content: flex-end;
     gap: 12px;
+    justify-content: flex-end;
   }
 </style>
