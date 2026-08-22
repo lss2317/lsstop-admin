@@ -17,7 +17,7 @@
       </div>
       <div class="card-body">
         <ElRow :gutter="20">
-          <ElCol :xs="24" :md="12">
+          <ElCol :xs="24">
             <ElFormItem label="QQ 链接" prop="qqUrl">
               <ElInput
                 v-model="form.qqUrl"
@@ -25,11 +25,13 @@
                 clearable
                 maxlength="200"
               >
-                <template #prefix><ArtSvgIcon icon="ri:qq-line" class="text-[#1296db]" /></template>
+                <template #prefix>
+                  <ArtSvgIcon icon="ri:qq-fill" class="social-input-icon is-qq" />
+                </template>
               </ElInput>
             </ElFormItem>
           </ElCol>
-          <ElCol :xs="24" :md="12">
+          <ElCol :xs="24">
             <ElFormItem label="GitHub 链接" prop="githubUrl">
               <ElInput
                 v-model="form.githubUrl"
@@ -37,11 +39,13 @@
                 clearable
                 maxlength="200"
               >
-                <template #prefix><ArtSvgIcon icon="ri:github-line" /></template>
+                <template #prefix>
+                  <ArtSvgIcon icon="ri:github-fill" class="social-input-icon is-github" />
+                </template>
               </ElInput>
             </ElFormItem>
           </ElCol>
-          <ElCol :xs="24" :md="12">
+          <ElCol :xs="24">
             <ElFormItem label="Gitee 链接" prop="giteeUrl" class="!mb-0">
               <ElInput
                 v-model="form.giteeUrl"
@@ -49,9 +53,9 @@
                 clearable
                 maxlength="200"
               >
-                <template #prefix
-                  ><ArtSvgIcon icon="ri:git-repository-line" class="text-[#c71d23]"
-                /></template>
+                <template #prefix>
+                  <ArtSvgIcon icon="ri:gitee-fill" class="social-input-icon is-gitee" />
+                </template>
               </ElInput>
             </ElFormItem>
           </ElCol>
@@ -74,7 +78,9 @@
             clearable
             maxlength="200"
           >
-            <template #prefix><ArtSvgIcon icon="ri:radio-2-line" /></template>
+            <template #prefix>
+              <ArtSvgIcon icon="ri:signal-tower-fill" class="social-input-icon is-websocket" />
+            </template>
           </ElInput>
           <p class="field-help">前台会自动拼接 /ws/chat，生产环境请使用加密协议 wss://。</p>
         </ElFormItem>
@@ -172,6 +178,28 @@
     font-size: 11px;
     line-height: 1.5;
     color: var(--art-gray-500);
+  }
+
+  .social-input-icon {
+    flex-shrink: 0;
+    font-size: 20px;
+
+    &.is-qq {
+      color: #12b7f5;
+    }
+
+    &.is-github {
+      color: var(--art-gray-800);
+    }
+
+    &.is-gitee {
+      color: #c71d23;
+    }
+
+    &.is-websocket {
+      font-size: 19px;
+      color: var(--theme-color);
+    }
   }
 
   @keyframes panel-in {
