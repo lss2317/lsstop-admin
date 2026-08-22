@@ -16,7 +16,7 @@ export interface WebsiteConfigItem {
   siteAuthor: string | null;
   /** 网站介绍 */
   siteIntro: string | null;
-  /** 关于我 */
+  /** 关于我（Markdown 原文） */
   about: string | null;
   /** 网站创建时间 */
   siteStartTime: string | null;

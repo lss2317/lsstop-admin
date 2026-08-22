@@ -19,7 +19,7 @@
           有未保存修改
         </span>
         <ElButton :disabled="!isDirty || submitting" @click="handleReset">放弃修改</ElButton>
-        <ElButton type="primary" :loading="submitting" @click="handleSubmit">
+        <ElButton type="primary" :disabled="!isDirty" :loading="submitting" @click="handleSubmit">
           <ArtSvgIcon icon="ri:save-line" class="mr-1" />
           保存配置
         </ElButton>
@@ -197,16 +197,34 @@
                     </ElFormItem>
                   </ElCol>
                   <ElCol :xs="24">
-                    <ElFormItem label="关于我" prop="about" class="!mb-0">
+                    <ElFormItem prop="about" class="markdown-form-item !mb-0">
+                      <template #label>
+                        <span class="markdown-label">
+                          <span>关于我</span>
+                          <span class="markdown-badge">
+                            <ArtSvgIcon icon="ri:markdown-line" />
+                            Markdown
+                          </span>
+                        </span>
+                      </template>
                       <ElInput
                         v-model="form.about"
                         type="textarea"
-                        :rows="5"
+                        :rows="9"
                         resize="none"
-                        placeholder="介绍一下网站作者、创作方向或个人经历"
-                        maxlength="500"
+                        :placeholder="aboutMarkdownPlaceholder"
+                        maxlength="5000"
                         show-word-limit
+                        class="markdown-input"
                       />
+                      <div class="markdown-help">
+                        <ArtSvgIcon icon="ri:information-line" />
+                        <span>内容将以 Markdown 原文保存，并在网站“关于我”页面渲染。</span>
+                        <span class="markdown-syntax"># 标题</span>
+                        <span class="markdown-syntax">**粗体**</span>
+                        <span class="markdown-syntax">- 列表</span>
+                        <span class="markdown-syntax">[链接](URL)</span>
+                      </div>
                     </ElFormItem>
                   </ElCol>
                 </ElRow>
@@ -435,19 +453,6 @@
               </div>
             </ElCard>
           </section>
-
-          <div class="setting-footer">
-            <div class="footer-state">
-              <ArtSvgIcon :icon="isDirty ? 'ri:edit-circle-line' : 'ri:checkbox-circle-line'" />
-              <span>{{ isDirty ? '配置已修改，保存后生效' : '当前配置已是最新状态' }}</span>
-            </div>
-            <div class="footer-actions">
-              <ElButton :disabled="!isDirty || submitting" @click="handleReset">放弃修改</ElButton>
-              <ElButton type="primary" :loading="submitting" @click="handleSubmit"
-                >保存配置</ElButton
-              >
-            </div>
-          </div>
         </main>
       </div>
     </ElForm>
@@ -545,6 +550,15 @@
 
   const getIllegalPolicyDescription = (value: number) =>
     illegalPolicyOptions.find((item) => item.value === value)?.description ?? '';
+
+  const aboutMarkdownPlaceholder = `# 关于我
+
+你好，我是……
+
+## 创作方向
+
+- 技术分享
+- 生活记录`;
 
   onMounted(() => {
     getSetting();
@@ -673,8 +687,7 @@
     border-radius: 11px;
   }
 
-  .header-actions,
-  .footer-actions {
+  .header-actions {
     display: flex;
     gap: 10px;
     align-items: center;
@@ -705,8 +718,6 @@
   }
 
   .setting-nav {
-    position: sticky;
-    top: 16px;
     padding: 12px;
     overflow: hidden;
     background: var(--default-box-color);
@@ -1050,32 +1061,6 @@
     }
   }
 
-  .setting-footer {
-    display: flex;
-    gap: 18px;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 68px;
-    padding: 12px 16px 12px 20px;
-    background: var(--default-box-color);
-    border: 1px solid var(--art-card-border);
-    border-radius: calc(var(--custom-radius) + 4px);
-    box-shadow: 0 8px 24px rgb(31 41 55 / 6%);
-  }
-
-  .footer-state {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    font-size: 12px;
-    color: var(--art-gray-600);
-
-    > svg {
-      font-size: 17px;
-      color: var(--theme-color);
-    }
-  }
-
   @keyframes panel-in {
     from {
       opacity: 0;
@@ -1112,16 +1097,35 @@
   }
 
   @media screen and (width <= 760px) {
+    .setting-page {
+      padding-bottom: 72px;
+    }
+
     .page-header {
-      flex-direction: column;
+      position: static;
+      display: block;
       padding-bottom: 18px;
     }
 
     .header-actions {
-      width: 100%;
+      position: fixed;
+      right: 15px;
+      bottom: 15px;
+      left: 15px;
+      z-index: 100;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      width: auto;
+      padding: 10px;
+      background: color-mix(in srgb, var(--default-box-color) 94%, transparent);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--art-card-border);
+      border-radius: calc(var(--custom-radius) + 4px);
+      box-shadow: 0 10px 30px rgb(31 41 55 / 14%);
 
-      .el-button:last-child {
-        flex: 1;
+      .el-button {
+        width: 100%;
+        margin: 0;
       }
     }
 
@@ -1176,26 +1180,6 @@
     .panel-heading {
       margin-bottom: 12px;
     }
-
-    .setting-footer {
-      flex-direction: column;
-      align-items: stretch;
-      padding: 14px;
-    }
-
-    .footer-state {
-      justify-content: center;
-    }
-
-    .footer-actions {
-      display: grid;
-      grid-template-columns: 1fr 1.5fr;
-
-      .el-button {
-        width: 100%;
-        margin: 0;
-      }
-    }
   }
 
   @media screen and (width <= 520px) {
@@ -1206,10 +1190,6 @@
     .page-header > div:first-child > p {
       padding-left: 47px;
       line-height: 1.55;
-    }
-
-    .header-actions .el-button:first-of-type {
-      display: none;
     }
 
     .card-heading,
