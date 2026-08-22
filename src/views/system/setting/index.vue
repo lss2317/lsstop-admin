@@ -49,6 +49,8 @@
             <BlogInfoPanel
               v-show="activeTab === 'base'"
               :model-value="form"
+              :role-options="roleOptions"
+              :role-options-loading="roleOptionsLoading"
               @avatar-change="handleAvatarChange"
             />
           </Transition>
@@ -78,6 +80,8 @@
 <script setup lang="ts">
   import type { WebsiteConfigItem } from '@/apis/setting/types';
   import { fetchSettingInfo, fetchUpdateSetting, fetchUploadWebsiteAvatar } from '@/apis/setting';
+  import { fetchRoleOptions } from '@/apis/user';
+  import type { RoleOption } from '@/apis/user';
   import { ElMessageBox } from 'element-plus';
   import type { FormInstance, FormItemRule, FormRules, UploadFile } from 'element-plus';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
@@ -95,6 +99,8 @@
   const submitting = ref(false);
   const confirming = ref(false);
   const loading = ref(false);
+  const roleOptionsLoading = ref(false);
+  const roleOptions = ref<RoleOption[]>([]);
   const activeTab = ref<SettingTab>('base');
   const panelTransitionDirection = ref<'up' | 'down'>('down');
   const pageHeaderRef = ref<HTMLElement>();
@@ -121,6 +127,7 @@
     githubUrl: '',
     giteeUrl: '',
     defaultUserAvatar: '',
+    registerDefaultRoleId: 0,
     enableCommentReview: 0,
     enableMessageReview: 0,
     websocketUrl: '',
@@ -233,6 +240,10 @@
       { required: true, message: '请选择博客创建时间', trigger: 'change' },
       { validator: validateSiteStartTime, trigger: 'change' }
     ],
+    registerDefaultRoleId: [
+      { required: true, message: '请选择注册默认角色', trigger: 'change' },
+      { type: 'number', min: 1, message: '请选择注册默认角色', trigger: 'change' }
+    ],
     siteIntro: [
       { required: true, whitespace: true, message: '请输入博客简介', trigger: 'blur' },
       { max: 500, message: '博客简介不能超过500个字符', trigger: 'blur' }
@@ -279,6 +290,7 @@
 
   onMounted(() => {
     getSetting();
+    getRoleOptions();
   });
 
   const getSetting = async (): Promise<void> => {
@@ -292,6 +304,19 @@
       // 接口报错由全局拦截器展示
     } finally {
       loading.value = false;
+    }
+  };
+
+  /** 获取启用中的角色，供注册默认角色下拉框使用。 */
+  const getRoleOptions = async (): Promise<void> => {
+    roleOptionsLoading.value = true;
+    try {
+      roleOptions.value = await fetchRoleOptions();
+    } catch {
+      roleOptions.value = [];
+      // 接口报错由全局拦截器展示
+    } finally {
+      roleOptionsLoading.value = false;
     }
   };
 
@@ -372,7 +397,9 @@
     } catch (error) {
       if (error && typeof error === 'object') {
         if (
-          ['siteName', 'siteAuthor', 'siteStartTime', 'siteIntro'].some((field) => field in error)
+          ['siteName', 'siteAuthor', 'siteStartTime', 'registerDefaultRoleId', 'siteIntro'].some(
+            (field) => field in error
+          )
         ) {
           activeTab.value = 'base';
         } else if (

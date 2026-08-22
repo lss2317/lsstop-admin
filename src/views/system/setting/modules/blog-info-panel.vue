@@ -127,8 +127,30 @@
                 value-format="YYYY-MM-DDTHH:mm:ss"
                 placeholder="请选择博客创建时间"
                 :prefix-icon="CalendarEventIcon"
-                class="w-full"
+                style="width: 100%"
               />
+            </ElFormItem>
+          </ElCol>
+          <ElCol :xs="24" :md="12">
+            <ElFormItem label="注册默认角色" prop="registerDefaultRoleId">
+              <ElSelect
+                v-model="form.registerDefaultRoleId"
+                :loading="roleOptionsLoading"
+                placeholder="请选择新用户注册后的默认角色"
+                filterable
+                class="w-full"
+              >
+                <template #prefix>
+                  <ArtSvgIcon icon="ri:shield-user-line" class="basic-input-icon is-role" />
+                </template>
+                <ElOption
+                  v-for="role in roleOptions"
+                  :key="role.id"
+                  :label="role.roleName"
+                  :value="role.id"
+                />
+              </ElSelect>
+              <p class="field-help">仅对后续新注册用户生效，现有用户角色不会改变</p>
             </ElFormItem>
           </ElCol>
           <ElCol :xs="24">
@@ -152,6 +174,7 @@
 
 <script setup lang="ts">
   import type { WebsiteConfigItem } from '@/apis/setting/types';
+  import type { RoleOption } from '@/apis/user';
   import type { UploadFile } from 'element-plus';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import type { AvatarField } from '../types';
@@ -160,6 +183,10 @@
     h(ArtSvgIcon, { icon: 'ri:calendar-event-line', class: 'basic-input-icon is-date' });
 
   const form = defineModel<WebsiteConfigItem>({ required: true });
+  defineProps<{
+    roleOptions: RoleOption[];
+    roleOptionsLoading: boolean;
+  }>();
   const emit = defineEmits<{
     avatarChange: [field: AvatarField, file: UploadFile];
   }>();
@@ -254,7 +281,19 @@
       &.is-date {
         color: #f59e0b;
       }
+
+      &.is-role {
+        color: #10b981;
+      }
     }
+  }
+
+  .field-help {
+    width: 100%;
+    margin-top: 7px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--art-gray-500);
   }
 
   .media-grid {

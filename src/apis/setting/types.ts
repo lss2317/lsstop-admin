@@ -28,6 +28,8 @@ export interface WebsiteConfigItem {
   giteeUrl: string | null;
   /** 用户默认头像 */
   defaultUserAvatar: string | null;
+  /** 用户注册时默认分配的角色ID */
+  registerDefaultRoleId: number;
   /** 评论审核(1:是、0:否) */
   enableCommentReview: number;
   /** 留言审核(1:是、0:否) */
