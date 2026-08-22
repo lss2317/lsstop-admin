@@ -226,7 +226,9 @@
   import { fetchUploadWebsiteConfigImage } from '@/apis/setting';
   import type { WebsiteConfigItem } from '@/apis/setting/types';
   import { ElMessage, type InputInstance } from 'element-plus';
+  import hljs from 'highlight.js';
   import MarkdownIt from 'markdown-it';
+  import '@/assets/styles/custom/one-dark-pro.scss';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import MarkdownCodeDialog from './markdown-code-dialog.vue';
   import MarkdownLinkDialog from './markdown-link-dialog.vue';
@@ -274,7 +276,14 @@
   const markdown = new MarkdownIt({
     html: true,
     linkify: true,
-    typographer: true
+    typographer: true,
+    highlight(code, language) {
+      const result =
+        language && hljs.getLanguage(language)
+          ? hljs.highlight(code, { language, ignoreIllegals: true })
+          : hljs.highlightAuto(code);
+      return `<pre class="hljs"><code>${result.value}</code></pre>`;
+    }
   });
   const aboutPreviewHtml = computed(() => markdown.render(form.value.about ?? ''));
 
@@ -727,6 +736,21 @@
     background: var(--default-box-color);
     border: 1px solid var(--art-card-border);
     border-radius: 8px;
+  }
+
+  .markdown-preview-content {
+    :deep(pre.hljs) {
+      padding: 16px 18px;
+      color: #a6accd;
+      background: #282c34;
+    }
+
+    :deep(pre.hljs code) {
+      display: block;
+      padding: 0;
+      color: inherit;
+      background: transparent;
+    }
   }
 
   .markdown-preview-empty {
