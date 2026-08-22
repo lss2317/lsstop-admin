@@ -4,21 +4,21 @@
  * @module apis/setting/types
  */
 
-/** 网站配置信息（对应后端 WebsiteConfigEntity，表中仅一条数据） */
+/** 个人博客配置 */
 export interface WebsiteConfigItem {
   /** 主键ID（更新配置时需携带） */
   id: number;
-  /** 网站头像 */
+  /** 博主头像（首页、侧栏和关于我页面使用） */
   siteAvatar: string | null;
-  /** 网站名称 */
+  /** 博客名称 */
   siteName: string | null;
-  /** 网站作者 */
+  /** 博主名称（文章作者和页脚使用） */
   siteAuthor: string | null;
-  /** 网站介绍 */
+  /** 博客简介（首页使用） */
   siteIntro: string | null;
   /** 关于我（Markdown 原文） */
   about: string | null;
-  /** 网站创建时间 */
+  /** 博客创建时间（页脚年份和运行时间使用） */
   siteStartTime: string | null;
   /** QQ链接 */
   qqUrl: string | null;
@@ -26,13 +26,13 @@ export interface WebsiteConfigItem {
   githubUrl: string | null;
   /** Gitee链接 */
   giteeUrl: string | null;
-  /** 用户默认头像 */
+  /** 访客默认头像 */
   defaultUserAvatar: string | null;
   /** 评论审核(1:是、0:否) */
   enableCommentReview: number;
   /** 留言审核(1:是、0:否) */
   enableMessageReview: number;
-  /** websocket地址 */
+  /** 聊天室WebSocket基础地址 */
   websocketUrl: string | null;
   /** 评论通知(1:是、0:否) */
   enableCommentEmailNotice: number;
