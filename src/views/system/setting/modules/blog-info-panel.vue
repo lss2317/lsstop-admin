@@ -131,7 +131,7 @@
               <ElInput
                 v-model="form.siteIntro"
                 type="textarea"
-                :rows="3"
+                :rows="4"
                 resize="none"
                 placeholder="用一句简短的话介绍你的博客"
                 maxlength="200"

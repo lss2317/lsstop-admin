@@ -36,7 +36,11 @@
       <div class="setting-layout">
         <SettingSidebar v-model="activeTab" />
 
-        <main class="setting-content">
+        <main
+          ref="settingContentRef"
+          class="setting-content"
+          :class="`is-switching-${panelTransitionDirection}`"
+        >
           <Transition name="setting-panel-switch">
             <BlogInfoPanel
               v-show="activeTab === 'base'"
@@ -87,7 +91,11 @@
   const submitting = ref(false);
   const loading = ref(false);
   const activeTab = ref<SettingTab>('base');
+  const panelTransitionDirection = ref<'up' | 'down'>('down');
+  const settingContentRef = ref<HTMLElement>();
   const savedSnapshot = ref('');
+
+  const settingTabOrder: SettingTab[] = ['base', 'links', 'comment', 'about'];
 
   // 图片上传相关
   const cropDialogVisible = ref(false);
@@ -125,6 +133,36 @@
   const rules: FormRules = {
     siteName: [{ required: true, message: '请输入博客名称', trigger: 'blur' }]
   };
+
+  /** 配置区标题滚出可视区域后，切换分类时将其平滑带回顶部。 */
+  const scrollSettingContentIntoView = () => {
+    const content = settingContentRef.value;
+    if (!content) return;
+
+    const headerBottom = document.getElementById('app-header')?.getBoundingClientRect().bottom ?? 0;
+    const safeTop = headerBottom + 12;
+    const contentTop = content.getBoundingClientRect().top;
+    if (contentTop >= safeTop) return;
+
+    const scrollOptions: ScrollToOptions = {
+      top: contentTop - safeTop,
+      behavior: 'smooth'
+    };
+    const appMain = document.getElementById('app-main');
+    const appMainOverflow = appMain ? window.getComputedStyle(appMain).overflowY : '';
+
+    if (appMain && (appMainOverflow === 'auto' || appMainOverflow === 'scroll')) {
+      appMain.scrollBy(scrollOptions);
+      return;
+    }
+    window.scrollBy(scrollOptions);
+  };
+
+  watch(activeTab, (currentTab, previousTab) => {
+    panelTransitionDirection.value =
+      settingTabOrder.indexOf(currentTab) >= settingTabOrder.indexOf(previousTab) ? 'down' : 'up';
+    nextTick(scrollSettingContentIntoView);
+  });
 
   onMounted(() => {
     getSetting();
@@ -284,8 +322,8 @@
   .setting-panel-switch-enter-active {
     z-index: 1;
     transition:
-      opacity 0.22s ease 0.03s,
-      transform 0.26s cubic-bezier(0.22, 1, 0.36, 1) 0.03s;
+      opacity 0.24s ease 0.11s,
+      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1) 0.11s;
     will-change: opacity, transform;
   }
 
@@ -296,13 +334,18 @@
     z-index: 0;
     width: 100%;
     pointer-events: none;
-    transition: opacity 0.14s ease;
+    transition: opacity 0.16s ease;
     will-change: opacity;
   }
 
-  .setting-panel-switch-enter-from {
+  .setting-content.is-switching-down .setting-panel-switch-enter-from {
     opacity: 0;
     transform: translate3d(0, 5px, 0);
+  }
+
+  .setting-content.is-switching-up .setting-panel-switch-enter-from {
+    opacity: 0;
+    transform: translate3d(0, -5px, 0);
   }
 
   .setting-panel-switch-leave-to {
@@ -370,6 +413,24 @@
     .page-header > div:first-child > p {
       padding-left: 47px;
       line-height: 1.55;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .setting-panel-switch-enter-active,
+    .setting-panel-switch-leave-active {
+      transition: none;
+    }
+
+    .setting-content :deep(.setting-panel) {
+      animation: none;
+    }
+
+    .setting-content.is-switching-down .setting-panel-switch-enter-from,
+    .setting-content.is-switching-up .setting-panel-switch-enter-from,
+    .setting-panel-switch-leave-to {
+      opacity: 1;
+      transform: none;
     }
   }
 </style>

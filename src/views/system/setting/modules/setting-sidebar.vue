@@ -259,4 +259,13 @@
       }
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-active-indicator,
+    .nav-item,
+    .nav-icon,
+    .nav-arrow {
+      transition: none;
+    }
+  }
 </style>
