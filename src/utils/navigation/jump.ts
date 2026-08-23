@@ -64,5 +64,5 @@ export const handleMenuJump = (item: AppRouteRecord, jumpToFirst: boolean = fals
   }
 
   // 跳转到子菜单路径
-  router.push(firstChild.path);
+  return router.push(firstChild.path);
 };

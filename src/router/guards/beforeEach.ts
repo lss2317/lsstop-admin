@@ -17,6 +17,54 @@ import { transformMenuData, transformToRouteRecords } from '@/utils/navigation/m
 
 let pendingLoading = false;
 let menuInited = false;
+let menuInitPromise: Promise<void> | null = null;
+
+/**
+ * 初始化当前用户菜单与动态路由。
+ *
+ * 初始化期间的所有导航共享同一个 Promise，避免重复请求和重复注册路由。
+ * 只有用户信息、菜单和动态路由全部处理成功后，才会标记为初始化完成。
+ */
+function ensureMenuInitialized(router: Router): Promise<void> {
+  if (menuInited) {
+    return Promise.resolve();
+  }
+
+  if (menuInitPromise) {
+    return menuInitPromise;
+  }
+
+  pendingLoading = true;
+  loadingService.showLoading();
+
+  menuInitPromise = (async () => {
+    const userStore = useUserStore();
+    const menuStore = useMenuStore();
+
+    // 1. 获取用户信息
+    await userStore.fetchUserInfoAction();
+
+    // 2. 从接口获取菜单数据
+    const backendMenus = await fetchMenuList();
+
+    // 3. 转换为前端菜单数据（路径规范化 + 自动redirect + 按钮权限提取）
+    const menuList = transformMenuData(backendMenus);
+
+    // 4. 转换为 Vue Router 路由记录并动态注册
+    const routeRecords = transformToRouteRecords(menuList);
+    const removeFns = routeRecords.map((route) => router.addRoute('Layout', route));
+    menuStore.addRemoveRouteFns(removeFns);
+
+    // 5. 设置菜单列表（同时自动推导 homePath）
+    menuStore.setMenuList(menuList);
+
+    menuInited = true;
+  })().finally(() => {
+    menuInitPromise = null;
+  });
+
+  return menuInitPromise;
+}
 
 export function getPendingLoading(): boolean {
   return pendingLoading;
@@ -67,42 +115,25 @@ export function setupBeforeEachGuard(router: Router): void {
       }
 
       // 登录后初始化（只执行一次）：获取用户信息 + 从接口构建菜单 + 动态注册路由
-      if (userStore.isLogin && !menuInited) {
-        menuInited = true;
-        pendingLoading = true;
-        loadingService.showLoading();
-
+      // 动态路由注册前，合法业务地址会暂时命中 Exception404，因此不能按 isPublic 跳过初始化。
+      // 仅在初始化失败跳转到 500 页后暂停重试，用户点击“返回首页”时会再次初始化。
+      if (userStore.isLogin && !menuInited && to.name !== 'Exception500') {
         try {
-          // 1. 获取用户信息
-          await userStore.fetchUserInfoAction();
-
-          // 2. 从接口获取菜单数据
-          const backendMenus = await fetchMenuList();
-
-          // 3. 转换为前端菜单数据（路径规范化 + 自动redirect + 按钮权限提取）
-          const menuList = transformMenuData(backendMenus);
-
-          // 4. 转换为 Vue Router 路由记录并动态注册
-          const routeRecords = transformToRouteRecords(menuList);
+          await ensureMenuInitialized(router);
           const menuStore = useMenuStore();
-
-          // 注册动态路由到 Layout 下
-          const removeFns = routeRecords.map((route) => router.addRoute('Layout', route));
-          menuStore.addRemoveRouteFns(removeFns);
-
-          // 5. 设置菜单列表（同时自动推导 homePath）
-          menuStore.setMenuList(menuList);
 
           // 动态路由刚注册，用 path 重新解析（不能用 ...to，否则会携带旧的 name 如 Exception404）
           const targetPath = to.path === '/' ? menuStore.getHomePath() : to.fullPath;
           next({ path: targetPath, replace: true });
           return;
-        } catch {
+        } catch (error) {
           // 请求失败由 HTTP 层统一处理（错误提示、token 过期自动登出）
-          // 这里只需重置初始化标志，避免卡死在守卫中
+          // 显式结束当前导航并进入错误页，避免导航一直处于 pending 状态
           menuInited = false;
           pendingLoading = false;
           loadingService.hideLoading();
+          console.error('[RouterInitError] 用户菜单和动态路由初始化失败', error);
+          next({ name: 'Exception500', replace: true });
           return;
         }
       }

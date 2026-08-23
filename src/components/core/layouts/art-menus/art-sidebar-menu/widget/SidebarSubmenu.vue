@@ -111,7 +111,11 @@
    */
   const goPage = (item: AppRouteRecord): void => {
     closeMenu();
-    handleMenuJump(item);
+    const navigation = handleMenuJump(item);
+    if (navigation) {
+      // 路由错误由 router.onError 统一提示，这里消费 rejection，避免产生未处理 Promise
+      void navigation.catch(() => {});
+    }
   };
 
   /**
