@@ -176,11 +176,15 @@
   import type { WebsiteConfigItem } from '@/apis/setting/types';
   import type { RoleOption } from '@/apis/user';
   import type { UploadFile } from 'element-plus';
+  import { defineComponent, h } from 'vue';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
   import type { AvatarField } from '../types';
 
-  const CalendarEventIcon = () =>
-    h(ArtSvgIcon, { icon: 'ri:calendar-event-line', class: 'basic-input-icon is-date' });
+  const CalendarEventIcon = defineComponent({
+    name: 'CalendarEventIcon',
+    setup: () => () =>
+      h(ArtSvgIcon, { icon: 'ri:calendar-event-line', class: 'basic-input-icon is-date' })
+  });
 
   const form = defineModel<WebsiteConfigItem>({ required: true });
   defineProps<{
