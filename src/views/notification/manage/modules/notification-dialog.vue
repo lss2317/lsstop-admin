@@ -43,7 +43,7 @@
           <ElDatePicker
             v-model="form.startTime"
             type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+            value-format="YYYY-MM-DDTHH:mm:ss"
             placeholder="开始时间"
             clearable
           />
@@ -51,7 +51,7 @@
           <ElDatePicker
             v-model="form.endTime"
             type="datetime"
-            value-format="YYYY-MM-DD HH:mm:ss"
+            value-format="YYYY-MM-DDTHH:mm:ss"
             placeholder="结束时间"
             clearable
           />
@@ -280,7 +280,7 @@
       <ElButton v-if="isViewMode" type="primary" @click="visible = false">关闭</ElButton>
       <template v-else>
         <ElButton @click="visible = false">取消</ElButton>
-        <ElButton type="primary" @click="handleSubmit">保存</ElButton>
+        <ElButton type="primary" :loading="loading" @click="handleSubmit">保存</ElButton>
       </template>
     </template>
   </ElDialog>
@@ -290,6 +290,7 @@
   import { ElMessage, type FormInstance, type FormRules, type InputInstance } from 'element-plus';
   import hljs from 'highlight.js';
   import MarkdownIt from 'markdown-it';
+  import type { AnnouncementPayload } from '@/apis/announcement/types';
   import { fetchUploadWebsiteConfigImage } from '@/apis/setting';
   import '@/assets/styles/custom/one-dark-pro.scss';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
@@ -312,20 +313,13 @@
     code: string;
   }
 
-  export interface AnnouncementForm {
-    title: string;
-    content: string;
-    type: number;
-    priority: number;
-    isEnabled: number;
-    startTime: string | null;
-    endTime: string | null;
-  }
+  export type AnnouncementForm = AnnouncementPayload;
 
   interface Props {
     modelValue: boolean;
     mode?: 'add' | 'edit' | 'view';
     editData?: AnnouncementForm;
+    loading?: boolean;
   }
 
   interface Emits {
@@ -334,7 +328,8 @@
   }
 
   const props = withDefaults(defineProps<Props>(), {
-    mode: 'add'
+    mode: 'add',
+    loading: false
   });
   const emit = defineEmits<Emits>();
   const formRef = ref<FormInstance>();

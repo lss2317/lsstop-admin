@@ -35,6 +35,7 @@
         v-model="dialogVisible"
         :mode="dialogMode"
         :edit-data="currentAnnouncement"
+        :loading="submitLoading"
         @submit="handleSubmit"
       />
     </ElCard>
@@ -46,8 +47,13 @@
   import { useTable } from '@/hooks/core/useTable';
   import { formatDateTime } from '@/utils/format';
   import type { ColumnOption } from '@/types/component';
-  import type { AnnouncementItem } from '@/apis/announcement/types';
-  import { fetchAnnouncementList } from '@/apis/announcement';
+  import type { AnnouncementItem, AnnouncementPayload } from '@/apis/announcement/types';
+  import {
+    fetchAddAnnouncement,
+    fetchAnnouncementList,
+    fetchDeleteAnnouncement,
+    fetchUpdateAnnouncement
+  } from '@/apis/announcement';
   import ArtButtonTable from '@/components/core/forms/art-button-table/index.vue';
   import NotificationSearch, {
     type NotificationSearchForm
@@ -58,6 +64,7 @@
 
   const showSearchBar = ref(false);
   const dialogVisible = ref(false);
+  const submitLoading = ref(false);
   const dialogMode = ref<'add' | 'edit' | 'view'>('add');
   const currentAnnouncement = ref<AnnouncementItem>();
 
@@ -77,17 +84,14 @@
     h('div', { class: 'generated-operation-actions' }, [
       h(ArtButtonTable, {
         type: 'view',
-        title: '查看公告',
         onClick: () => handleView(row)
       }),
       h(ArtButtonTable, {
         type: 'edit',
-        title: '编辑公告',
         onClick: () => handleEdit(row)
       }),
       h(ArtButtonTable, {
         type: 'delete',
-        title: '删除公告',
         onClick: () => handleDelete(row)
       })
     ]);
@@ -164,7 +168,10 @@
     if (row.startTime && row.endTime) {
       return h('div', { class: 'effective-time-range' }, [
         h('span', formatDateTime(row.startTime)),
-        h('span', { class: 'effective-time-range__end' }, `至 ${formatDateTime(row.endTime)}`)
+        h('span', { class: 'effective-time-range__end' }, [
+          h('span', { class: 'effective-time-range__separator' }, '至 '),
+          formatDateTime(row.endTime)
+        ])
       ]);
     }
     if (row.startTime) return `自 ${formatDateTime(row.startTime)} 起`;
@@ -194,19 +201,38 @@
     dialogVisible.value = true;
   };
 
-  const handleSubmit = (): void => {
-    ElMessage.info('公告保存接口暂未接入');
-    // TODO: 接入公告新增、编辑接口后，保存成功时关闭弹窗并刷新列表。
+  const handleSubmit = async (formData: AnnouncementPayload): Promise<void> => {
+    submitLoading.value = true;
+    try {
+      const announcementId = currentAnnouncement.value?.id;
+      if (dialogMode.value === 'edit' && announcementId) {
+        await fetchUpdateAnnouncement({ ...formData, id: announcementId });
+      } else {
+        await fetchAddAnnouncement(formData);
+      }
+      ElMessage.success(`${dialogMode.value === 'edit' ? '编辑' : '新增'}成功`);
+      dialogVisible.value = false;
+      await refreshData();
+    } catch {
+      // 接口错误由全局请求拦截器统一提示，保留弹窗内容便于继续修改。
+    } finally {
+      submitLoading.value = false;
+    }
   };
 
   const handleDelete = async (row: AnnouncementItem): Promise<void> => {
-    await ElMessageBox.confirm(`确定删除公告“${row.title}”吗？`, '删除确认', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
-      type: 'warning'
-    });
-    ElMessage.info('公告删除接口暂未接入');
-    // TODO: 接入公告删除接口后，删除成功时刷新列表。
+    try {
+      await ElMessageBox.confirm(`确定删除公告“${row.title}”吗？`, '删除确认', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      });
+      await fetchDeleteAnnouncement(row.id);
+      ElMessage.success('删除成功');
+      await refreshData();
+    } catch {
+      // 用户取消或接口报错时保持当前列表，接口错误由全局请求拦截器统一提示。
+    }
   };
 </script>
 
@@ -235,7 +261,7 @@
     text-align: left;
   }
 
-  :deep(.effective-time-range__end) {
+  :deep(.effective-time-range__separator) {
     color: var(--art-gray-500);
   }
 </style>

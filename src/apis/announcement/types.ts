@@ -48,6 +48,30 @@ export interface AnnouncementItem {
   updateTime: string;
 }
 
+/** 新增、编辑公告参数 */
+export interface AnnouncementPayload {
+  /** 公告标题 */
+  title: string;
+  /** Markdown 格式的公告内容 */
+  content: string;
+  /** 公告类型 */
+  type: AnnouncementType;
+  /** 显示优先级 */
+  priority: number;
+  /** 是否启用 */
+  isEnabled: AnnouncementEnabledStatus;
+  /** 生效开始时间 */
+  startTime: string | null;
+  /** 生效结束时间 */
+  endTime: string | null;
+}
+
+/** 编辑公告参数 */
+export interface UpdateAnnouncementPayload extends AnnouncementPayload {
+  /** 公告ID */
+  id: number;
+}
+
 /** 公告分页列表响应 */
 export interface AnnouncementListResponse {
   /** 记录列表 */
