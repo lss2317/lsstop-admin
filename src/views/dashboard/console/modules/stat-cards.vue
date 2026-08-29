@@ -1,21 +1,21 @@
 <template>
-  <ElRow :gutter="20" class="flex">
-    <ElCol v-for="(item, index) in dataList" :key="index" :sm="12" :md="6" :lg="6">
-      <div class="art-card relative flex flex-col justify-center h-35 px-5 mb-5 max-sm:mb-4">
-        <span class="text-g-700 text-sm">{{ item.des }}</span>
-        <ArtCountTo class="text-[26px] font-medium mt-2" :target="item.num" :duration="1300" />
-        <div class="flex-c mt-1">
-          <span class="text-xs text-g-600">今日新增</span>
-          <span class="ml-1 text-xs font-semibold text-success">{{ item.todayCount }}</span>
-        </div>
-        <div
-          class="absolute top-0 bottom-0 right-5 m-auto size-12.5 rounded-xl flex-cc bg-theme/10"
-        >
-          <ArtSvgIcon :icon="item.icon" class="text-xl text-theme" />
-        </div>
+  <div class="grid grid-cols-4 gap-5 max-xl:grid-cols-2 max-sm:grid-cols-1 max-sm:gap-4">
+    <div
+      v-for="item in dataList"
+      :key="item.key"
+      class="art-card relative flex min-w-0 flex-col justify-center h-35 px-5"
+    >
+      <span class="text-g-700 text-sm">{{ item.des }}</span>
+      <ArtCountTo class="text-[26px] font-medium mt-2" :target="item.num" :duration="1300" />
+      <div class="flex-c mt-1">
+        <span class="text-xs text-g-600">今日新增</span>
+        <span class="ml-1 text-xs font-semibold text-success">{{ item.todayCount }}</span>
       </div>
-    </ElCol>
-  </ElRow>
+      <div class="absolute top-0 bottom-0 right-5 m-auto size-12.5 rounded-xl flex-cc bg-theme/10">
+        <ArtSvgIcon :icon="item.icon" class="text-xl text-theme" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -36,9 +36,13 @@
 
   /** 按 key 匹配合并前端配置 + 后端数据 */
   const dataList = computed(() =>
-    props.data.map((item) => ({
-      ...item,
-      ...cardMetaMap[item.key]
-    }))
+    (Array.isArray(props.data) ? props.data : [])
+      .filter((item) => Boolean(cardMetaMap[item.key]))
+      .map((item) => ({
+        ...item,
+        num: Number.isFinite(item.num) ? Math.max(0, item.num) : 0,
+        todayCount: Number.isFinite(item.todayCount) ? Math.max(0, item.todayCount) : 0,
+        ...cardMetaMap[item.key]
+      }))
   );
 </script>

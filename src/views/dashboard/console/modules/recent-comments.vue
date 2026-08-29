@@ -1,5 +1,5 @@
 <template>
-  <div class="art-card p-5 mb-5 max-sm:mb-4 flex flex-col">
+  <div class="art-card min-w-0 p-5 flex flex-col">
     <div class="art-card-header mb-4">
       <div class="title">
         <h4>最近评论</h4>
@@ -33,11 +33,13 @@
           ></p>
           <p class="text-xs text-g-400 mt-0.5 flex items-center min-w-0">
             <ArtSvgIcon
-              :icon="TARGET_META[item.targetType].icon"
+              :icon="getTargetMeta(item.targetType).icon"
               class="mr-1 text-sm shrink-0"
-              :class="TARGET_META[item.targetType].color"
+              :class="getTargetMeta(item.targetType).color"
             />
-            <span class="truncate">{{ TARGET_META[item.targetType].format(item.targetName) }}</span>
+            <span class="truncate">{{
+              getTargetMeta(item.targetType).format(item.targetName)
+            }}</span>
           </p>
         </div>
       </div>
@@ -66,6 +68,19 @@
       format: (n) => `评论了说说「${n}」`
     }
   };
+
+  const UNKNOWN_TARGET_META: {
+    icon: string;
+    color: string;
+    format: (name: string) => string;
+  } = {
+    icon: 'ri:question-line',
+    color: 'text-g-400',
+    format: () => '评论了未知内容'
+  };
+
+  const getTargetMeta = (targetType: RecentCommentItem['targetType']) =>
+    TARGET_META[targetType] ?? UNKNOWN_TARGET_META;
 </script>
 
 <style scoped>

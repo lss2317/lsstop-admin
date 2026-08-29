@@ -1,5 +1,5 @@
 <template>
-  <div class="art-card h-100 p-5 mb-5 max-sm:mb-4">
+  <div class="art-card min-w-0 h-100 p-5">
     <div class="art-card-header">
       <div class="title">
         <h4>评论来源分布</h4>
@@ -7,12 +7,16 @@
       </div>
     </div>
     <ArtRingChart
+      v-if="hasChartData"
       height="calc(100% - 40px)"
       :data="chartData"
       :showLegend="true"
       legendPosition="bottom"
       centerText="评论"
     />
+    <div v-else class="flex h-[calc(100%_-_40px)] min-h-[180px] items-center justify-center">
+      <ElEmpty description="暂无评论来源数据" :image-size="80" />
+    </div>
   </div>
 </template>
 
@@ -33,9 +37,12 @@
 
   /** 将 CommentSourceItem[] 转换为图表所需的 { name, value }[] */
   const chartData = computed(() =>
-    props.sources.map((item) => ({
-      name: TARGET_TYPE_LABEL[item.targetType] ?? '未知',
-      value: item.value
-    }))
+    (Array.isArray(props.sources) ? props.sources : [])
+      .filter((item) => Number.isFinite(item.value) && item.value > 0)
+      .map((item) => ({
+        name: TARGET_TYPE_LABEL[item.targetType] ?? '未知',
+        value: item.value
+      }))
   );
+  const hasChartData = computed(() => chartData.value.length > 0);
 </script>

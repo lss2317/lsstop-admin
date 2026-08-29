@@ -1,11 +1,12 @@
 <template>
-  <div class="art-card h-105 p-4 box-border mb-5 max-sm:mb-4">
+  <div class="art-card min-w-0 h-105 p-5 box-border">
     <div class="art-card-header mb-2">
       <div class="title">
         <h4>近七天评论统计</h4>
       </div>
     </div>
     <ArtBarChart
+      v-if="hasChartData"
       class="box-border p-2"
       barWidth="50%"
       height="16rem"
@@ -13,6 +14,9 @@
       :data="chartData"
       :xAxisData="xAxisLabels"
     />
+    <div v-else class="flex h-64 items-center justify-center">
+      <ElEmpty description="暂无评论趋势数据" :image-size="80" />
+    </div>
 
     <div class="flex-b mt-2">
       <div class="flex-1 text-center" v-for="(item, index) in list" :key="index">
@@ -32,8 +36,14 @@
     data: CommentStat;
   }>();
 
-  const xAxisLabels = computed(() => props.data.dailyStats.map((d) => formatDateShort(d.date)));
-  const chartData = computed(() => props.data.dailyStats.map((d) => d.count));
+  const dailyStats = computed(() =>
+    (Array.isArray(props.data.dailyStats) ? props.data.dailyStats : []).filter(
+      (item) => /^\d{4}-\d{2}-\d{2}$/.test(item.date) && Number.isFinite(item.count)
+    )
+  );
+  const hasChartData = computed(() => dailyStats.value.length > 0);
+  const xAxisLabels = computed(() => dailyStats.value.map((d) => formatDateShort(d.date)));
+  const chartData = computed(() => dailyStats.value.map((d) => Math.max(0, d.count)));
 
   /** 底部统计指标（前端配置 label，后端提供 value） */
   const list = computed(() => [

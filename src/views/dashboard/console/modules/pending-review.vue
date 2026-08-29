@@ -1,5 +1,5 @@
 <template>
-  <div class="art-card p-5 mb-5 max-sm:mb-4">
+  <div class="art-card min-w-0 p-5">
     <div class="art-card-header mb-4">
       <div class="title">
         <h4>待处理</h4>
@@ -74,7 +74,7 @@
   const pendingItems = computed(() =>
     pendingMeta.map((meta) => ({
       ...meta,
-      num: props.data[meta.key]
+      num: Number.isFinite(props.data[meta.key]) ? Math.max(0, props.data[meta.key]) : 0
     }))
   );
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="art-card p-5 mb-5 max-sm:mb-4 flex flex-col">
+  <div class="art-card min-w-0 p-5 flex flex-col">
     <div class="art-card-header mb-4">
       <div class="title">
         <h4>内容概览</h4>
@@ -84,7 +84,7 @@
   const overviewItems = computed(() =>
     overviewMeta.map((meta) => ({
       ...meta,
-      count: props.data[meta.key]
+      count: Number.isFinite(props.data[meta.key]) ? Math.max(0, props.data[meta.key]) : 0
     }))
   );
 </script>

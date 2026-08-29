@@ -1,18 +1,22 @@
 <template>
-  <div class="art-card h-100 p-5 mb-5 overflow-hidden max-sm:mb-4">
+  <div class="art-card min-w-0 h-100 p-5 overflow-hidden max-xl:col-span-2 max-sm:col-span-1">
     <div class="art-card-header">
       <div class="title">
-        <h4>热门文章 Top{{ articles.length }}</h4>
+        <h4>热门文章 Top{{ validArticles.length }}</h4>
         <p>按浏览量排序</p>
       </div>
     </div>
     <ArtHBarChart
+      v-if="hasChartData"
       height="calc(100% - 40px)"
       :data="chartData"
       :xAxisData="articleNames"
       :showAxisLine="false"
       barWidth="45%"
     />
+    <div v-else class="flex h-[calc(100%_-_40px)] min-h-[180px] items-center justify-center">
+      <ElEmpty description="暂无热门文章数据" :image-size="80" />
+    </div>
   </div>
 </template>
 
@@ -25,7 +29,18 @@
   }>();
 
   /** 反转数据：ECharts 水平柱状图默认从下往上排列，反转后高值在上 */
-  const reversed = computed(() => [...props.articles].reverse());
+  const validArticles = computed(() =>
+    (Array.isArray(props.articles) ? props.articles : [])
+      .filter(
+        (article) =>
+          typeof article.name === 'string' &&
+          article.name.trim().length > 0 &&
+          Number.isFinite(article.viewCount)
+      )
+      .map((article) => ({ ...article, viewCount: Math.max(0, article.viewCount) }))
+  );
+  const hasChartData = computed(() => validArticles.value.length > 0);
+  const reversed = computed(() => [...validArticles.value].reverse());
 
   /** 图表 Y 轴标签（文章标题，15字截断） */
   const articleNames = computed(() =>

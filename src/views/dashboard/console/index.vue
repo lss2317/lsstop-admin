@@ -1,24 +1,18 @@
 <!-- 控制台页面 -->
 <template>
-  <div v-if="consoleData">
+  <div v-if="consoleData" class="grid gap-5 pb-5 max-sm:gap-4 max-sm:pb-4">
     <StatCards :data="consoleData.statCards" />
 
-    <ElRow :gutter="20">
-      <ElCol :sm="24" :md="12" :lg="10">
-        <CommentStat :data="consoleData.commentStat" />
-      </ElCol>
-      <ElCol :sm="24" :md="12" :lg="14">
-        <VisitOverview :data="consoleData.visitOverview" />
-      </ElCol>
-    </ElRow>
+    <div class="grid grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-5 max-xl:grid-cols-1 max-sm:gap-4">
+      <CommentStat :data="consoleData.commentStat" />
+      <VisitOverview :data="consoleData.visitOverview" />
+    </div>
 
-    <div class="flex gap-5 max-md:flex-col">
-      <div class="flex flex-col w-[58%] max-md:w-full">
-        <RecentComments class="flex-1" :data="consoleData.recentComments" />
-      </div>
-      <div class="flex flex-col w-[42%] max-md:w-full">
+    <div class="grid grid-cols-[minmax(0,7fr)_minmax(0,5fr)] gap-5 max-xl:grid-cols-1 max-sm:gap-4">
+      <RecentComments :data="consoleData.recentComments" />
+      <div class="grid min-w-0 gap-5 max-sm:gap-4">
         <PendingReview :data="consoleData.pendingReview" />
-        <ContentOverview class="flex-1" :data="consoleData.contentOverview" />
+        <ContentOverview :data="consoleData.contentOverview" />
       </div>
     </div>
   </div>
@@ -38,15 +32,9 @@
   defineOptions({ name: 'Console' });
 
   const consoleData = ref<ConsoleData | null>(null);
-  const loading = ref(false);
 
   async function loadData() {
-    loading.value = true;
-    try {
-      consoleData.value = await fetchConsoleData();
-    } finally {
-      loading.value = false;
-    }
+    consoleData.value = await fetchConsoleData();
   }
 
   onMounted(() => {

@@ -1,28 +1,20 @@
 <!-- 分析页面 -->
 <template>
-  <div v-if="analysisData">
+  <div v-if="analysisData" class="grid gap-5 pb-5 max-sm:gap-4 max-sm:pb-4">
     <VisitTrend :stats="analysisData.uniqueVisitorTrend.dailyStats" />
 
-    <ElRow :gutter="20">
-      <ElCol :xl="10" :lg="10" :xs="24">
-        <TopArticles :articles="analysisData.topArticles" />
-      </ElCol>
-      <ElCol :xl="7" :lg="7" :xs="24">
-        <CategoryDistribution :categories="analysisData.categoryDistribution" />
-      </ElCol>
-      <ElCol :xl="7" :lg="7" :xs="24">
-        <CommentSource :sources="analysisData.commentSource" />
-      </ElCol>
-    </ElRow>
+    <div
+      class="grid grid-cols-[minmax(0,10fr)_minmax(0,7fr)_minmax(0,7fr)] gap-5 max-xl:grid-cols-2 max-sm:grid-cols-1 max-sm:gap-4"
+    >
+      <TopArticles :articles="analysisData.topArticles" />
+      <CategoryDistribution :categories="analysisData.categoryDistribution" />
+      <CommentSource :sources="analysisData.commentSource" />
+    </div>
 
-    <ElRow :gutter="20">
-      <ElCol :xl="14" :lg="14" :xs="24">
-        <InteractionTrend :trend="analysisData.interactionTrend" />
-      </ElCol>
-      <ElCol :xl="10" :lg="10" :xs="24">
-        <TagRadar :tags="analysisData.tagRadar" />
-      </ElCol>
-    </ElRow>
+    <div class="grid grid-cols-[minmax(0,7fr)_minmax(0,5fr)] gap-5 max-xl:grid-cols-1 max-sm:gap-4">
+      <InteractionTrend :trend="analysisData.interactionTrend" />
+      <TagRadar :tags="analysisData.tagRadar" />
+    </div>
   </div>
 </template>
 
@@ -40,15 +32,9 @@
   defineOptions({ name: 'Analysis' });
 
   const analysisData = ref<AnalysisData | null>(null);
-  const loading = ref(false);
 
   async function loadData() {
-    loading.value = true;
-    try {
-      analysisData.value = await fetchAnalysisData();
-    } finally {
-      loading.value = false;
-    }
+    analysisData.value = await fetchAnalysisData();
   }
 
   onMounted(() => {
