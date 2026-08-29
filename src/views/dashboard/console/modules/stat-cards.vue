@@ -14,7 +14,13 @@
       />
       <div class="flex-c mt-1">
         <span class="text-xs text-g-600">{{ item.todayLabel }}</span>
-        <span class="ml-1 text-xs font-semibold text-success">{{ item.todayCount }}</span>
+        <span
+          class="ml-1 inline-flex items-center text-xs font-semibold"
+          :class="item.todayCount > 0 ? 'text-success' : 'text-g-400'"
+        >
+          {{ item.todayCount }}
+          <ArtSvgIcon v-if="item.todayCount > 0" icon="ri:arrow-up-line" class="ml-0.5 text-sm" />
+        </span>
       </div>
       <div class="absolute top-0 bottom-0 right-5 m-auto size-12.5 rounded-xl flex-cc bg-theme/10">
         <ArtSvgIcon :icon="item.icon" class="text-xl text-theme" />
