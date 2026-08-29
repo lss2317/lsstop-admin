@@ -72,7 +72,7 @@
 
   watch(visible, (isVisible) => {
     if (!isVisible) return;
-    form.text = props.initialText || '链接文字';
+    form.text = props.initialText;
     form.url = '';
     nextTick(() => formRef.value?.clearValidate());
   });

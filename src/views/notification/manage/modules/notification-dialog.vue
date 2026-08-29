@@ -161,9 +161,22 @@
                       class="markdown-tool"
                       title="插入链接"
                       aria-label="插入链接"
-                      @click="wrapMarkdown('[', '](https://example.com)', '链接文字')"
+                      @click="openLinkDialog"
                     >
                       <ArtSvgIcon icon="ri:link" />
+                    </button>
+                    <button
+                      type="button"
+                      class="markdown-tool"
+                      :title="imageUploading ? '图片上传中' : '上传并插入图片'"
+                      aria-label="插入图片"
+                      :disabled="imageUploading"
+                      @click="openImagePicker"
+                    >
+                      <ArtSvgIcon
+                        :icon="imageUploading ? 'ri:loader-4-line' : 'ri:image-line'"
+                        :class="{ 'is-spinning': imageUploading }"
+                      />
                     </button>
                     <button
                       type="button"
@@ -179,7 +192,7 @@
                       class="markdown-tool"
                       title="插入代码块"
                       aria-label="插入代码块"
-                      @click="insertCodeBlock"
+                      @click="openCodeDialog"
                     >
                       <ArtSvgIcon icon="ri:code-box-line" />
                     </button>
@@ -244,6 +257,25 @@
       </div>
     </div>
 
+    <input
+      v-if="!isViewMode"
+      ref="contentImageInputRef"
+      type="file"
+      accept="image/*"
+      hidden
+      @change="handleContentImageSelect"
+    />
+    <MarkdownLinkDialog
+      v-model="linkDialogVisible"
+      :initial-text="linkInitialText"
+      @confirm="handleInsertLink"
+    />
+    <MarkdownCodeDialog
+      v-model="codeDialogVisible"
+      :initial-code="codeInitialCode"
+      @confirm="handleInsertCodeBlock"
+    />
+
     <template #footer>
       <ElButton v-if="isViewMode" type="primary" @click="visible = false">关闭</ElButton>
       <template v-else>
@@ -255,16 +287,29 @@
 </template>
 
 <script setup lang="ts">
-  import type { FormInstance, FormRules, InputInstance } from 'element-plus';
+  import { ElMessage, type FormInstance, type FormRules, type InputInstance } from 'element-plus';
   import hljs from 'highlight.js';
   import MarkdownIt from 'markdown-it';
+  import { fetchUploadWebsiteConfigImage } from '@/apis/setting';
   import '@/assets/styles/custom/one-dark-pro.scss';
   import ArtSvgIcon from '@/components/core/base/art-svg-icon/index.vue';
+  import MarkdownCodeDialog from '@/views/system/setting/modules/markdown-code-dialog.vue';
+  import MarkdownLinkDialog from '@/views/system/setting/modules/markdown-link-dialog.vue';
 
   interface MarkdownSelection {
     start: number;
     end: number;
     text: string;
+  }
+
+  interface MarkdownLinkValue {
+    text: string;
+    url: string;
+  }
+
+  interface MarkdownCodeValue {
+    language: string;
+    code: string;
   }
 
   export interface AnnouncementForm {
@@ -294,7 +339,16 @@
   const emit = defineEmits<Emits>();
   const formRef = ref<FormInstance>();
   const contentInputRef = ref<InputInstance>();
+  const contentImageInputRef = ref<HTMLInputElement>();
   const contentMode = ref<'edit' | 'preview'>('edit');
+  const imageUploading = ref(false);
+  const linkDialogVisible = ref(false);
+  const codeDialogVisible = ref(false);
+  const linkInitialText = ref('');
+  const codeInitialCode = ref('');
+  const pendingSelection = ref<MarkdownSelection>({ start: 0, end: 0, text: '' });
+  const CONTENT_IMAGE_MAX_SIZE = 5 * 1024 * 1024;
+  const CONTENT_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
   const contentMarkdownPlaceholder = `# 公告标题
 
@@ -358,6 +412,25 @@
     return { start, end, text: form.content.slice(start, end) };
   };
 
+  const insertAtSelection = (
+    markdownText: string,
+    selection: MarkdownSelection,
+    block = false
+  ): void => {
+    const before =
+      block && selection.start > 0 && form.content[selection.start - 1] !== '\n' ? '\n\n' : '';
+    const after =
+      block && selection.end < form.content.length && form.content[selection.end] !== '\n'
+        ? '\n\n'
+        : block
+          ? '\n'
+          : '';
+    const inserted = `${before}${markdownText}${after}`;
+    const value = `${form.content.slice(0, selection.start)}${inserted}${form.content.slice(selection.end)}`;
+    const cursor = selection.start + inserted.length;
+    setContentSelection(value, cursor, cursor);
+  };
+
   const wrapMarkdown = (prefix: string, suffix: string, placeholder: string): void => {
     const selection = getContentSelection();
     const selected = selection.text || placeholder;
@@ -394,19 +467,59 @@
     setContentSelection(value, lineStart + 3, lineStart + replacement.length);
   };
 
-  const insertCodeBlock = (): void => {
-    const selection = getContentSelection();
-    const code = selection.text || '代码';
-    const before = selection.start > 0 && form.content[selection.start - 1] !== '\n' ? '\n\n' : '';
-    const after =
-      selection.end < form.content.length && form.content[selection.end] !== '\n' ? '\n\n' : '\n';
-    const inserted = `${before}\`\`\`\n${code}\n\`\`\`${after}`;
-    const value = `${form.content.slice(0, selection.start)}${inserted}${form.content.slice(selection.end)}`;
-    setContentSelection(
-      value,
-      selection.start + inserted.length,
-      selection.start + inserted.length
-    );
+  const openLinkDialog = (): void => {
+    pendingSelection.value = getContentSelection();
+    linkInitialText.value = pendingSelection.value.text;
+    linkDialogVisible.value = true;
+  };
+
+  const handleInsertLink = ({ text, url }: MarkdownLinkValue): void => {
+    const safeText = text.replaceAll(']', '\\]');
+    insertAtSelection(`[${safeText}](${url})`, pendingSelection.value);
+  };
+
+  const openCodeDialog = (): void => {
+    pendingSelection.value = getContentSelection();
+    codeInitialCode.value = pendingSelection.value.text;
+    codeDialogVisible.value = true;
+  };
+
+  const handleInsertCodeBlock = ({ language, code }: MarkdownCodeValue): void => {
+    insertAtSelection(`\`\`\`${language}\n${code}\n\`\`\``, pendingSelection.value, true);
+  };
+
+  const openImagePicker = (): void => {
+    pendingSelection.value = getContentSelection();
+    contentImageInputRef.value?.click();
+  };
+
+  const handleContentImageSelect = async (event: Event): Promise<void> => {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    if (!CONTENT_IMAGE_TYPES.includes(file.type)) {
+      ElMessage.warning('仅支持 JPG、PNG、GIF 或 WebP 图片');
+      return;
+    }
+    if (file.size > CONTENT_IMAGE_MAX_SIZE) {
+      ElMessage.warning('图片大小不能超过 5MB');
+      return;
+    }
+
+    imageUploading.value = true;
+    try {
+      const url = await fetchUploadWebsiteConfigImage(file);
+      const description = file.name.replace(/\.[^.]+$/, '').trim() || '图片';
+      const safeDescription = description.replaceAll(']', '\\]');
+      insertAtSelection(`![${safeDescription}](${url})`, pendingSelection.value, true);
+      ElMessage.success('图片已上传并插入');
+    } catch {
+      // 上传失败由请求拦截器统一展示错误信息
+    } finally {
+      imageUploading.value = false;
+    }
   };
 
   const insertMarkdownDivider = (): void => {
@@ -715,6 +828,16 @@
       &:active {
         background: color-mix(in srgb, var(--theme-color) 17%, transparent);
       }
+
+      &:disabled {
+        color: var(--art-gray-400);
+        cursor: not-allowed;
+        background: transparent;
+      }
+
+      .is-spinning {
+        animation: markdown-spin 0.8s linear infinite;
+      }
     }
 
     .markdown-tool-divider {
@@ -834,6 +957,12 @@
         font-size: 12px;
         color: var(--art-gray-500);
       }
+    }
+  }
+
+  @keyframes markdown-spin {
+    to {
+      transform: rotate(360deg);
     }
   }
 
