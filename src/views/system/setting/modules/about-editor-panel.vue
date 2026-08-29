@@ -15,10 +15,6 @@
           <p>使用 Markdown 编写个人介绍，并查看博客前台的渲染效果</p>
         </div>
         <div class="markdown-heading-actions">
-          <span class="markdown-badge">
-            <ArtSvgIcon icon="ri:markdown-line" />
-            Markdown
-          </span>
           <div
             class="markdown-mode-switch"
             :class="{ 'is-preview': aboutMode === 'preview' }"
@@ -519,21 +515,6 @@
     padding: 22px;
   }
 
-  .markdown-badge {
-    display: inline-flex;
-    gap: 4px;
-    align-items: center;
-    height: 21px;
-    padding: 0 7px;
-    font-size: 10px;
-    font-weight: 500;
-    line-height: 21px;
-    color: var(--theme-color);
-    background: color-mix(in srgb, var(--theme-color) 10%, transparent);
-    border: 1px solid color-mix(in srgb, var(--theme-color) 18%, transparent);
-    border-radius: 5px;
-  }
-
   .markdown-card-heading {
     flex-direction: row;
     align-items: center;
@@ -850,10 +831,6 @@
 
     .markdown-heading-actions {
       align-items: flex-end;
-    }
-
-    .markdown-badge {
-      display: none;
     }
 
     .markdown-mode-switch button {
