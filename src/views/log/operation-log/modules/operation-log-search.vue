@@ -55,7 +55,10 @@
     { label: '新增', value: '新增' },
     { label: '编辑', value: '编辑' },
     { label: '删除', value: '删除' },
-    { label: '上传', value: '上传' }
+    { label: '上传', value: '上传' },
+    { label: '导出', value: '导出' },
+    { label: '权限变更', value: '权限变更' },
+    { label: '重置', value: '重置' }
   ]);
 
   /**

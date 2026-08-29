@@ -246,6 +246,12 @@
         return 'danger';
       case '上传':
         return 'primary';
+      case '导出':
+        return 'primary';
+      case '权限变更':
+        return 'warning';
+      case '重置':
+        return 'danger';
       default:
         return 'info';
     }
