@@ -28,7 +28,7 @@ export interface CommentStat {
   todayCount: number;
   /** 日均评论 */
   dailyAvg: number;
-  /** 周同比，如 "+15%" */
+  /** 较上周变化，如 "+15%" */
   weekOverWeek: string;
 }
 

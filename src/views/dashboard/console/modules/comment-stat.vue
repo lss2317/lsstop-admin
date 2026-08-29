@@ -3,6 +3,7 @@
     <div class="art-card-header mb-2">
       <div class="title">
         <h4>近七天评论统计</h4>
+        <p>仅统计已通过审核的评论</p>
       </div>
     </div>
     <ArtBarChart
@@ -47,9 +48,9 @@
 
   /** 底部统计指标（前端配置 label，后端提供 value） */
   const list = computed(() => [
-    { name: '总数', num: props.data.totalCount },
-    { name: '今日新增', num: props.data.todayCount },
-    { name: '日均评论', num: props.data.dailyAvg },
-    { name: '周同比', num: props.data.weekOverWeek }
+    { name: '近7天评论', num: Math.max(0, props.data.totalCount || 0) },
+    { name: '今日评论', num: Math.max(0, props.data.todayCount || 0) },
+    { name: '日均评论', num: Math.max(0, props.data.dailyAvg || 0) },
+    { name: '较上周', num: props.data.weekOverWeek || '+0%' }
   ]);
 </script>

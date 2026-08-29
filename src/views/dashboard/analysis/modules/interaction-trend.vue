@@ -3,7 +3,7 @@
     <div class="art-card-header">
       <div class="title">
         <h4>互动趋势对比</h4>
-        <p>近7天评论、留言、点赞变化</p>
+        <p>{{ summaryText }}</p>
       </div>
     </div>
     <ArtLineChart
@@ -14,6 +14,8 @@
       :showLegend="true"
       :showAxisLine="false"
       :showSplitLine="true"
+      symbol="circle"
+      :symbolSize="5"
     />
     <div v-else class="flex h-[calc(100%_-_40px)] min-h-[180px] items-center justify-center">
       <ElEmpty description="暂无互动趋势数据" :image-size="80" />
@@ -47,4 +49,16 @@
     { name: '留言', data: dailyData.value.map((d) => d.message) },
     { name: '点赞', data: dailyData.value.map((d) => d.like) }
   ]);
+
+  const summaryText = computed(() => {
+    const totals = dailyData.value.reduce(
+      (result, item) => ({
+        comment: result.comment + item.comment,
+        message: result.message + item.message,
+        like: result.like + item.like
+      }),
+      { comment: 0, message: 0, like: 0 }
+    );
+    return `近7天：评论 ${totals.comment} · 留言 ${totals.message} · 点赞 ${totals.like}`;
+  });
 </script>

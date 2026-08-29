@@ -83,6 +83,11 @@
     }
   });
 
+  /** 为最大值预留顶部空间；全零序列仍按有效数据绘制 */
+  const yAxisMax = computed(() =>
+    maxValue.value > 0 ? Math.max(maxValue.value + 1, Math.ceil(maxValue.value * 1.1)) : 1
+  );
+
   // 初始化动画数据（优化：减少条件判断）
   const initAnimationData = (): number[] | LineDataItem[] => {
     if (isMultipleData.value) {
@@ -210,7 +215,7 @@
       yAxis: {
         type: 'value',
         min: 0,
-        max: maxValue.value,
+        max: yAxisMax.value,
         axisLabel: getAxisLabelStyle(props.showAxisLabel),
         axisLine: getAxisLineStyle(props.showAxisLine),
         splitLine: getSplitLineStyle(props.showSplitLine)
@@ -310,16 +315,13 @@
     // 检查单数据情况
     if (Array.isArray(props.data) && typeof props.data[0] === 'number') {
       const singleData = props.data as number[];
-      return !singleData.length || singleData.every((val) => val === 0);
+      return !singleData.length;
     }
 
     // 检查多数据情况
     if (Array.isArray(props.data) && typeof props.data[0] === 'object') {
       const multiData = props.data as LineDataItem[];
-      return (
-        !multiData.length ||
-        multiData.every((item) => !item.data?.length || item.data.every((val) => val === 0))
-      );
+      return !multiData.length || multiData.every((item) => !item.data?.length);
     }
 
     return true;

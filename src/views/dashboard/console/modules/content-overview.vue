@@ -15,12 +15,9 @@
         <div class="size-9 rounded-lg flex-cc shrink-0" :class="item.iconBg">
           <ArtSvgIcon :icon="item.icon" class="text-base" :class="item.iconColor" />
         </div>
-        <div v-if="item.count > 0" class="ml-2.5 flex items-baseline gap-1">
+        <div class="ml-2.5 flex items-baseline gap-1">
           <span class="text-lg font-semibold" :class="item.numColor">{{ item.count }}</span>
           <span class="text-xs text-g-500">{{ item.label }}</span>
-        </div>
-        <div v-else class="ml-2.5">
-          <span class="text-xs text-g-400">暂无{{ item.label }}</span>
         </div>
       </div>
     </div>
@@ -48,7 +45,7 @@
   const overviewMeta: OverviewMeta[] = [
     {
       key: 'articleCount',
-      label: '文章',
+      label: '公开文章',
       icon: 'ri:article-line',
       iconBg: 'bg-blue-500/10',
       iconColor: 'text-blue-500',

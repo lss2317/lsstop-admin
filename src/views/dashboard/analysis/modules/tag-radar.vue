@@ -2,15 +2,18 @@
   <div class="art-card min-w-0 h-82 p-5">
     <div class="art-card-header">
       <div class="title">
-        <h4>标签热度分析</h4>
-        <p>热门标签文章数量对比</p>
+        <h4>热门标签排行</h4>
+        <p>按公开文章数量排序</p>
       </div>
     </div>
-    <ArtRadarChart
+    <ArtHBarChart
       v-if="hasChartData"
       height="calc(100% - 40px)"
-      :indicator="indicator"
-      :data="radarData"
+      :data="chartData"
+      :xAxisData="tagNames"
+      :showAxisLine="false"
+      :showDataLabel="true"
+      barWidth="42%"
     />
     <div v-else class="flex h-[calc(100%_-_40px)] min-h-[180px] items-center justify-center">
       <ElEmpty description="暂无标签热度数据" :image-size="80" />
@@ -26,10 +29,6 @@
     tags: TagRadarItem[];
   }>();
 
-  /** 截断过长标签名 */
-  const truncate = (str: string, maxLen = 10) =>
-    str.length > maxLen ? str.slice(0, maxLen) + '...' : str;
-
   const validTags = computed(() =>
     (Array.isArray(props.tags) ? props.tags : [])
       .filter(
@@ -40,20 +39,17 @@
           tag.value > 0
       )
       .map((tag) => ({ ...tag, name: tag.name.trim() }))
+      .sort((a, b) => b.value - a.value)
   );
   const hasChartData = computed(() => validTags.value.length > 0);
 
-  /** 雷达图维度指标：从数据中推导 max 值，name 过长则截断 */
-  const indicator = computed(() => {
-    const maxVal = Math.max(1, ...validTags.value.map((t) => t.value));
-    return validTags.value.map((t) => ({ name: truncate(t.name), max: maxVal }));
-  });
+  /** 水平柱状图从下往上排列，反转后最高热度显示在顶部 */
+  const reversedTags = computed(() => [...validTags.value].reverse());
 
-  /** 雷达图数据系列 */
-  const radarData = computed(() => [
-    {
-      name: '文章数量',
-      value: validTags.value.map((t) => t.value)
-    }
-  ]);
+  const tagNames = computed(() =>
+    reversedTags.value.map((tag) =>
+      tag.name.length > 10 ? `${tag.name.slice(0, 10)}...` : tag.name
+    )
+  );
+  const chartData = computed(() => reversedTags.value.map((tag) => tag.value));
 </script>

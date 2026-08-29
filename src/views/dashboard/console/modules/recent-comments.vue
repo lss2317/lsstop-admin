@@ -21,16 +21,14 @@
           :src="item.avatar"
           :alt="item.nickname"
           class="size-9 rounded-full shrink-0 object-cover"
+          @error="handleAvatarError"
         />
         <div class="ml-3 flex-1 min-w-0">
           <div class="flex items-center justify-between">
             <span class="text-sm font-medium text-g-800">{{ item.nickname }}</span>
             <span class="text-xs text-g-400">{{ formatTimeAgo(item.createdAt) }}</span>
           </div>
-          <p
-            class="text-xs text-g-500 mt-1 truncate comment-content"
-            v-html="parseEmoji(item.content)"
-          ></p>
+          <p class="comment-content mt-1 text-xs text-g-500" v-html="parseEmoji(item.content)"></p>
           <p class="text-xs text-g-400 mt-0.5 flex items-center min-w-0">
             <ArtSvgIcon
               :icon="getTargetMeta(item.targetType).icon"
@@ -50,6 +48,7 @@
 <script setup lang="ts">
   import type { RecentCommentItem } from '@/apis/dashboard/types';
   import { formatTimeAgo, parseEmoji } from '@/utils/format';
+  import defaultAvatar from '@/assets/images/user/avatar.webp';
 
   defineProps<{
     data: RecentCommentItem[];
@@ -81,9 +80,22 @@
 
   const getTargetMeta = (targetType: RecentCommentItem['targetType']) =>
     TARGET_META[targetType] ?? UNKNOWN_TARGET_META;
+
+  const handleAvatarError = (event: Event) => {
+    const image = event.currentTarget as HTMLImageElement;
+    image.onerror = null;
+    image.src = defaultAvatar;
+  };
 </script>
 
 <style scoped>
+  .comment-content {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
   .comment-content :deep(.comment-emoji) {
     display: inline-block;
     width: 1.2em;

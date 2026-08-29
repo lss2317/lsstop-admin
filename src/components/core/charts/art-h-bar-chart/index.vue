@@ -28,6 +28,7 @@
     xAxisData: () => [],
     barWidth: '36%',
     stack: false,
+    showDataLabel: false,
 
     // 轴线显示配置
     showAxisLabel: true,
@@ -109,6 +110,12 @@
       data: config.data,
       type: 'bar' as const,
       stack: config.stack,
+      label: {
+        show: props.showDataLabel,
+        position: 'right' as const,
+        color: '#999',
+        fontSize: 12
+      },
       itemStyle: getBaseItemStyle(config.color),
       barWidth: config.barWidth || props.barWidth,
       ...animationConfig
@@ -132,16 +139,13 @@
       // 检查单数据情况
       if (Array.isArray(props.data) && typeof props.data[0] === 'number') {
         const singleData = props.data as number[];
-        return !singleData.length || singleData.every((val) => val === 0);
+        return !singleData.length;
       }
 
       // 检查多数据情况
       if (Array.isArray(props.data) && typeof props.data[0] === 'object') {
         const multiData = props.data as BarDataItem[];
-        return (
-          !multiData.length ||
-          multiData.every((item) => !item.data?.length || item.data.every((val) => val === 0))
-        );
+        return !multiData.length || multiData.every((item) => !item.data?.length);
       }
 
       return true;
@@ -151,7 +155,7 @@
       const options: EChartsOption = {
         grid: getGridWithLegend(props.showLegend && isMultipleData.value, props.legendPosition, {
           top: 15,
-          right: 0,
+          right: props.showDataLabel ? 36 : 0,
           left: 0
         }),
         tooltip: props.showTooltip ? getTooltipStyle() : undefined,

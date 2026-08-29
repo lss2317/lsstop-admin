@@ -3,15 +3,18 @@
     <div class="art-card-header">
       <div class="title">
         <h4>文章分类占比</h4>
+        <p>仅统计包含公开文章的分类</p>
       </div>
     </div>
     <ArtRingChart
       v-if="hasChartData"
-      height="calc(100% - 30px)"
+      height="calc(100% - 40px)"
       :data="chartData"
       :showLegend="true"
       legendPosition="bottom"
       :showLabel="false"
+      :centerText="totalCount.toLocaleString()"
+      centerSubText="公开文章"
     />
     <div v-else class="flex h-[calc(100%_-_40px)] min-h-[180px] items-center justify-center">
       <ElEmpty description="暂无分类分布数据" :image-size="80" />
@@ -55,4 +58,5 @@
   });
 
   const hasChartData = computed(() => chartData.value.length > 0);
+  const totalCount = computed(() => chartData.value.reduce((sum, item) => sum + item.value, 0));
 </script>

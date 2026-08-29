@@ -3,7 +3,7 @@
     <div class="art-card-header">
       <div class="title">
         <h4>评论来源分布</h4>
-        <p>按评论目标类型统计</p>
+        <p>已通过审核的评论来源</p>
       </div>
     </div>
     <ArtRingChart
@@ -12,7 +12,8 @@
       :data="chartData"
       :showLegend="true"
       legendPosition="bottom"
-      centerText="评论"
+      :centerText="totalCount.toLocaleString()"
+      centerSubText="评论"
     />
     <div v-else class="flex h-[calc(100%_-_40px)] min-h-[180px] items-center justify-center">
       <ElEmpty description="暂无评论来源数据" :image-size="80" />
@@ -45,4 +46,5 @@
       }))
   );
   const hasChartData = computed(() => chartData.value.length > 0);
+  const totalCount = computed(() => chartData.value.reduce((sum, item) => sum + item.value, 0));
 </script>

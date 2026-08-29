@@ -125,6 +125,8 @@ export interface BarChartProps extends BaseChartProps, AxisDisplayProps, Interac
   stack?: boolean;
   /** 圆角 */
   borderRadius?: number | number[];
+  /** 是否显示数据标签 */
+  showDataLabel?: boolean;
 }
 
 // 折线图数据项接口
@@ -208,6 +210,8 @@ export interface RingChartProps extends BaseChartProps, InteractionProps {
   borderRadius?: number;
   /** 中心文本 */
   centerText?: string;
+  /** 中心辅助文本 */
+  centerSubText?: string;
   /** 是否显示标签 */
   showLabel?: boolean;
 }

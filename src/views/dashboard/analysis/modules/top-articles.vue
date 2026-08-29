@@ -12,6 +12,7 @@
       :data="chartData"
       :xAxisData="articleNames"
       :showAxisLine="false"
+      :showDataLabel="true"
       barWidth="45%"
     />
     <div v-else class="flex h-[calc(100%_-_40px)] min-h-[180px] items-center justify-center">

@@ -28,6 +28,7 @@
     radius: () => ['50%', '80%'],
     borderRadius: 10,
     centerText: '',
+    centerSubText: '',
     showLabel: false,
 
     // 交互配置
@@ -43,7 +44,7 @@
       checkEmpty: () => {
         return !props.data?.length || props.data.every((item) => item.value === 0);
       },
-      watchSources: [() => props.data, () => props.centerText],
+      watchSources: [() => props.data, () => props.centerText, () => props.centerSubText],
       generateOptions: (): EChartsOption => {
         // 根据图例位置计算环形图中心位置
         const getCenterPosition = (): [string, string] => {
@@ -115,14 +116,20 @@
           const centerPos = getCenterPosition();
           option.title = {
             text: props.centerText,
+            subtext: props.centerSubText,
             left: centerPos[0],
             top: centerPos[1],
             textAlign: 'center',
             textVerticalAlign: 'middle',
+            itemGap: 4,
             textStyle: {
               fontSize: 18,
-              fontWeight: 500,
-              color: isDark.value ? '#999' : '#ADB0BC'
+              fontWeight: 600,
+              color: isDark.value ? '#ddd' : '#4a4a5a'
+            },
+            subtextStyle: {
+              fontSize: 12,
+              color: isDark.value ? '#888' : '#ADB0BC'
             }
           };
         }
