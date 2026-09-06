@@ -29,7 +29,7 @@
     </ul>
 
     <div class="w-full h-[calc(100%-95px)]">
-      <div class="h-[calc(100%-60px)] overflow-y-scroll scrollbar-thin">
+      <div class="h-[calc(100%-60px)] overflow-y-auto scrollbar-thin">
         <!-- 通知 -->
         <ul v-show="barActiveIndex === 0">
           <li
@@ -70,7 +70,7 @@
         <!-- 空状态 -->
         <div
           v-show="currentTabIsEmpty"
-          class="relative top-25 h-full text-g-500 text-center !bg-transparent"
+          class="h-full flex flex-col items-center justify-center text-g-500 text-center !bg-transparent"
         >
           <ArtSvgIcon icon="system-uicons:inbox" class="text-5xl" />
           <p class="mt-3.5 text-xs !bg-transparent"
