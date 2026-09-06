@@ -67,18 +67,6 @@
           </li>
         </ul>
 
-        <!-- 待办 -->
-        <ul v-show="barActiveIndex === 2">
-          <li
-            v-for="(item, index) in pendingList"
-            :key="index"
-            class="box-border px-5 py-3.5 last:border-b-0"
-          >
-            <h4>{{ item.title }}</h4>
-            <p class="text-xs text-g-500">{{ item.time }}</p>
-          </li>
-        </ul>
-
         <!-- 空状态 -->
         <div
           v-show="currentTabIsEmpty"
@@ -126,13 +114,6 @@
     avatar: string;
   }
 
-  interface PendingItem {
-    /** 标题 */
-    title: string;
-    /** 时间 */
-    time: string;
-  }
-
   interface BarItem {
     /** 名称 */
     name: ComputedRef<string>;
@@ -170,9 +151,6 @@
     // 消息数据（从接口获取，初始为空）
     const msgList = ref<MessageItem[]>([]);
 
-    // 待办数据
-    const pendingList = ref<PendingItem[]>([]);
-
     // 标签栏数据
     const barList = computed<BarItem[]>(() => [
       {
@@ -182,17 +160,12 @@
       {
         name: computed(() => t('notice.bar[1]')),
         num: msgList.value.length
-      },
-      {
-        name: computed(() => t('notice.bar[2]')),
-        num: pendingList.value.length
       }
     ]);
 
     return {
       noticeList,
       msgList,
-      pendingList,
       barList
     };
   };
@@ -261,11 +234,9 @@
   const useTabManagement = (
     noticeList: Ref<NoticeItem[]>,
     msgList: Ref<MessageItem[]>,
-    pendingList: Ref<PendingItem[]>,
     businessHandlers: {
       handleNoticeAll: () => void;
       handleMsgAll: () => void;
-      handlePendingAll: () => void;
     }
   ) => {
     const changeBar = (index: number) => {
@@ -274,7 +245,7 @@
 
     // 检查当前标签页是否为空
     const currentTabIsEmpty = computed(() => {
-      const tabDataMap = [noticeList.value, msgList.value, pendingList.value];
+      const tabDataMap = [noticeList.value, msgList.value];
 
       const currentData = tabDataMap[barActiveIndex.value];
       return currentData && currentData.length === 0;
@@ -284,8 +255,7 @@
       // 查看全部处理器映射
       const viewAllHandlers: Record<number, () => void> = {
         0: businessHandlers.handleNoticeAll,
-        1: businessHandlers.handleMsgAll,
-        2: businessHandlers.handlePendingAll
+        1: businessHandlers.handleMsgAll
       };
 
       const handler = viewAllHandlers[barActiveIndex.value];
@@ -314,29 +284,21 @@
       console.log('查看全部消息');
     };
 
-    const handlePendingAll = () => {
-      // 处理查看全部待办
-      console.log('查看全部待办');
-    };
-
     return {
       handleNoticeAll,
-      handleMsgAll,
-      handlePendingAll
+      handleMsgAll
     };
   };
 
   // 组合所有逻辑
-  const { noticeList, msgList, pendingList, barList } = useNotificationData();
+  const { noticeList, msgList, barList } = useNotificationData();
   const { getNoticeStyle } = useNotificationStyles();
   const { showNotice } = useNotificationAnimation();
-  const { handleNoticeAll, handleMsgAll, handlePendingAll } = useBusinessLogic();
-  const { changeBar, currentTabIsEmpty, handleViewAll } = useTabManagement(
-    noticeList,
-    msgList,
-    pendingList,
-    { handleNoticeAll, handleMsgAll, handlePendingAll }
-  );
+  const { handleNoticeAll, handleMsgAll } = useBusinessLogic();
+  const { changeBar, currentTabIsEmpty, handleViewAll } = useTabManagement(noticeList, msgList, {
+    handleNoticeAll,
+    handleMsgAll
+  });
 
   // 监听属性变化
   watch(
