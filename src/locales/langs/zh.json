@@ -111,8 +111,7 @@
   "notice": {
     "title": "通知",
     "btnRead": "标为已读",
-    "bar": ["通知", "消息"],
-    "text": ["暂无"],
+    "empty": "暂无未读通知",
     "viewAll": "查看全部"
   },
   "worktab": {

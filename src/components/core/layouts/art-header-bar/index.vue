@@ -83,14 +83,19 @@
         />
 
         <!-- 通知按钮 -->
-        <ArtIconButton
+        <ElBadge
           v-if="shouldShowNotification"
-          icon="ri:notification-2-line"
-          class="notice-button relative"
-          @click="visibleNotice"
+          :value="unreadCount"
+          :hidden="unreadCount === 0"
+          :max="99"
+          class="notice-badge"
         >
-          <div class="absolute top-2 right-2 size-1.5 !bg-danger rounded-full"></div>
-        </ArtIconButton>
+          <ArtIconButton
+            icon="ri:notification-2-line"
+            class="notice-button"
+            @click="visibleNotice"
+          />
+        </ElBadge>
 
         <!-- 设置按钮 -->
         <div v-if="shouldShowSettings" class="flex-cc">
@@ -113,7 +118,11 @@
     <ArtWorkTab />
 
     <!-- 通知 -->
-    <ArtNotification v-model:value="showNotice" ref="notice" />
+    <ArtNotification
+      v-model:value="showNotice"
+      ref="notice"
+      @unread-count-change="unreadCount = $event"
+    />
   </div>
 </template>
 
@@ -122,7 +131,6 @@
   import { useFullscreen, useWindowSize } from '@vueuse/core';
   import { MenuTypeEnum } from '@/enums/appEnum';
   import { useSettingStore } from '@/store/modules/setting';
-  import { useUserStore } from '@/store/modules/user';
   import { useMenuStore } from '@/store/modules/menu';
   import AppConfig from '@/config';
   import { mittBus } from '@/utils/sys';
@@ -140,7 +148,6 @@
   const { width } = useWindowSize();
 
   const settingStore = useSettingStore();
-  const userStore = useUserStore();
   const menuStore = useMenuStore();
 
   // 顶部栏功能配置
@@ -155,11 +162,12 @@
     shouldShowThemeToggle
   } = useHeaderBar();
 
-  const { menuOpen, systemThemeColor, menuType, isDark, tabStyle } = storeToRefs(settingStore);
+  const { menuOpen, menuType, isDark, tabStyle } = storeToRefs(settingStore);
 
   const { menuList } = storeToRefs(menuStore);
 
   const showNotice = ref(false);
+  const unreadCount = ref(0);
   const notice = ref(null);
 
   // 菜单类型判断

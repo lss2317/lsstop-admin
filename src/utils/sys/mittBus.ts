@@ -48,6 +48,8 @@ type Events = {
   openSearchDialog: void;
   // 打开锁屏事件 - 无参数
   openLockScreen: void;
+  // 通知阅读状态变化事件 - 无参数
+  notificationReadChanged: void;
 };
 
 // 创建类型安全的事件总线实例

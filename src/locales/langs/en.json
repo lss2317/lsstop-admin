@@ -111,8 +111,7 @@
   "notice": {
     "title": "Notice",
     "btnRead": "Mark as read",
-    "bar": ["Notice", "Message"],
-    "text": ["No"],
+    "empty": "No unread notifications",
     "viewAll": "View all"
   },
   "worktab": {
