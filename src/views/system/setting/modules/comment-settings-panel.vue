@@ -45,8 +45,8 @@
       <div class="setting-rows">
         <div class="switch-row">
           <div>
-            <strong>新评论通知</strong>
-            <p>有新评论公开发布时，向站长发送提醒邮件</p>
+            <strong>评论与回复通知</strong>
+            <p>新评论公开发布时通知站长，评论收到回复时通知被回复用户</p>
           </div>
           <ElSwitch v-model="form.enableCommentEmailNotice" :active-value="1" :inactive-value="0" />
         </div>
